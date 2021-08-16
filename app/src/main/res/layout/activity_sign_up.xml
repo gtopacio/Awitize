@@ -4,114 +4,125 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/baby_blue">
+    android:background="@drawable/gradient_bg">
 
     <Button
-        android:id="@+id/sign_up_btn"
+        android:id="@+id/bt_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:background="@color/grey"
         android:text="Sign Up"
+        android:textColor="@color/darkest_grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirm_pw_sign_up_input" />
+        app:layout_constraintTop_toBottomOf="@+id/et_cfm_password_signup" />
 
     <TextView
-        android:id="@+id/awitize_tv2"
+        android:id="@+id/tv_awitize_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/bungee"
         android:text="Awitize"
         android:textAlignment="center"
+        android:textColor="@color/yellow"
         android:textSize="60sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/username_tv2"
+        android:id="@+id/tv2_username_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:fontFamily="@font/bungee"
         android:text="Username"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/awitize_tv2" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_awitize_signup" />
 
     <TextView
-        android:id="@+id/email_tv"
+        android:id="@+id/tv_email_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/bungee"
         android:text="Email"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_input" />
+        app:layout_constraintTop_toBottomOf="@+id/et_username_signup" />
 
     <TextView
-        android:id="@+id/pw_tv2"
+        android:id="@+id/tv_password_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/bungee"
         android:text="Password"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_input" />
+        app:layout_constraintTop_toBottomOf="@+id/et_email_signup" />
 
     <TextView
-        android:id="@+id/confirm_password_input"
+        android:id="@+id/tv_cfm_password_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/bungee"
         android:text="Confirm Password"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pw_sign_up_input" />
+        app:layout_constraintTop_toBottomOf="@+id/et_password_signup" />
 
     <EditText
-        android:id="@+id/username_input"
+        android:id="@+id/et_username_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="15"
         android:inputType="textPersonName"
+        android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_tv2" />
+        app:layout_constraintTop_toBottomOf="@+id/tv2_username_signup" />
 
     <EditText
-        android:id="@+id/email_input"
+        android:id="@+id/et_email_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="15"
         android:inputType="textPersonName"
+        android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_email_signup" />
 
     <EditText
-        android:id="@+id/pw_sign_up_input"
+        android:id="@+id/et_password_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="15"
         android:inputType="textPassword"
+        android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pw_tv2" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_password_signup" />
 
     <EditText
-        android:id="@+id/confirm_pw_sign_up_input"
+        android:id="@+id/et_cfm_password_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="15"
         android:inputType="textPassword"
+        android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirm_password_input" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_cfm_password_signup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
