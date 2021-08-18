@@ -2,6 +2,7 @@ package com.mobdeve.awitize;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_music_player);
+        setContentView(R.layout.activity_title);
 
         /*
         setContentView(R.layout.activity_main);
@@ -40,5 +41,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         */
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent i = new Intent(MainActivity.this, SigninActivity.class);
+        startActivity(i);
+        finish();
     }
 }
