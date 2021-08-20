@@ -9,22 +9,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class GenreViewHolder extends RecyclerView.ViewHolder {
 
-    private ConstraintLayout clGenre;
+    //private ConstraintLayout clGenre;
     private TextView tvGenreName;
     private TextView tvNumOfSongs;
 
     public GenreViewHolder(@NonNull @org.jetbrains.annotations.NotNull View itemView) {
         super(itemView);
 
-        this.clGenre = itemView.findViewById(R.id.cl_genre);
-        this.tvNumOfSongs = itemView.findViewById(R.id.tv_genre);
+        //this.clGenre = itemView.findViewById(R.id.cl_genre);
+        this.tvGenreName = itemView.findViewById(R.id.tv_genre);
         this.tvNumOfSongs = itemView.findViewById(R.id.tv_tracks);
 
     }
 
-    public ConstraintLayout getClGenre () {
+    /*public ConstraintLayout getClGenre () {
         return this.clGenre;
-    }
+    }*/
 
     public TextView getGenreName () {
         return this.tvNumOfSongs;
@@ -39,7 +39,7 @@ public class GenreViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setTvNumOfSongs (int songs) {
-        this.tvNumOfSongs.setText(songs);
+        this.tvNumOfSongs.setText(songs + " tracks");
     }
 
 }
