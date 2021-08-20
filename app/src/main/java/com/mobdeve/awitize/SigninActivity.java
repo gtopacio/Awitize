@@ -35,6 +35,16 @@ public class SigninActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(mAuth.getCurrentUser() != null){
+            Intent i = new Intent(SigninActivity.this, DashboardActivity.class);
+            startActivity(i);
+            finish();
+        }
+    }
+
     private void initComponents(){
         signUp = findViewById(R.id.tv_sign_up);
         email = findViewById(R.id.et_email_login);

@@ -12,7 +12,7 @@
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/bungee"
         android:text="1:23"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/tv_artist"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_song" />
@@ -24,7 +24,7 @@
         android:layout_marginStart="8dp"
         android:fontFamily="@font/bungee"
         android:text="Artist"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_song"
         app:layout_constraintHorizontal_bias="1.0"
@@ -38,7 +38,7 @@
         android:layout_marginStart="16dp"
         android:fontFamily="@font/bungee"
         android:text="Song 1"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

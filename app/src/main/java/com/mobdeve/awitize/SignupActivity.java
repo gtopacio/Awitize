@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -49,11 +50,13 @@ public class SignupActivity extends AppCompatActivity {
             mAuth.createUserWithEmailAndPassword(emailInput, passwordInput).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
+
                     if(task.isSuccessful()){
                         Toast.makeText(SignupActivity.this, "Signup Successful, try logging in now", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Toast.makeText(SignupActivity.this, "Signup Successful, try logging in now", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupActivity.this, "Signup Not Successful", Toast.LENGTH_SHORT).show();
+                        Log.w("Error", task.getException().toString());
                     }
                 }
             });
