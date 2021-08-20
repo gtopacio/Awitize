@@ -2,6 +2,8 @@ package com.mobdeve.awitize;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +31,9 @@ public class DashboardActivity extends AppCompatActivity {
     private FirebaseUser user;
     private TextView emailView;
     private ArrayList<MusicData> songs;
+    private ArrayList<Genre> genres;
+    private RecyclerView rvDasboard;
+    private GenreAdapter genreAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +61,10 @@ public class DashboardActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView <?> parent) {
             }
         });
+
+        initRecyclerView();
     }
+
 
     @Override
     protected void onStart() {
@@ -77,12 +85,24 @@ public class DashboardActivity extends AppCompatActivity {
                         String artist = String.valueOf(d.child("artist").getValue());
                         String title = String.valueOf(d.child("title").getValue());
                         String url = String.valueOf(d.child("url").getValue());
-                        songs.add(new MusicData(artist, title, url));
+                        String genre = String.valueOf(d.child("genre").getValue());
+                        String album = String.valueOf(d.child("album").getValue());
+                        songs.add(new MusicData(artist, title, url, genre, album));
                     }
 
                 }
             }
         });
+    }
+
+    private void initRecyclerView() {
+        this.genres = GenreDataHelper.loadGenres();
+
+        this.rvDasboard = findViewById(R.id.rv_category_selection);
+        this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+        this.genreAdapter = new GenreAdapter(this.genres);
+        this.rvDasboard.setAdapter(this.genreAdapter);
     }
 
     private void checkSession(){
