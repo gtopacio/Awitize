@@ -35,6 +35,8 @@ public class DashboardActivity extends AppCompatActivity {
     private RecyclerView rvDasboard;
     private GenreAdapter genreAdapter;
 
+    private TextView nowPlaying;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +64,7 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
+        nowPlaying = findViewById(R.id.tv_now_playing_main);
         initRecyclerView();
     }
 
@@ -79,7 +82,6 @@ public class DashboardActivity extends AppCompatActivity {
                 else {
                     Iterator<DataSnapshot> retSongs = task.getResult().getChildren().iterator();
                     songs = new ArrayList<>();
-                    Log.w("TEST", String.valueOf(task.getResult().getChildrenCount()));
                     while(retSongs.hasNext()){
                         DataSnapshot d = retSongs.next();
                         String artist = String.valueOf(d.child("artist").getValue());
@@ -87,9 +89,18 @@ public class DashboardActivity extends AppCompatActivity {
                         String url = String.valueOf(d.child("url").getValue());
                         String genre = String.valueOf(d.child("genre").getValue());
                         String album = String.valueOf(d.child("album").getValue());
+                        Log.w("Loaded", artist + " - " + title + ", " + genre + " " + album + " " + url);
                         songs.add(new MusicData(artist, title, url, genre, album));
                     }
-
+                    nowPlaying.setOnClickListener(v -> {
+                        Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
+                        MusicData song = songs.get(0);
+                        i.putExtra("title", song.getTitle());
+                        i.putExtra("artist", song.getArtist());
+                        i.putExtra("url", song.getUrl());
+                        startActivity(i);
+                        finish();
+                    });
                 }
             }
         });

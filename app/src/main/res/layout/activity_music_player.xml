@@ -104,58 +104,8 @@
         app:layout_constraintStart_toStartOf="@+id/gl_vert_3_player"
         app:layout_constraintTop_toBottomOf="@+id/tv_curr_song" />
 
-    <ProgressBar
-        android:id="@+id/pb_duration"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_player"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_6_player"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_player" />
-
-    <ImageButton
-        android:id="@+id/ib_play_player"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_margin="10dp"
-        android:adjustViewBounds="true"
-        android:background="@color/grey"
-        android:cropToPadding="false"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_player"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_player"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_3_player"
-        app:layout_constraintTop_toBottomOf="@+id/pb_duration"
-        app:srcCompat="@android:drawable/ic_media_play" />
-
-    <ImageButton
-        android:id="@+id/ib_prev_player"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_margin="14dp"
-        android:adjustViewBounds="true"
-        android:background="@color/grey"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_player"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_3_player"
-        app:layout_constraintTop_toBottomOf="@+id/pb_duration"
-        app:srcCompat="@android:drawable/ic_media_previous" />
-
-    <ImageButton
-        android:id="@+id/ib_next_player"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_margin="14dp"
-        android:adjustViewBounds="true"
-        android:background="@color/grey"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_player"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_player"
-        app:layout_constraintTop_toBottomOf="@+id/pb_duration"
-        app:layout_constraintVertical_bias="0.344"
-        app:srcCompat="@android:drawable/ic_media_next" />
-
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/miniplayer_bg"
@@ -247,5 +197,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.75" />
+
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/pv_player_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_player"
+        app:layout_constraintStart_toStartOf="@+id/gl_vert_6_player"
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_player"
+        app:show_buffering="when_playing"
+        app:show_shuffle_button="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
