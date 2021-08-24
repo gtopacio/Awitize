@@ -11,6 +11,7 @@
         android:id="@+id/cl_music_player_main"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         android:background="@drawable/miniplayer_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_main"

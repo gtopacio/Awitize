@@ -202,6 +202,7 @@
         android:id="@+id/pv_player_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="5dp"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_player"
         app:layout_constraintStart_toStartOf="@+id/gl_vert_6_player"
