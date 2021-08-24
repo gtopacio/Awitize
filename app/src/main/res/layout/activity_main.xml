@@ -117,7 +117,7 @@
         android:id="@+id/ib_next_main"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="7dp"
+        android:layout_margin="5dp"
         android:background="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_main"
@@ -129,7 +129,7 @@
         android:id="@+id/ib_prev_main"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="7dp"
+        android:layout_margin="5dp"
         android:background="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_main"
@@ -230,6 +230,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.685" />
+        app:layout_constraintGuide_percent="0.66" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

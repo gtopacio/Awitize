@@ -16,4 +16,7 @@
     <color name="darker_grey">#595260</color>
     <color name="darkest_grey">#2C2E43</color>
     <color name="white">#FFFFFF</color>
+
+    <color name="brines_green">#55c39e</color>
+    <color name="brines_blue">#387ca3</color>
 </resources>

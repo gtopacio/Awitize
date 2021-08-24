@@ -33,31 +33,6 @@
         tools:srcCompat="@drawable/ic___user"
         android:src="@drawable/ic___user" />
 
-    <Spinner
-        android:id="@+id/sp_library_select"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_2_lib"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_3_lib"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_1_lib"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_1_lib"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageButton
-        android:id="@+id/ib_search_lib"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="7dp"
-        android:background="@color/grey"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_2_lib"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_lib"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_5_lib"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_1_lib"
-        app:srcCompat="?android:attr/actionModeWebSearchDrawable" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_library_selection"
         android:layout_width="0dp"
@@ -116,7 +91,7 @@
         android:id="@+id/ib_next_lib"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="7dp"
+        android:layout_margin="5dp"
         android:background="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_lib"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_lib"
@@ -128,7 +103,7 @@
         android:id="@+id/ib_prev_lib"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="7dp"
+        android:layout_margin="5dp"
         android:background="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_lib"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_lib"
@@ -229,6 +204,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.685" />
+        app:layout_constraintGuide_percent="0.66" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

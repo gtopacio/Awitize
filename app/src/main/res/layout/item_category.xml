@@ -4,8 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_genre"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/gradient_category">
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/view_line_category2"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_margin="0dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_genre"
@@ -33,4 +43,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_genre"
         app:layout_constraintVertical_bias="1.0" />
+
+    <View
+        android:id="@+id/view_line_category"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_margin="0dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"  />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
