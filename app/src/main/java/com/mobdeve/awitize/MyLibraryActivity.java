@@ -77,9 +77,10 @@ public class MyLibraryActivity extends AppCompatActivity {
         nowPlaying.setOnClickListener(v -> {
             Intent i = new Intent(MyLibraryActivity.this, MusicPlayerActivity.class);
             MusicData song = songs.get(0);
-            i.putExtra("title", song.getTitle());
-            i.putExtra("artist", song.getArtist());
-            i.putExtra("url", song.getUrl());
+            i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
+            i.putExtra(SongAttributes.ARTIST.name(), song.getArtist());
+            i.putExtra(SongAttributes.URL.name(), song.getUrl());
+            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
             startActivity(i);
             finish();
         });
@@ -92,7 +93,7 @@ public class MyLibraryActivity extends AppCompatActivity {
 
         accountButton.setOnClickListener(v -> {
             Intent i = new Intent(MyLibraryActivity.this, AccountActivity.class);
-            i.putExtra("Previous Class", this.getClass().getName());
+            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
             startActivity(i);
             finish();
         });
