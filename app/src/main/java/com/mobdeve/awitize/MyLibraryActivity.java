@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,38 +34,68 @@ public class MyLibraryActivity extends AppCompatActivity {
     private ArrayList<Genre> genres;
     private RecyclerView rvDasboard;
     private GenreAdapter genreAdapter;
-
     private TextView nowPlaying;
+    private FloatingActionButton pageSelect;
+    private ImageButton accountButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_library);
 
         checkSession();
 
-        setContentView(R.layout.activity_main);
-        // FOR TESTING ONLY
-        Spinner spinner = findViewById(R.id.sp_category_select);
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("SONGS");
-        arrayList.add("ALBUM");
-        arrayList.add("GENRE");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arrayList);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(arrayAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String tutorialsName = parent.getItemAtPosition(position).toString();
-//                Toast.makeText(parent.getContext(), "Selected: " + tutorialsName, Toast.LENGTH_LONG).show();
-            }
-            @Override
-            public void onNothingSelected(AdapterView <?> parent) {
-            }
+        loadComponents();
+//        // FOR TESTING ONLY
+//        Spinner spinner = findViewById(R.id.sp_category_select);
+//        ArrayList<String> arrayList = new ArrayList<>();
+//        arrayList.add("SONGS");
+//        arrayList.add("ALBUM");
+//        arrayList.add("GENRE");
+//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arrayList);
+//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner.setAdapter(arrayAdapter);
+//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                String tutorialsName = parent.getItemAtPosition(position).toString();
+////                Toast.makeText(parent.getContext(), "Selected: " + tutorialsName, Toast.LENGTH_LONG).show();
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView <?> parent) {
+//            }
+//        });
+
+        initRecyclerView();
+    }
+
+    private void loadComponents() {
+        nowPlaying = findViewById(R.id.tv_now_playing_lib);
+        pageSelect = findViewById(R.id.fab_page_select_lib);
+        accountButton = findViewById(R.id.ib_account_lib);
+
+        nowPlaying.setOnClickListener(v -> {
+            Intent i = new Intent(MyLibraryActivity.this, MusicPlayerActivity.class);
+            MusicData song = songs.get(0);
+            i.putExtra("title", song.getTitle());
+            i.putExtra("artist", song.getArtist());
+            i.putExtra("url", song.getUrl());
+            startActivity(i);
+            finish();
         });
 
-        nowPlaying = findViewById(R.id.tv_now_playing_main);
-        initRecyclerView();
+        pageSelect.setOnClickListener(v -> {
+            Intent i = new Intent(MyLibraryActivity.this, DashboardActivity.class);
+            startActivity(i);
+            finish();
+        });
+
+        accountButton.setOnClickListener(v -> {
+            Intent i = new Intent(MyLibraryActivity.this, AccountActivity.class);
+            i.putExtra("Previous Class", this.getClass().getName());
+            startActivity(i);
+            finish();
+        });
     }
 
     @Override
@@ -89,15 +121,6 @@ public class MyLibraryActivity extends AppCompatActivity {
                         Log.w("Loaded", artist + " - " + title + ", " + genre + " " + album + " " + url);
                         songs.add(new MusicData(artist, title, url, genre, album));
                     }
-                    nowPlaying.setOnClickListener(v -> {
-                        Intent i = new Intent(MyLibraryActivity.this, MusicPlayerActivity.class);
-                        MusicData song = songs.get(0);
-                        i.putExtra("title", song.getTitle());
-                        i.putExtra("artist", song.getArtist());
-                        i.putExtra("url", song.getUrl());
-                        startActivity(i);
-                        finish();
-                    });
                 }
             }
         });
@@ -106,7 +129,7 @@ public class MyLibraryActivity extends AppCompatActivity {
     private void initRecyclerView() {
         this.genres = GenreDataHelper.loadGenres();
 
-        this.rvDasboard = findViewById(R.id.rv_category_selection);
+        this.rvDasboard = findViewById(R.id.rv_library_selection);
         this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         this.genreAdapter = new GenreAdapter(this.genres);

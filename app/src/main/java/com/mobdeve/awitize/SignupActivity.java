@@ -3,6 +3,7 @@ package com.mobdeve.awitize;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -47,12 +48,19 @@ public class SignupActivity extends AppCompatActivity {
                 return;
             }
 
+            if(passwordInput.length() < 8){
+                Toast.makeText(this, "Passwords needs a minimum of 8 characters", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             mAuth.createUserWithEmailAndPassword(emailInput, passwordInput).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
 
                     if(task.isSuccessful()){
-                        Toast.makeText(SignupActivity.this, "Signup Successful, try logging in now", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(SignupActivity.this, DashboardActivity.class);
+                        startActivity(i);
+                        finish();
                     }
                     else{
                         Toast.makeText(SignupActivity.this, "Signup Not Successful", Toast.LENGTH_SHORT).show();

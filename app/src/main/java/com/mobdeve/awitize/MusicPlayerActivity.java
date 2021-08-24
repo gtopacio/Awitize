@@ -17,7 +17,6 @@ public class MusicPlayerActivity extends AppCompatActivity {
     private TextView currSong;
     private TextView currArtist;
     private SimpleExoPlayer player;
-    private StyledPlayerView playerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +33,6 @@ public class MusicPlayerActivity extends AppCompatActivity {
         currSong.setText(title);
         currArtist.setText(artist);
         player = new SimpleExoPlayer.Builder(this).build();
-        playerView.setPlayer(player);
 
         MediaItem song = MediaItem.fromUri(url);
         player.addMediaItem(song);
@@ -50,6 +48,5 @@ public class MusicPlayerActivity extends AppCompatActivity {
     private void initComponents(){
         currSong = findViewById(R.id.tv_curr_song);
         currArtist = findViewById(R.id.tv_curr_artist);
-        playerView = findViewById(R.id.pv_player_view);
     }
 }

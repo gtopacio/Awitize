@@ -11,12 +11,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,16 +36,22 @@ public class DashboardActivity extends AppCompatActivity {
     private ArrayList<Genre> genres;
     private RecyclerView rvDasboard;
     private GenreAdapter genreAdapter;
+    private FloatingActionButton pageSelect;
 
     private TextView nowPlaying;
+
+    private ImageButton accountButton;
+    private ImageButton searchButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_main);
         checkSession();
 
-        setContentView(R.layout.activity_main);
+        loadSongs();
+        loadComponents();
+
         // FOR TESTING ONLY
         Spinner spinner = findViewById(R.id.sp_category_select);
         ArrayList<String> arrayList = new ArrayList<>();
@@ -64,14 +72,44 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        nowPlaying = findViewById(R.id.tv_now_playing_main);
         initRecyclerView();
     }
 
+    private void loadComponents(){
+        nowPlaying = findViewById(R.id.tv_now_playing_main);
+        pageSelect = findViewById(R.id.fab_page_select_main);
+        accountButton = findViewById(R.id.ib_account_main);
+        searchButton = findViewById(R.id.ib_search_main);
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+        nowPlaying.setOnClickListener(v -> {
+            Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
+            MusicData song = songs.get(0);
+            i.putExtra("title", song.getTitle());
+            i.putExtra("artist", song.getArtist());
+            i.putExtra("url", song.getUrl());
+            startActivity(i);
+            finish();
+        });
+
+        pageSelect.setOnClickListener(v -> {
+            Intent i = new Intent(DashboardActivity.this, MyLibraryActivity.class);
+            startActivity(i);
+            finish();
+        });
+
+        accountButton.setOnClickListener(v -> {
+            Intent i = new Intent(DashboardActivity.this, AccountActivity.class);
+            i.putExtra("Previous Class", this.getClass().getName());
+            startActivity(i);
+            finish();
+        });
+
+        searchButton.setOnClickListener(v -> {
+            //Intent for search activity
+        });
+    }
+
+    private void loadSongs() {
         DatabaseReference music = FirebaseDatabase.getInstance("https://awitize-d10e3-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("music");
         music.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -82,7 +120,7 @@ public class DashboardActivity extends AppCompatActivity {
                 else {
                     Iterator<DataSnapshot> retSongs = task.getResult().getChildren().iterator();
                     songs = new ArrayList<>();
-                    while(retSongs.hasNext()){
+                    while(retSongs.hasNext()) {
                         DataSnapshot d = retSongs.next();
                         String artist = String.valueOf(d.child("artist").getValue());
                         String title = String.valueOf(d.child("title").getValue());
@@ -92,15 +130,6 @@ public class DashboardActivity extends AppCompatActivity {
                         Log.w("Loaded", artist + " - " + title + ", " + genre + " " + album + " " + url);
                         songs.add(new MusicData(artist, title, url, genre, album));
                     }
-                    nowPlaying.setOnClickListener(v -> {
-                        Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
-                        MusicData song = songs.get(0);
-                        i.putExtra("title", song.getTitle());
-                        i.putExtra("artist", song.getArtist());
-                        i.putExtra("url", song.getUrl());
-                        startActivity(i);
-                        finish();
-                    });
                 }
             }
         });
@@ -108,10 +137,8 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
         this.genres = GenreDataHelper.loadGenres();
-
         this.rvDasboard = findViewById(R.id.rv_category_selection);
         this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
         this.genreAdapter = new GenreAdapter(this.genres);
         this.rvDasboard.setAdapter(this.genreAdapter);
     }
