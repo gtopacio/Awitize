@@ -31,9 +31,9 @@ public class MyLibraryActivity extends AppCompatActivity {
     private FirebaseUser user;
     private TextView emailView;
     private ArrayList<MusicData> songs;
-    private ArrayList<Genre> genres;
+    private ArrayList<Playlist> playlists;
     private RecyclerView rvDasboard;
-    private GenreAdapter genreAdapter;
+    private PlaylistAdapter playlistAdapter;
     private TextView nowPlaying;
     private FloatingActionButton pageSelect;
     private ImageButton accountButton;
@@ -128,13 +128,13 @@ public class MyLibraryActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        this.genres = GenreDataHelper.loadGenres();
+        this.playlists = PlaylistDataHelper.loadPlaylist();
 
         this.rvDasboard = findViewById(R.id.rv_library_selection);
         this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        this.genreAdapter = new GenreAdapter(this.genres);
-        this.rvDasboard.setAdapter(this.genreAdapter);
+        this.playlistAdapter = new PlaylistAdapter(this.playlists);
+        this.rvDasboard.setAdapter(this.playlistAdapter);
     }
 
     private void checkSession() {
