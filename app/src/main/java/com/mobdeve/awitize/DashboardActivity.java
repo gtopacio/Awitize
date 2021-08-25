@@ -34,8 +34,12 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView emailView;
     private ArrayList<MusicData> songs;
     private ArrayList<Genre> genres;
+    private ArrayList<Artist> artists;
+    private ArrayList<Album> albums;
     private RecyclerView rvDasboard;
+    private ArtistAdapter artistAdapter;
     private GenreAdapter genreAdapter;
+    private AlbumAdapter albumAdapter;
     private FloatingActionButton pageSelect;
 
     private TextView nowPlaying;
@@ -65,14 +69,14 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String tutorialsName = parent.getItemAtPosition(position).toString();
-//                Toast.makeText(parent.getContext(), "Selected: " + tutorialsName, Toast.LENGTH_LONG).show();
+                //Toast.makeText(parent.getContext(), "Selected: " + tutorialsName, Toast.LENGTH_LONG).show();
+                initRecyclerView(tutorialsName);
             }
             @Override
             public void onNothingSelected(AdapterView <?> parent) {
             }
         });
 
-        initRecyclerView();
     }
 
     private void loadComponents(){
@@ -136,12 +140,32 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    private void initRecyclerView() {
-        this.genres = GenreDataHelper.loadGenres();
-        this.rvDasboard = findViewById(R.id.rv_category_selection);
-        this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        this.genreAdapter = new GenreAdapter(this.genres);
-        this.rvDasboard.setAdapter(this.genreAdapter);
+    private void initRecyclerView(String selected) {
+        switch (selected) {
+            case "ARTIST":
+                this.artists = ArtistDataHelper.loadArtist();
+                this.rvDasboard = findViewById(R.id.rv_category_selection);
+                this.rvDasboard.setAlpha(1);
+                this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                this.artistAdapter = new ArtistAdapter(this.artists);
+                this.rvDasboard.setAdapter(this.artistAdapter);
+                break;
+            case "ALBUM":
+                this.albums = AlbumDataHelper.loadAlbums();
+                this.rvDasboard = findViewById(R.id.rv_category_selection);
+                this.rvDasboard.setAlpha(1);
+                this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                this.albumAdapter = new AlbumAdapter(this.albums);
+                this.rvDasboard.setAdapter(this.albumAdapter);
+                break;
+            default:
+                this.genres = GenreDataHelper.loadGenres();
+                this.rvDasboard = findViewById(R.id.rv_category_selection);
+                this.rvDasboard.setAlpha(1);
+                this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                this.genreAdapter = new GenreAdapter(this.genres);
+                this.rvDasboard.setAdapter(this.genreAdapter);
+        }
     }
 
     private void checkSession(){
@@ -153,4 +177,6 @@ public class DashboardActivity extends AppCompatActivity {
             finish();
         }
     }
+
+
 }

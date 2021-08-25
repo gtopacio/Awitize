@@ -4,7 +4,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class GenreViewHolder extends RecyclerView.ViewHolder {
@@ -17,7 +16,7 @@ public class GenreViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
 
         //this.clGenre = itemView.findViewById(R.id.cl_genre);
-        this.tvGenreName = itemView.findViewById(R.id.tv_genre);
+        this.tvGenreName = itemView.findViewById(R.id.tv_category);
         this.tvNumOfSongs = itemView.findViewById(R.id.tv_tracks);
 
     }
