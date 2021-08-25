@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        Intent i = new Intent(MainActivity.this, SigninActivity.class);
+        Intent i = new Intent(MainActivity.this, AddSong.class);
         startActivity(i);
         finish();
     }
