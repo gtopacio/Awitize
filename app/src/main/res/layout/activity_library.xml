@@ -120,7 +120,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/rv_library_selection"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_lib"
         app:layout_constraintStart_toStartOf="@+id/gl_vert_3_lib"
-        app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
+        app:srcCompat="?android:attr/listChoiceIndicatorMultiple" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_hori_1_lib"
