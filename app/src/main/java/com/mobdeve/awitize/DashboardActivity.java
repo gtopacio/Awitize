@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,8 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -24,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mobdeve.awitize.services.PlayerService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,10 +47,33 @@ public class DashboardActivity extends AppCompatActivity {
     private AlbumAdapter albumAdapter;
     private FloatingActionButton pageSelect;
 
-    private TextView nowPlaying;
+//    private TextView nowPlaying;
+    private StyledPlayerView playerView;
 
     private ImageButton accountButton;
     private ImageButton searchButton;
+
+    private PlayerService playerService;
+    private boolean isServiceBounded = false;
+
+    private static final String TAG = "DashboardActivity";
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) service;
+            playerService = binder.getService();
+            isServiceBounded = true;
+
+            playerView = findViewById(R.id.music_player_main);
+            playerView.setPlayer(playerService.getPlayer());
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isServiceBounded = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +81,8 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         checkSession();
 
+        Intent serviceIntent = new Intent(this, PlayerService.class);
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
         loadSongs();
         loadComponents();
 
@@ -76,25 +106,24 @@ public class DashboardActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView <?> parent) {
             }
         });
-
     }
 
     private void loadComponents(){
-        nowPlaying = findViewById(R.id.tv_now_playing_main);
+//        nowPlaying = findViewById(R.id.tv_now_playing_main);
         pageSelect = findViewById(R.id.fab_page_select_main);
         accountButton = findViewById(R.id.ib_account_main);
         searchButton = findViewById(R.id.ib_search_main);
 
-        nowPlaying.setOnClickListener(v -> {
-            Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
-            MusicData song = songs.get(0);
-            i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
-            i.putExtra(SongAttributes.ARTIST.name(), song.getArtist());
-            i.putExtra(SongAttributes.URL.name(), song.getUrl());
-            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
-            startActivity(i);
-            finish();
-        });
+//        nowPlaying.setOnClickListener(v -> {
+//            Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
+//            MusicData song = songs.get(0);
+//            i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
+//            i.putExtra(SongAttributes.ARTIST.name(), song.getArtist());
+//            i.putExtra(SongAttributes.URL.name(), song.getUrl());
+//            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
+//            startActivity(i);
+//            finish();
+//        });
 
         pageSelect.setOnClickListener(v -> {
             Intent i = new Intent(DashboardActivity.this, MyLibraryActivity.class);
@@ -133,7 +162,9 @@ public class DashboardActivity extends AppCompatActivity {
                         String genre = String.valueOf(d.child("genre").getValue());
                         String album = String.valueOf(d.child("album").getValue());
                         Log.w("Loaded", artist + " - " + title + ", " + genre + " " + album + " " + url);
-                        songs.add(new MusicData(artist, title, url, genre, album));
+                        MusicData songData = new MusicData(artist, title, url, genre, album);
+                        songs.add(songData);
+                        playerService.queueSong(songData);
                     }
                 }
             }

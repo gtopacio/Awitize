@@ -9,13 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Awitize">
-        <activity android:name=".AddSong"></activity>
-
         <service
-            android:name=".services.AudioPlayback"
+            android:name=".services.PlayerService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"></service>
 
+        <activity android:name=".AddSong" />
         <activity android:name=".AccountActivity" />
         <activity android:name=".MusicPlayerActivity" />
         <activity android:name=".MyLibraryActivity" />

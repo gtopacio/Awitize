@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.mobdeve.awitize.services.PlayerService;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,13 +20,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title);
+
+        Intent service = new Intent(this, PlayerService.class);
+        startService(service);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        Intent i = new Intent(MainActivity.this, AddSong.class);
+        Intent i = new Intent(MainActivity.this, SigninActivity.class);
         startActivity(i);
         finish();
     }
