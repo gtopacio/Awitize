@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 public class GenreAdapter extends RecyclerView.Adapter<GenreViewHolder> {
 
+    public static final String KEY_NAME = "KEY_NAME";
+
     private ArrayList<Genre> genres;
 
     public GenreAdapter(ArrayList<Genre> genres) {
@@ -30,7 +32,10 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreViewHolder> {
         genreviewholder.getClGenre().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext().)
+                Intent intent = new Intent(v.getContext(), ShowCategoryActivity.class);
+                intent.putExtra(KEY_NAME, genres.get(genreviewholder.getBindingAdapterPosition()).getGenre());
+
+                v.getContext().startActivity(intent);
             }
         });
 
