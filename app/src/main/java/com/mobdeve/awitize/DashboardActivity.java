@@ -2,12 +2,15 @@ package com.mobdeve.awitize;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -28,7 +31,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mobdeve.awitize.services.PlayerEvents;
 import com.mobdeve.awitize.services.PlayerService;
+import com.mobdeve.awitize.state.GlobalState;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,16 +52,30 @@ public class DashboardActivity extends AppCompatActivity {
     private AlbumAdapter albumAdapter;
     private FloatingActionButton pageSelect;
 
-//    private TextView nowPlaying;
-    private StyledPlayerView playerView;
+    private TextView nowPlaying;
 
     private ImageButton accountButton;
     private ImageButton searchButton;
+    private ImageButton playPauseButton;
 
     private PlayerService playerService;
     private boolean isServiceBounded = false;
 
     private static final String TAG = "DashboardActivity";
+
+    private BroadcastReceiver newSongReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUI();
+        }
+    };
+
+    private BroadcastReceiver playerStateChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUI();
+        }
+    };
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -64,9 +83,6 @@ public class DashboardActivity extends AppCompatActivity {
             PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) service;
             playerService = binder.getService();
             isServiceBounded = true;
-
-            playerView = findViewById(R.id.music_player_main);
-            playerView.setPlayer(playerService.getPlayer());
         }
 
         @Override
@@ -83,6 +99,10 @@ public class DashboardActivity extends AppCompatActivity {
 
         Intent serviceIntent = new Intent(this, PlayerService.class);
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(newSongReceiver, new IntentFilter(PlayerEvents.NEW_SONG.name()));
+        LocalBroadcastManager.getInstance(this).registerReceiver(playerStateChanged, new IntentFilter(PlayerEvents.STATE_CHANGED.name()));
+
         loadSongs();
         loadComponents();
 
@@ -109,21 +129,22 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void loadComponents(){
-//        nowPlaying = findViewById(R.id.tv_now_playing_main);
+        nowPlaying = findViewById(R.id.tv_now_playing_main);
         pageSelect = findViewById(R.id.fab_page_select_main);
         accountButton = findViewById(R.id.ib_account_main);
         searchButton = findViewById(R.id.ib_search_main);
+        playPauseButton = findViewById(R.id.ib_play_main);
 
-//        nowPlaying.setOnClickListener(v -> {
-//            Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
-//            MusicData song = songs.get(0);
-//            i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
-//            i.putExtra(SongAttributes.ARTIST.name(), song.getArtist());
-//            i.putExtra(SongAttributes.URL.name(), song.getUrl());
-//            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
-//            startActivity(i);
-//            finish();
-//        });
+        nowPlaying.setOnClickListener(v -> {
+            Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
+            MusicData song = songs.get(0);
+            i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
+            i.putExtra(SongAttributes.ARTIST.name(), song.getArtist());
+            i.putExtra(SongAttributes.URL.name(), song.getUrl());
+            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
+            startActivity(i);
+            finish();
+        });
 
         pageSelect.setOnClickListener(v -> {
             Intent i = new Intent(DashboardActivity.this, MyLibraryActivity.class);
@@ -138,9 +159,33 @@ public class DashboardActivity extends AppCompatActivity {
             finish();
         });
 
+        playPauseButton.setOnClickListener(v -> {
+            if(GlobalState.isIsPlaying()){
+                Intent i = new Intent(PlayerEvents.PAUSE.name());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+            }
+            else{
+                Intent i = new Intent(PlayerEvents.PLAY.name());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+            }
+        });
+
         searchButton.setOnClickListener(v -> {
             //Intent for search activity
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateUI();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(newSongReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(playerStateChanged);
     }
 
     private void loadSongs() {
@@ -196,6 +241,15 @@ public class DashboardActivity extends AppCompatActivity {
                 this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
                 this.genreAdapter = new GenreAdapter(this.genres);
                 this.rvDasboard.setAdapter(this.genreAdapter);
+        }
+    }
+
+    private void updateUI(){
+        MusicData curr = GlobalState.getNowPlaying();
+        if(curr != null){
+            nowPlaying.setText(curr.getArtist() + " - " + curr.getTitle());
+            int image = GlobalState.isIsPlaying() ? R.drawable.exo_controls_pause : R.drawable.exo_controls_play;
+            playPauseButton.setImageResource(image);
         }
     }
 

@@ -16,19 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_main"
         app:layout_constraintStart_toStartOf="@+id/gl_vert_1_main"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_4_main">
-
-        <com.google.android.exoplayer2.ui.StyledPlayerView
-            android:id="@+id/music_player_main"
-            android:layout_width="0dp"
-            android:layout_height="58dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_4_main"/>
 
     <ImageButton
         android:id="@+id/ib_account_main"
@@ -97,55 +85,55 @@
         app:layout_constraintStart_toStartOf="@+id/gl_vert_3_main"
         app:layout_constraintTop_toTopOf="@+id/gl_hori_1_main" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/tv_now_playing_main"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginLeft="3dp"-->
-<!--        android:fontFamily="@font/bungee"-->
-<!--        android:text="Song 1 - Artist"-->
-<!--        android:textColor="@color/white"-->
-<!--        android:textSize="20sp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/gl_vert_6_main"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/gl_vert_1_main"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_main" />-->
+    <TextView
+        android:id="@+id/tv_now_playing_main"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:fontFamily="@font/bungee"
+        android:text="Song 1 - Artist"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"
+        app:layout_constraintEnd_toStartOf="@+id/gl_vert_6_main"
+        app:layout_constraintStart_toStartOf="@+id/gl_vert_1_main"
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_main" />
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/ib_play_main"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_margin="5dp"-->
-<!--        android:background="@color/grey"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_main"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/gl_vert_5_main"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_main"-->
-<!--        app:srcCompat="@android:drawable/ic_media_play" />-->
+    <ImageButton
+        android:id="@+id/ib_play_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:background="@color/grey"
+        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"
+        app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_main"
+        app:layout_constraintStart_toStartOf="@+id/gl_vert_5_main"
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_main"
+        app:srcCompat="@android:drawable/ic_media_play" />
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/ib_next_main"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_margin="5dp"-->
-<!--        android:background="@color/grey"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_main"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/gl_vert_4_main"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_main"-->
-<!--        app:srcCompat="@android:drawable/ic_media_next" />-->
+    <ImageButton
+        android:id="@+id/ib_next_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:background="@color/grey"
+        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"
+        app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_main"
+        app:layout_constraintStart_toStartOf="@+id/gl_vert_4_main"
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_main"
+        app:srcCompat="@android:drawable/ic_media_next" />
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/ib_prev_main"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_margin="5dp"-->
-<!--        android:background="@color/grey"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_main"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/gl_vert_6_main"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_main"-->
-<!--        app:srcCompat="@android:drawable/ic_media_previous" />-->
+    <ImageButton
+        android:id="@+id/ib_prev_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:background="@color/grey"
+        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_main"
+        app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_main"
+        app:layout_constraintStart_toStartOf="@+id/gl_vert_6_main"
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_main"
+        app:srcCompat="@android:drawable/ic_media_previous" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_page_select_main"
