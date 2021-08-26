@@ -4,33 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_bg">
+    android:background="@color/aa_3">
 
-    <TextView
-        android:id="@+id/tv_awitize_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/bungee"
-        android:text="Awitize"
-        android:textAlignment="center"
-        android:textColor="@color/yellow"
-        android:textSize="60sp"
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="40dp"
+        android:cropToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo___awitize" />
 
     <TextView
         android:id="@+id/tv_email_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/bungee"
+        android:layout_marginTop="44dp"
+        android:fontFamily="@font/quicksand_bold"
         android:text="Email"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_awitize_login" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo" />
 
     <EditText
         android:id="@+id/et_email_login"
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_email_login" />
@@ -47,9 +47,10 @@
         android:id="@+id/tv_password_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bungee"
+        android:fontFamily="@font/quicksand_bold"
         android:text="Password"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_email_login" />
@@ -61,21 +62,25 @@
         android:ems="10"
         android:inputType="textPassword"
         android:password="true"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_password_login" />
 
     <Button
         android:id="@+id/bt_login"
-        android:layout_width="wrap_content"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@color/grey"
-        android:text="Log In"
-        android:textColor="@color/darkest_grey"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="44dp"
+        android:background="@drawable/rounded_btn_login"
+        android:fontFamily="@font/quicksand_bold"
+        android:text="Login"
+        android:textColor="@color/aa_5"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/et_password_login"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/et_password_login"
         app:layout_constraintTop_toBottomOf="@+id/et_password_login" />
 
     <TextView
@@ -83,8 +88,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
+        android:fontFamily="@font/quicksand"
         android:text="Sign up"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -93,9 +99,11 @@
         android:id="@+id/tv_dhaa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand"
         android:text="Don't have an account?"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         app:layout_constraintBottom_toTopOf="@+id/tv_sign_up"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

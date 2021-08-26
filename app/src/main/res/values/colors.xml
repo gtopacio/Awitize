@@ -10,13 +10,23 @@
     <color name="darker_sand">#CFC5A5</color>
     <color name="sand">#EAE3C8</color>
     <color name="brown">#C2B092</color>
+    <color name="white">#FFFFFF</color>
 
     <color name="yellow">#FFD523</color>
     <color name="grey">#B2B1B9</color>
     <color name="darker_grey">#595260</color>
     <color name="darkest_grey">#2C2E43</color>
-    <color name="white">#FFFFFF</color>
+
 
     <color name="brines_green">#55c39e</color>
     <color name="brines_blue">#387ca3</color>
+
+    <!-- FINAL SANA -->
+    <color name="aa_white">#FFFFFF</color>
+    <color name="bb_white">#BFFFFFFF</color>
+    <color name="aa_1">#d5ecd4</color>
+    <color name="aa_2">#c3dac3</color>
+    <color name="aa_3">#a1b0ab</color>
+    <color name="aa_4">#929487</color>
+    <color name="aa_5">#6b6054</color>
 </resources>

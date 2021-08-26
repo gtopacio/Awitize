@@ -70,7 +70,7 @@ public class MyLibraryActivity extends AppCompatActivity {
     }
 
     private void loadComponents() {
-        nowPlaying = findViewById(R.id.tv_now_playing_lib);
+        //nowPlaying = findViewById(R.id.tv_now_playing_lib);
         pageSelect = findViewById(R.id.fab_page_select_lib);
         accountButton = findViewById(R.id.ib_account_lib);
 

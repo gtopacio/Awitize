@@ -5,7 +5,7 @@
     android:id="@+id/ContraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_bg">
+    android:background="@color/aa_4">
 
     <TextView
         android:id="@+id/tv_liked_playlists"
@@ -15,7 +15,7 @@
         android:layout_marginTop="36dp"
         android:fontFamily="@font/bungee"
         android:text="PLAYLISTS"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="@+id/gl_vert_1_acc"
         app:layout_constraintTop_toTopOf="@+id/gl_hori_3_acc" />
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/bungee"
         android:text="DELETE"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_3_acc"
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/bungee"
         android:text="SIGN OUT"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_acc_delete"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_3_acc"
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/bungee"
         android:text="aaron@gmail.com"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_3_acc"
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/bungee"
         android:text="0 playlists"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_liked_playlists"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_acc"
@@ -98,7 +98,7 @@
         android:padding="0dp"
         android:text="ACCOUNT"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@+id/gl_hori_2_acc"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_3_acc"

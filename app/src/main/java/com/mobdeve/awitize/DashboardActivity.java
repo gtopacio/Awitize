@@ -52,7 +52,8 @@ public class DashboardActivity extends AppCompatActivity {
     private AlbumAdapter albumAdapter;
     private FloatingActionButton pageSelect;
 
-    private TextView nowPlaying;
+    private TextView nowPlayingTitle;
+    private TextView nowPlayingArtist;
 
     private ImageButton accountButton;
     private ImageButton searchButton;
@@ -118,9 +119,9 @@ public class DashboardActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String tutorialsName = parent.getItemAtPosition(position).toString();
-                //Toast.makeText(parent.getContext(), "Selected: " + tutorialsName, Toast.LENGTH_LONG).show();
-                initRecyclerView(tutorialsName);
+                String categoryName = parent.getItemAtPosition(position).toString();
+                //Toast.makeText(parent.getContext(), "Selected: " + categoryName, Toast.LENGTH_LONG).show();
+                initRecyclerView(categoryName);
             }
             @Override
             public void onNothingSelected(AdapterView <?> parent) {
@@ -129,13 +130,14 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void loadComponents(){
-        nowPlaying = findViewById(R.id.tv_now_playing_main);
+        nowPlayingTitle = findViewById(R.id.tv_now_playing_main_title);
+        nowPlayingArtist = findViewById(R.id.tv_now_playing_main_artist);
         pageSelect = findViewById(R.id.fab_page_select_main);
         accountButton = findViewById(R.id.ib_account_main);
         searchButton = findViewById(R.id.ib_search_main);
         playPauseButton = findViewById(R.id.ib_play_main);
 
-        nowPlaying.setOnClickListener(v -> {
+        nowPlayingTitle.setOnClickListener(v -> {
             Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
             MusicData song = songs.get(0);
             i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
@@ -247,8 +249,9 @@ public class DashboardActivity extends AppCompatActivity {
     private void updateUI(){
         MusicData curr = GlobalState.getNowPlaying();
         if(curr != null){
-            nowPlaying.setText(curr.getArtist() + " - " + curr.getTitle());
-            int image = GlobalState.isIsPlaying() ? R.drawable.exo_controls_pause : R.drawable.exo_controls_play;
+            nowPlayingTitle.setText(curr.getTitle());
+            nowPlayingArtist.setText(curr.getArtist());
+            int image = GlobalState.isIsPlaying() ? R.drawable.ic___70_pause_button : R.drawable.ic___72_play_button;
             playPauseButton.setImageResource(image);
         }
     }

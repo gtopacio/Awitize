@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_bg">
+    android:background="@color/aa_3">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_music_player_lib"
@@ -13,25 +13,124 @@
         android:layout_marginTop="5dp"
         android:background="@drawable/miniplayer_bg"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_lib"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_1_lib"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_4_lib">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_library_selection">
 
+        <TextView
+            android:id="@+id/tv_now_playing_lib_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:fontFamily="@font/quicksand"
+            android:text="Song 1"
+            android:textColor="@color/aa_white"
+            android:textSize="20sp"
+            app:autoSizeMinTextSize="12dp"
+            app:layout_constraintEnd_toStartOf="@+id/gl_vert_lib_mp_1"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_now_playing_lib_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:fontFamily="@font/quicksand"
+            android:text=" Artist"
+            android:textColor="@color/aa_white"
+            android:textSize="14sp"
+            app:autoSizeMinTextSize="12dp"
+            app:layout_constraintEnd_toStartOf="@+id/gl_vert_lib_mp_1"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_now_playing_lib_title" />
+
+        <ImageButton
+            android:id="@+id/ib_play_lib"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/ic___72_play_button"
+            android:backgroundTint="#FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/gl_hori_lib_mp_2"
+            app:layout_constraintEnd_toStartOf="@+id/gl_vert_lib_mp_3"
+            app:layout_constraintStart_toStartOf="@+id/gl_vert_lib_mp_2"
+            app:layout_constraintTop_toTopOf="@+id/gl_hori_lib_mp_1" />
+
+        <ImageButton
+            android:id="@+id/ib_next_lib"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/ic___68_skip_button"
+            android:backgroundTint="#FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/gl_hori_lib_mp_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/gl_vert_lib_mp_3"
+            app:layout_constraintTop_toTopOf="@+id/gl_hori_lib_mp_1" />
+
+        <ImageButton
+            android:id="@+id/ib_prev_lib"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/ic___03_previous"
+            android:backgroundTint="#FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/gl_hori_lib_mp_2"
+            app:layout_constraintEnd_toStartOf="@+id/gl_vert_lib_mp_2"
+            app:layout_constraintStart_toStartOf="@+id/gl_vert_lib_mp_1"
+            app:layout_constraintTop_toTopOf="@+id/gl_hori_lib_mp_1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_vert_lib_mp_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.70" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_vert_lib_mp_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.80" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_vert_lib_mp_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.90" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_hori_lib_mp_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_hori_lib_mp_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".8" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageButton
         android:id="@+id/ib_account_lib"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="5dp"
-        android:background="@color/grey"
+        android:background="@drawable/ic___avatar"
+        android:backgroundTint="#FFFFFF"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/gl_hori_2_lib"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_lib"
         app:layout_constraintStart_toStartOf="@+id/gl_vert_4_lib"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_1_lib"
-        tools:srcCompat="@drawable/ic___user"
-        android:src="@drawable/ic___user" />
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_1_lib" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_library_selection"
@@ -49,78 +148,27 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
-        android:fontFamily="@font/bungee"
+        android:fontFamily="@font/quicksand_bold"
         android:gravity="center|center_vertical"
         android:padding="0dp"
         android:text="My Stuffs"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/aa_white"
         android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@+id/gl_hori_2_lib"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_lib"
         app:layout_constraintStart_toStartOf="@+id/gl_vert_3_lib"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_1_lib" />
-
-    <TextView
-        android:id="@+id/tv_now_playing_lib"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="3dp"
-        android:fontFamily="@font/bungee"
-        android:text="Song 1 - Artist"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_lib"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_6_lib"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_1_lib"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_lib" />
-
-    <ImageButton
-        android:id="@+id/ib_play_lib"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="5dp"
-        android:background="@color/grey"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_lib"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_lib"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_5_lib"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_lib"
-        app:srcCompat="@android:drawable/ic_media_play" />
-
-    <ImageButton
-        android:id="@+id/ib_next_lib"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="5dp"
-        android:background="@color/grey"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_lib"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_lib"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_4_lib"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_lib"
-        app:srcCompat="@android:drawable/ic_media_next" />
-
-    <ImageButton
-        android:id="@+id/ib_prev_lib"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="5dp"
-        android:background="@color/grey"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_6_lib"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_lib"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_6_lib"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_5_lib"
-        app:srcCompat="@android:drawable/ic_media_previous" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_page_select_lib"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        app:backgroundTint="@color/grey"
+        app:backgroundTint="@color/aa_4"
         app:layout_constraintBottom_toBottomOf="@+id/rv_library_selection"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_lib"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_3_lib"
-        app:srcCompat="?android:attr/listChoiceIndicatorMultiple" />
+        app:layout_constraintEnd_toStartOf="@+id/gl_vert_2_lib"
+        app:srcCompat="@drawable/ic___house" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_hori_1_lib"
@@ -149,20 +197,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.9015048" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_hori_5_lib"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.925" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_hori_6_lib"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.975" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_vert_1_lib"
@@ -198,12 +232,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.75" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_vert_6_lib"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.66" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
