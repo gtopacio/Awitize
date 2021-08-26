@@ -7,7 +7,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.ConditionVariable;
 import android.util.Log;
@@ -19,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mobdeve.awitize.helpers.DatabaseHelper;
 import com.mobdeve.awitize.services.DatabaseUpdater;
 import com.mobdeve.awitize.state.GlobalState;
 
@@ -39,6 +43,24 @@ public class ShowCategoryActivity extends AppCompatActivity {
     private RecyclerView rvSongs;
     private SongAdapter songAdapter;
     private TextView Title;
+    private ImageButton back;
+
+    private String categoryName;
+    private String categoryType;
+
+    private DatabaseHelper databaseHelper;
+
+    private BroadcastReceiver loadSongReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String artist = intent.getStringExtra("artist");
+            String title = intent.getStringExtra("title");
+            String audioFileURL = intent.getStringExtra("audioFileURL");
+            String albumCoverURL = intent.getStringExtra("albumCoverURL");
+            songs.add(new MusicData(artist, title, audioFileURL, albumCoverURL));
+            songAdapter.notifyDataSetChanged();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,52 +75,34 @@ public class ShowCategoryActivity extends AppCompatActivity {
         this.nextButton = findViewById(R.id.ib_next_cat);
         this.rvSongs = findViewById(R.id.rv_content_selection);
         this.Title = findViewById(R.id.tv_category_type);
+        this.back = findViewById(R.id.ib_back_cat);
+
+        databaseHelper = new DatabaseHelper(this);
+
+        back.setOnClickListener(v -> {
+            this.onBackPressed();
+        });
 
         Intent intent = getIntent();
 
-        String name = intent.getStringExtra(GenreAdapter.KEY_NAME);
+        categoryName = intent.getStringExtra(CategoryConstants.CATEGORY_NAME.name());
+        categoryType = intent.getStringExtra(CategoryConstants.CATEGORY_TYPE.name());
 
-        this.songs = loadSongs();
+        songs = new ArrayList<>();
+
         this.rvSongs.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         this.songAdapter = new SongAdapter(this.songs);
         this.rvSongs.setAdapter(this.songAdapter);
+        this.Title.setText(categoryName);
 
-        this.Title.setText(name);
+        databaseHelper.getCategorySongs(categoryType, categoryName);
 
-
-
-//        DatabaseReference db = FirebaseDatabase.getInstance("https://awitize-d10e3-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("genres");
-
-//        DatabaseReference songs = db.child(name);
-
-//        songs.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//                ArrayList<MusicData> genreSongs = new ArrayList<>();
-//                Iterator<DataSnapshot> it = snapshot.getChildren().iterator();
-//                while(it.hasNext()){
-//                    DataSnapshot curr = it.next();
-//                    genreSongs.add(new MusicData(curr.getKey(), (int) curr.getChildrenCount()));
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-//
-//            }
-//        })
-
-
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(loadSongReceiver, new IntentFilter("Load Music Data"));
     }
 
-    private ArrayList<MusicData> loadSongs() {
-        ArrayList<MusicData> genreSongs = new ArrayList<>();
-
-        genreSongs.add(new MusicData("hello", "song 1", "asd", new ArrayList<String>(), "asdf"));
-        genreSongs.add(new MusicData("world", "song 2", "asd", new ArrayList<String>(), "asdf"));
-        genreSongs.add(new MusicData("my friend", "song 3", "asd", new ArrayList<String>(), "asdf"));
-
-        return genreSongs;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(loadSongReceiver);
     }
 }

@@ -12,8 +12,6 @@ import java.util.ArrayList;
 
 public class GenreAdapter extends RecyclerView.Adapter<GenreViewHolder> {
 
-    public static final String KEY_NAME = "KEY_NAME";
-
     private ArrayList<Genre> genres;
 
     public GenreAdapter(ArrayList<Genre> genres) {
@@ -33,8 +31,8 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreViewHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ShowCategoryActivity.class);
-                intent.putExtra(KEY_NAME, genres.get(genreviewholder.getBindingAdapterPosition()).getGenre());
-
+                intent.putExtra(CategoryConstants.CATEGORY_NAME.name(), genres.get(genreviewholder.getBindingAdapterPosition()).getGenre());
+                intent.putExtra(CategoryConstants.CATEGORY_TYPE.name(), "GENRE");
                 v.getContext().startActivity(intent);
             }
         });

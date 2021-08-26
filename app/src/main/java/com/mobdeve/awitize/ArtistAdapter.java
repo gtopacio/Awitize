@@ -1,5 +1,6 @@
 package com.mobdeve.awitize;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,13 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistViewHolder> {
         View itemView = inflater.inflate(R.layout.item_category, parent, false);
 
         ArtistViewHolder artistViewHolder = new ArtistViewHolder(itemView);
+
+        artistViewHolder.getLayout().setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), ShowCategoryActivity.class);
+            intent.putExtra(CategoryConstants.CATEGORY_NAME.name(), artists.get(artistViewHolder.getBindingAdapterPosition()).getArtistName());
+            intent.putExtra(CategoryConstants.CATEGORY_TYPE.name(), "ARTIST");
+            v.getContext().startActivity(intent);
+        });
 
         return artistViewHolder;
     }

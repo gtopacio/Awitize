@@ -15,6 +15,8 @@ public class GlobalState {
     private static ArrayList<Genre> genres;
     private static ArrayList<Artist> artists;
 
+    private static MusicData musicData;
+
     public static void setNowPlaying(MusicData musicData){
         nowPlaying = musicData;
     }
@@ -53,5 +55,13 @@ public class GlobalState {
 
     public static void setArtists(ArrayList<Artist> artists) {
         GlobalState.artists = artists;
+    }
+
+    public static MusicData getMusicData() {
+        return musicData;
+    }
+
+    public static void setMusicData(MusicData musicData) {
+        GlobalState.musicData = musicData;
     }
 }

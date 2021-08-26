@@ -9,13 +9,15 @@ public class MusicData {
     private ArrayList<String> genres;
     private String audioFileURL;
     private String album;
+    private String albumCoverURL;
 
-    public MusicData(String artist, String title, String url, ArrayList<String> genre, String album){
+    public MusicData(String artist, String title, String audioFileURL, String albumCoverURL){
         this.artist = artist;
         this.title = title;
-        this.genres = genre;
-        this.album = album;
-        this.audioFileURL = url;
+//        this.genres = genre;
+//        this.album = album;
+        this.audioFileURL = audioFileURL;
+        this.albumCoverURL = albumCoverURL;
     }
 
 

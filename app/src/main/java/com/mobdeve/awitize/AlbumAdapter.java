@@ -1,5 +1,6 @@
 package com.mobdeve.awitize;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumViewHolder> {
 
         AlbumViewHolder albumViewHolder = new AlbumViewHolder(itemView);
 
+        albumViewHolder.getLayout().setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), ShowCategoryActivity.class);
+            intent.putExtra(CategoryConstants.CATEGORY_NAME.name(), albums.get(albumViewHolder.getBindingAdapterPosition()).getAlbumName());
+            intent.putExtra(CategoryConstants.CATEGORY_TYPE.name(), "ALBUM");
+            v.getContext().startActivity(intent);
+        });
         return albumViewHolder;
     }
 

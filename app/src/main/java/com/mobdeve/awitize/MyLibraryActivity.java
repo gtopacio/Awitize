@@ -74,16 +74,16 @@ public class MyLibraryActivity extends AppCompatActivity {
         pageSelect = findViewById(R.id.fab_page_select_lib);
         accountButton = findViewById(R.id.ib_account_lib);
 
-        nowPlaying.setOnClickListener(v -> {
-            Intent i = new Intent(MyLibraryActivity.this, MusicPlayerActivity.class);
-            MusicData song = songs.get(0);
-            i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
-            i.putExtra(SongAttributes.ARTIST.name(), song.getArtist());
-            i.putExtra(SongAttributes.URL.name(), song.getUrl());
-            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
-            startActivity(i);
-            finish();
-        });
+//        nowPlaying.setOnClickListener(v -> {
+//            Intent i = new Intent(MyLibraryActivity.this, MusicPlayerActivity.class);
+//            MusicData song = songs.get(0);
+//            i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
+//            i.putExtra(SongAttributes.ARTIST.name(), song.getArtist());
+//            i.putExtra(SongAttributes.URL.name(), song.getUrl());
+//            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
+//            startActivity(i);
+//            finish();
+//        });
 
         pageSelect.setOnClickListener(v -> {
             Intent i = new Intent(MyLibraryActivity.this, DashboardActivity.class);
@@ -96,34 +96,6 @@ public class MyLibraryActivity extends AppCompatActivity {
             i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
             startActivity(i);
             finish();
-        });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        DatabaseReference music = FirebaseDatabase.getInstance("https://awitize-d10e3-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("music");
-        music.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                }
-                else {
-                    Iterator<DataSnapshot> retSongs = task.getResult().getChildren().iterator();
-                    songs = new ArrayList<>();
-                    while(retSongs.hasNext()){
-                        DataSnapshot d = retSongs.next();
-                        String artist = String.valueOf(d.child("artist").getValue());
-                        String title = String.valueOf(d.child("title").getValue());
-                        String url = String.valueOf(d.child("url").getValue());
-                        String genre = null;
-                        String album = String.valueOf(d.child("album").getValue());
-                        Log.w("Loaded", artist + " - " + title + ", " + genre + " " + album + " " + url);
-                        songs.add(new MusicData(artist, title, url, null, album));
-                    }
-                }
-            }
         });
     }
 
