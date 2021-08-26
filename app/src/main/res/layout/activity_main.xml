@@ -127,6 +127,8 @@
         android:id="@+id/ib_account_main"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
         android:adjustViewBounds="true"
         android:background="@drawable/ic___avatar"
         android:backgroundTint="#FFFFFF"
@@ -139,7 +141,9 @@
     <Spinner
         android:id="@+id/sp_category_select"
         android:layout_width="0dp"
-        android:layout_height="25dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:background="@android:drawable/btn_dropdown"
         android:dropDownWidth="match_parent"
         android:spinnerMode="dropdown"
@@ -192,7 +196,7 @@
         app:layout_constraintBottom_toTopOf="@+id/gl_hori_2_main"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_main"
         app:layout_constraintStart_toStartOf="@+id/gl_vert_1_main"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_1_main" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_page_select_main"
@@ -223,7 +227,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.10259918" />
+        app:layout_constraintGuide_percent=".15" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_hori_4_main"

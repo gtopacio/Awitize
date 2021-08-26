@@ -26,7 +26,6 @@
             android:text="Song 1"
             android:textColor="@color/aa_white"
             android:textSize="20sp"
-            app:autoSizeMinTextSize="12dp"
             app:layout_constraintEnd_toStartOf="@+id/gl_vert_lib_mp_1"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -124,6 +123,8 @@
         android:id="@+id/ib_account_lib"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
         android:background="@drawable/ic___avatar"
         android:backgroundTint="#FFFFFF"
         android:scaleType="centerCrop"
@@ -157,8 +158,9 @@
         android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@+id/gl_hori_2_lib"
         app:layout_constraintEnd_toStartOf="@+id/gl_vert_5_lib"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_3_lib"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/gl_vert_1_lib"
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_1_lib" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_page_select_lib"
