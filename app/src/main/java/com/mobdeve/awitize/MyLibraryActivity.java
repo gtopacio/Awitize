@@ -117,10 +117,10 @@ public class MyLibraryActivity extends AppCompatActivity {
                         String artist = String.valueOf(d.child("artist").getValue());
                         String title = String.valueOf(d.child("title").getValue());
                         String url = String.valueOf(d.child("url").getValue());
-                        String genre = String.valueOf(d.child("genre").getValue());
+                        String genre = null;
                         String album = String.valueOf(d.child("album").getValue());
                         Log.w("Loaded", artist + " - " + title + ", " + genre + " " + album + " " + url);
-                        songs.add(new MusicData(artist, title, url, genre, album));
+                        songs.add(new MusicData(artist, title, url, null, album));
                     }
                 }
             }

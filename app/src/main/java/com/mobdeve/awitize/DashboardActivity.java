@@ -42,7 +42,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     private FirebaseUser user;
     private TextView emailView;
-    private ArrayList<MusicData> songs;
     private ArrayList<Genre> genres;
     private ArrayList<Artist> artists;
     private ArrayList<Album> albums;
@@ -61,6 +60,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private PlayerService playerService;
     private boolean isServiceBounded = false;
+    private Spinner spinner;
 
     private static final String TAG = "DashboardActivity";
 
@@ -75,6 +75,36 @@ public class DashboardActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             updateUI();
+        }
+    };
+
+    private BroadcastReceiver albumsUpdatedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int pos = spinner.getSelectedItemPosition();
+            if(spinner.getItemAtPosition(pos).toString().equals("ALBUM")){
+                initRecyclerView("ALBUM");
+            }
+        }
+    };
+
+    private BroadcastReceiver artistsUpdatedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int pos = spinner.getSelectedItemPosition();
+            if(spinner.getItemAtPosition(pos).toString().equals("ARTIST")){
+                initRecyclerView("ARTIST");
+            }
+        }
+    };
+
+    private BroadcastReceiver genresUpdatedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int pos = spinner.getSelectedItemPosition();
+            if(spinner.getItemAtPosition(pos).toString().equals("GENRE")){
+                initRecyclerView("GENRE");
+            }
         }
     };
 
@@ -104,11 +134,12 @@ public class DashboardActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(newSongReceiver, new IntentFilter(PlayerEvents.NEW_SONG.name()));
         LocalBroadcastManager.getInstance(this).registerReceiver(playerStateChanged, new IntentFilter(PlayerEvents.STATE_CHANGED.name()));
 
-        loadSongs();
+
+//        loadSongs();
         loadComponents();
 
         // FOR TESTING ONLY
-        Spinner spinner = findViewById(R.id.sp_category_select);
+        spinner = findViewById(R.id.sp_category_select);
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("GENRE");
         arrayList.add("ARTIST");
@@ -139,11 +170,6 @@ public class DashboardActivity extends AppCompatActivity {
 
         nowPlayingTitle.setOnClickListener(v -> {
             Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
-            MusicData song = songs.get(0);
-            i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
-            i.putExtra(SongAttributes.ARTIST.name(), song.getArtist());
-            i.putExtra(SongAttributes.URL.name(), song.getUrl());
-            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
             startActivity(i);
             finish();
         });
@@ -181,6 +207,9 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateUI();
+        LocalBroadcastManager.getInstance(this).registerReceiver(albumsUpdatedReceiver, new IntentFilter("Albums Updated"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(artistsUpdatedReceiver, new IntentFilter("Artist Updated"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(genresUpdatedReceiver, new IntentFilter("Genres Updated"));
     }
 
     @Override
@@ -188,40 +217,43 @@ public class DashboardActivity extends AppCompatActivity {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(newSongReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(playerStateChanged);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(albumsUpdatedReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(artistsUpdatedReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(genresUpdatedReceiver);
     }
 
-    private void loadSongs() {
-        DatabaseReference music = FirebaseDatabase.getInstance("https://awitize-d10e3-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("music");
-        music.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                }
-                else {
-                    Iterator<DataSnapshot> retSongs = task.getResult().getChildren().iterator();
-                    songs = new ArrayList<>();
-                    while(retSongs.hasNext()) {
-                        DataSnapshot d = retSongs.next();
-                        String artist = String.valueOf(d.child("artist").getValue());
-                        String title = String.valueOf(d.child("title").getValue());
-                        String url = String.valueOf(d.child("url").getValue());
-                        String genre = String.valueOf(d.child("genre").getValue());
-                        String album = String.valueOf(d.child("album").getValue());
-                        Log.w("Loaded", artist + " - " + title + ", " + genre + " " + album + " " + url);
-                        MusicData songData = new MusicData(artist, title, url, genre, album);
-                        songs.add(songData);
-                        playerService.queueSong(songData);
-                    }
-                }
-            }
-        });
-    }
+//    private void loadSongs() {
+//        DatabaseReference music = FirebaseDatabase.getInstance("https://awitize-d10e3-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("music");
+//        music.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                if (!task.isSuccessful()) {
+//                    Log.e("firebase", "Error getting data", task.getException());
+//                }
+//                else {
+//                    Iterator<DataSnapshot> retSongs = task.getResult().getChildren().iterator();
+//                    songs = new ArrayList<>();
+//                    while(retSongs.hasNext()) {
+//                        DataSnapshot d = retSongs.next();
+//                        String artist = String.valueOf(d.child("artist").getValue());
+//                        String title = String.valueOf(d.child("title").getValue());
+//                        String url = String.valueOf(d.child("url").getValue());
+//                        String genre = String.valueOf(d.child("genre").getValue());
+//                        String album = String.valueOf(d.child("album").getValue());
+//                        Log.w("Loaded", artist + " - " + title + ", " + genre + " " + album + " " + url);
+//                        MusicData songData = new MusicData(artist, title, url, genre, album);
+//                        songs.add(songData);
+//                        playerService.queueSong(songData);
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     private void initRecyclerView(String selected) {
         switch (selected) {
             case "ARTIST":
-                this.artists = ArtistDataHelper.loadArtist();
+                this.artists = GlobalState.getArtists() == null ? new ArrayList<>() : GlobalState.getArtists();
                 this.rvDasboard = findViewById(R.id.rv_category_selection);
                 this.rvDasboard.setAlpha(1);
                 this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -229,7 +261,7 @@ public class DashboardActivity extends AppCompatActivity {
                 this.rvDasboard.setAdapter(this.artistAdapter);
                 break;
             case "ALBUM":
-                this.albums = AlbumDataHelper.loadAlbums();
+                this.albums = GlobalState.getAlbums() == null ? new ArrayList<>() : GlobalState.getAlbums();
                 this.rvDasboard = findViewById(R.id.rv_category_selection);
                 this.rvDasboard.setAlpha(1);
                 this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -237,7 +269,7 @@ public class DashboardActivity extends AppCompatActivity {
                 this.rvDasboard.setAdapter(this.albumAdapter);
                 break;
             default:
-                this.genres = GenreDataHelper.loadGenres();
+                this.genres = GlobalState.getGenres() == null ? new ArrayList<>() : GlobalState.getGenres();
                 this.rvDasboard = findViewById(R.id.rv_category_selection);
                 this.rvDasboard.setAlpha(1);
                 this.rvDasboard.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));

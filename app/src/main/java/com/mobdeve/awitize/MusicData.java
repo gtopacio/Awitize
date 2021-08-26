@@ -1,19 +1,21 @@
 package com.mobdeve.awitize;
 
+import java.util.ArrayList;
+
 public class MusicData {
 
     private String artist;
     private String title;
-    private String genre;
-    private String url;
+    private ArrayList<String> genres;
+    private String audioFileURL;
     private String album;
 
-    public MusicData(String artist, String title, String url, String genre, String album){
+    public MusicData(String artist, String title, String url, ArrayList<String> genre, String album){
         this.artist = artist;
         this.title = title;
-        this.genre = genre;
+        this.genres = genre;
         this.album = album;
-        this.url = url;
+        this.audioFileURL = url;
     }
 
 
@@ -26,10 +28,10 @@ public class MusicData {
     }
 
     public String getUrl() {
-        return url;
+        return audioFileURL;
     }
 
-    public String getGenre() {return genre;}
+    public ArrayList<String> getGenres() {return genres;}
 
     public String getAlbum() {return album;}
 }
