@@ -1,5 +1,6 @@
 package com.mobdeve.awitize;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -28,6 +29,13 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistViewHolder>{
         View itemView = inflater.inflate(R.layout.item_playlist, parent,false);
 
         PlaylistViewHolder playlistViewHolder = new PlaylistViewHolder(itemView);
+
+//        playlistViewHolder.getClPlaylist().setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(v.getContext(), )
+//            }
+//        });
 
         return playlistViewHolder;
     }

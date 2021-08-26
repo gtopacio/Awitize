@@ -1,5 +1,6 @@
 package com.mobdeve.awitize;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -25,6 +26,13 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreViewHolder> {
         View itemView = inflater.inflate(R.layout.item_category, parent, false);
 
         GenreViewHolder genreviewholder = new GenreViewHolder(itemView);
+
+        genreviewholder.getClGenre().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext().)
+            }
+        });
 
         return genreviewholder;
     }
