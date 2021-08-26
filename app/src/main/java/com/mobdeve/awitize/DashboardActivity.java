@@ -134,8 +134,6 @@ public class DashboardActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(newSongReceiver, new IntentFilter(PlayerEvents.NEW_SONG.name()));
         LocalBroadcastManager.getInstance(this).registerReceiver(playerStateChanged, new IntentFilter(PlayerEvents.STATE_CHANGED.name()));
 
-
-//        loadSongs();
         loadComponents();
 
         // FOR TESTING ONLY
@@ -170,6 +168,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         nowPlayingTitle.setOnClickListener(v -> {
             Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
+            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
             startActivity(i);
             finish();
         });
@@ -284,7 +283,7 @@ public class DashboardActivity extends AppCompatActivity {
             nowPlayingTitle.setText(curr.getTitle());
             nowPlayingArtist.setText(curr.getArtist());
             int image = GlobalState.isIsPlaying() ? R.drawable.ic___70_pause_button : R.drawable.ic___72_play_button;
-            playPauseButton.setImageResource(image);
+            playPauseButton.setBackgroundResource(image);
         }
     }
 

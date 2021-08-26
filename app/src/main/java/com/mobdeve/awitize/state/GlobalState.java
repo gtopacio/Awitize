@@ -1,9 +1,14 @@
 package com.mobdeve.awitize.state;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+
 import com.mobdeve.awitize.Album;
 import com.mobdeve.awitize.Artist;
 import com.mobdeve.awitize.Genre;
 import com.mobdeve.awitize.MusicData;
+import com.mobdeve.awitize.services.PlayerService;
 
 import java.util.ArrayList;
 
