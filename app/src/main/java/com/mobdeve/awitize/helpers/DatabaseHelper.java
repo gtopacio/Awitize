@@ -3,10 +3,13 @@ package com.mobdeve.awitize.helpers;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -15,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mobdeve.awitize.DatabaseKeys;
 import com.mobdeve.awitize.Genre;
 import com.mobdeve.awitize.MusicData;
+import com.mobdeve.awitize.model.User;
 import com.mobdeve.awitize.services.DatabaseUpdater;
 import com.mobdeve.awitize.state.GlobalState;
 
@@ -31,6 +35,7 @@ public class DatabaseHelper {
     private DatabaseReference album;
     private DatabaseReference artist;
     private DatabaseReference genre;
+    private DatabaseReference users;
 
     private static final String TAG = "DatabaseHelper";
 
@@ -41,6 +46,7 @@ public class DatabaseHelper {
         album = db.getReference(DatabaseKeys.albums.name());
         artist = db.getReference(DatabaseKeys.artists.name());
         genre = db.getReference(DatabaseKeys.genres.name());
+        users = db.getReference(DatabaseKeys.users.name());
     }
 
     public void loadMusicData(String musicID){
@@ -93,6 +99,25 @@ public class DatabaseHelper {
             @Override
             public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
+            }
+        });
+    }
+
+    public void addUser(String email, String uid){
+        User newUser = new User(email);
+        users.child(uid).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                detachContext();
+            }
+        });
+    }
+
+    public void deleteUser(String uid){
+        users.child(uid).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                detachContext();
             }
         });
     }

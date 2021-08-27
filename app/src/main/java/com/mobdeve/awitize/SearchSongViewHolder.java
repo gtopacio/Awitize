@@ -1,5 +1,6 @@
 package com.mobdeve.awitize;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
@@ -28,6 +29,10 @@ public class SearchSongViewHolder extends RecyclerView.ViewHolder {
 
     public void setTvSeachedArtistTvArtist (String artistName) {
         this.tvSeachedArtist.setText(artistName);
+    }
+
+    public void setBanTint(boolean banned){
+        searchLayout.setBackgroundColor(banned ? Color.GRAY : searchLayout.getSolidColor());
     }
 
     public void setTvSearchedSongTvSong (String songName) {

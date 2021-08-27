@@ -10,6 +10,7 @@ public class MusicData {
     private String audioFileURL;
     private String album;
     private String albumCoverURL;
+    private boolean banned;
 
     public MusicData(String artist, String title, String audioFileURL, String albumCoverURL){
         this.artist = artist;
@@ -18,6 +19,17 @@ public class MusicData {
 //        this.album = album;
         this.audioFileURL = audioFileURL;
         this.albumCoverURL = albumCoverURL;
+        banned = false;
+    }
+
+    public MusicData(String artist, String title, String audioFileURL, String albumCoverURL, boolean banned){
+        this.artist = artist;
+        this.title = title;
+//        this.genres = genre;
+//        this.album = album;
+        this.audioFileURL = audioFileURL;
+        this.albumCoverURL = albumCoverURL;
+        this.banned = banned;
     }
 
 
@@ -39,5 +51,9 @@ public class MusicData {
 
     public String getAlbumCoverURL() {
         return albumCoverURL;
+    }
+
+    public boolean isBanned() {
+        return banned;
     }
 }

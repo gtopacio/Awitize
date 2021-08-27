@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -112,12 +113,13 @@ public class PlayerService extends Service {
 
     public void queueSong(MusicData musicData){
 
-        if(player.isPlaying()){
+        if(player.isPlaying() || player.getPlaybackState() == ExoPlayer.STATE_READY){
             Toast.makeText(this, "Queued " + musicData.getArtist() + " - " + musicData.getTitle(), Toast.LENGTH_SHORT).show();
         }
 
         queue.add(musicData);
-        if(!player.isPlaying()){
+        Log.d(TAG, "queueSong: Queued " + musicData.getArtist() + " - " + musicData.getTitle());
+        if(player.getPlaybackState() == ExoPlayer.STATE_IDLE && !player.getPlayWhenReady()){
             playSong(queue.pollFirst());
         }
     }

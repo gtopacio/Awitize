@@ -14,6 +14,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.mobdeve.awitize.helpers.DatabaseHelper;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -58,6 +60,9 @@ public class SignupActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
 
                     if(task.isSuccessful()){
+                        DatabaseHelper helper = new DatabaseHelper(SignupActivity.this);
+                        FirebaseUser user = task.getResult().getUser();
+                        helper.addUser(user.getEmail(), user.getUid());
                         Intent i = new Intent(SignupActivity.this, DashboardActivity.class);
                         startActivity(i);
                         finish();

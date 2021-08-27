@@ -16,10 +16,12 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.mobdeve.awitize.helpers.DatabaseHelper;
 import com.mobdeve.awitize.services.PlayerService;
 
 public class AccountActivity extends AppCompatActivity {
 
+    private static final String TAG = "AccountActivity";
     private TextView emailView;
     private TextView signOut;
     private TextView delete;
@@ -109,16 +111,20 @@ public class AccountActivity extends AppCompatActivity {
 
         delete.setOnClickListener(v -> {
             FirebaseUser user = mAuth.getCurrentUser();
+            String uid = user.getUid();
+            if(isServiceBounded){
+                playerService.destroySession();
+            }
+            Log.d(TAG, "loadComponents: User " + user.getEmail() + " " + user.getUid());
             user.delete().addOnCompleteListener(task -> {
                if(task.isSuccessful()){
                    Toast.makeText(this, "Account Deletion is successful", Toast.LENGTH_SHORT).show();
+                   DatabaseHelper helper = new DatabaseHelper(AccountActivity.this);
+                   helper.deleteUser(uid);
                }
                else{
                    Toast.makeText(this, "Account Deletion is NOT successful", Toast.LENGTH_SHORT).show();
                }
-                if(isServiceBounded){
-                    playerService.destroySession();
-                }
                 Intent i = new Intent(AccountActivity.this, MainActivity.class);
                 startActivity(i);
                 finish();

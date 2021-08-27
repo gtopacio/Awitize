@@ -35,6 +35,7 @@ public class SearchSongAdapter extends RecyclerView.Adapter<SearchSongViewHolder
     public void onBindViewHolder(@NonNull @NotNull SearchSongViewHolder holder, int position) {
         holder.setTvSeachedArtistTvArtist(searchedSongs.get(position).getArtist());
         holder.setTvSearchedSongTvSong(searchedSongs.get(position).getTitle());
+        holder.setBanTint(searchedSongs.get(position).isBanned());
     }
 
     @Override

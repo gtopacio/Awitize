@@ -199,6 +199,8 @@ public class DashboardActivity extends AppCompatActivity {
 
         searchButton.setOnClickListener(v -> {
             //Intent for search activity
+            Intent i = new Intent(this, SearchActivity.class);
+            startActivity(i);
         });
     }
 
