@@ -146,6 +146,11 @@ public class ShowCategoryActivity extends AppCompatActivity implements QueueSong
             finish();
         });
 
+        nextButton.setOnClickListener(v -> {
+            Intent i = new Intent(PlayerEvents.SKIP.name());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+        });
+
         Intent intent = getIntent();
 
         categoryName = intent.getStringExtra(CategoryConstants.CATEGORY_NAME.name());

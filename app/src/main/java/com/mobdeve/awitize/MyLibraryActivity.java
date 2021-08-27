@@ -48,6 +48,7 @@ public class MyLibraryActivity extends AppCompatActivity {
     private TextView nowPlayingTitle;
     private TextView nowPlayingArtist;
     private ImageButton playPauseButton;
+    private ImageButton nextButton;
 
     private BroadcastReceiver newSongReceiver = new BroadcastReceiver() {
         @Override
@@ -116,6 +117,7 @@ public class MyLibraryActivity extends AppCompatActivity {
         playPauseButton = findViewById(R.id.ib_play_lib);
         pageSelect = findViewById(R.id.fab_page_select_lib);
         accountButton = findViewById(R.id.ib_account_lib);
+        nextButton = findViewById(R.id.ib_next_lib);
 
         nowPlayingTitle.setOnClickListener(v -> {
             Intent i = new Intent(MyLibraryActivity.this, MusicPlayerActivity.class);
@@ -146,6 +148,11 @@ public class MyLibraryActivity extends AppCompatActivity {
                 Intent i = new Intent(PlayerEvents.PLAY.name());
                 LocalBroadcastManager.getInstance(this).sendBroadcast(i);
             }
+        });
+
+        nextButton.setOnClickListener(v -> {
+            Intent i = new Intent(PlayerEvents.SKIP.name());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(i);
         });
     }
 

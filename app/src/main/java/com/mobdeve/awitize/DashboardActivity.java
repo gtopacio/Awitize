@@ -57,6 +57,7 @@ public class DashboardActivity extends AppCompatActivity {
     private ImageButton accountButton;
     private ImageButton searchButton;
     private ImageButton playPauseButton;
+    private ImageButton nextButton;
 
     private PlayerService playerService;
     private boolean isServiceBounded = false;
@@ -165,6 +166,7 @@ public class DashboardActivity extends AppCompatActivity {
         accountButton = findViewById(R.id.ib_account_main);
         searchButton = findViewById(R.id.ib_search_main);
         playPauseButton = findViewById(R.id.ib_play_main);
+        nextButton = findViewById(R.id.ib_next_main);
 
         nowPlayingTitle.setOnClickListener(v -> {
             Intent i = new Intent(DashboardActivity.this, MusicPlayerActivity.class);
@@ -201,6 +203,11 @@ public class DashboardActivity extends AppCompatActivity {
             //Intent for search activity
             Intent i = new Intent(this, SearchActivity.class);
             startActivity(i);
+        });
+
+        nextButton.setOnClickListener(v -> {
+            Intent i = new Intent(PlayerEvents.SKIP.name());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(i);
         });
     }
 

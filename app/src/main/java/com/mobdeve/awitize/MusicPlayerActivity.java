@@ -31,6 +31,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
     private ImageButton accountButton;
     private String prevClass;
     private ImageButton playPauseButton;
+    private ImageButton nextButton;
     private ImageView albumCover;
 
     private PlayerService playerService;
@@ -101,6 +102,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
         accountButton = findViewById(R.id.ib_account_player);
         playPauseButton = findViewById(R.id.ib_play_player);
         albumCover = findViewById(R.id.iv_curr_song_pic);
+        nextButton = findViewById(R.id.ib_next_player);
 
         back.setOnClickListener(v -> {
             try {
@@ -138,6 +140,11 @@ public class MusicPlayerActivity extends AppCompatActivity {
             Intent i = new Intent(this, AccountActivity.class);
             startActivity(i);
             finish();
+        });
+
+        nextButton.setOnClickListener(v -> {
+            Intent i = new Intent(PlayerEvents.SKIP.name());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(i);
         });
     }
 

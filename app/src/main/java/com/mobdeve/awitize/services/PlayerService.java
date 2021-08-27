@@ -58,6 +58,19 @@ public class PlayerService extends Service {
         }
     };
 
+    private BroadcastReceiver skipReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(queue.size() > 0){
+                player.setPlayWhenReady(false);
+                playSong(queue.pollFirst());
+            }
+            else{
+                Toast.makeText(PlayerService.this, "No Next Song in Queue", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
     public PlayerService() {
     }
 
@@ -107,8 +120,17 @@ public class PlayerService extends Service {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(playReceiver, new IntentFilter(PlayerEvents.PLAY.name()));
         LocalBroadcastManager.getInstance(this).registerReceiver(pauseReceiver, new IntentFilter(PlayerEvents.PAUSE.name()));
+        LocalBroadcastManager.getInstance(this).registerReceiver(skipReceiver, new IntentFilter(PlayerEvents.SKIP.name()));
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(playReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(pauseReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(skipReceiver);
     }
 
     public void queueSong(MusicData musicData){

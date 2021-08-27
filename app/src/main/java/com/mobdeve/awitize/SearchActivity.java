@@ -31,6 +31,7 @@ public class SearchActivity extends AppCompatActivity {
     private TextView nowPlayingTitle;
     private TextView nowPlayingArtist;
     private ImageButton playPauseButton;
+    private ImageButton nextButton;
     private RecyclerView searchRvSongs;
     private SearchSongAdapter searchSongAdapter;
     private SearchView searchToolbar;
@@ -82,6 +83,7 @@ public class SearchActivity extends AppCompatActivity {
         this.playPauseButton = findViewById(R.id.ib_play_search);
         this.searchRvSongs = findViewById(R.id.rv_search_selection);
         this.searchToolbar = findViewById(R.id.sv_toolbar);
+        this.nextButton = findViewById(R.id.ib_next_search);
 
         songsResult = new ArrayList<>();
 
@@ -101,6 +103,11 @@ public class SearchActivity extends AppCompatActivity {
                 Intent i = new Intent(PlayerEvents.PLAY.name());
                 LocalBroadcastManager.getInstance(this).sendBroadcast(i);
             }
+        });
+
+        nextButton.setOnClickListener(v -> {
+            Intent i = new Intent(PlayerEvents.SKIP.name());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(i);
         });
     }
 
