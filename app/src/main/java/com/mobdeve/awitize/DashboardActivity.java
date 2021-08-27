@@ -219,35 +219,8 @@ public class DashboardActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(albumsUpdatedReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(artistsUpdatedReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(genresUpdatedReceiver);
+        unbindService(connection);
     }
-
-//    private void loadSongs() {
-//        DatabaseReference music = FirebaseDatabase.getInstance("https://awitize-d10e3-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("music");
-//        music.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                if (!task.isSuccessful()) {
-//                    Log.e("firebase", "Error getting data", task.getException());
-//                }
-//                else {
-//                    Iterator<DataSnapshot> retSongs = task.getResult().getChildren().iterator();
-//                    songs = new ArrayList<>();
-//                    while(retSongs.hasNext()) {
-//                        DataSnapshot d = retSongs.next();
-//                        String artist = String.valueOf(d.child("artist").getValue());
-//                        String title = String.valueOf(d.child("title").getValue());
-//                        String url = String.valueOf(d.child("url").getValue());
-//                        String genre = String.valueOf(d.child("genre").getValue());
-//                        String album = String.valueOf(d.child("album").getValue());
-//                        Log.w("Loaded", artist + " - " + title + ", " + genre + " " + album + " " + url);
-//                        MusicData songData = new MusicData(artist, title, url, genre, album);
-//                        songs.add(songData);
-//                        playerService.queueSong(songData);
-//                    }
-//                }
-//            }
-//        });
-//    }
 
     private void initRecyclerView(String selected) {
         switch (selected) {
@@ -282,6 +255,12 @@ public class DashboardActivity extends AppCompatActivity {
         if(curr != null){
             nowPlayingTitle.setText(curr.getTitle());
             nowPlayingArtist.setText(curr.getArtist());
+            int image = GlobalState.isIsPlaying() ? R.drawable.ic___70_pause_button : R.drawable.ic___72_play_button;
+            playPauseButton.setBackgroundResource(image);
+        }
+        else{
+            nowPlayingTitle.setText("No Song");
+            nowPlayingArtist.setText("No Artist");
             int image = GlobalState.isIsPlaying() ? R.drawable.ic___70_pause_button : R.drawable.ic___72_play_button;
             playPauseButton.setBackgroundResource(image);
         }

@@ -53,23 +53,6 @@
         app:layout_constraintStart_toStartOf="@+id/gl_vert_1_player"
         app:layout_constraintTop_toTopOf="@+id/gl_hori_1_player" />
 
-    <ImageButton
-        android:id="@+id/ib_curr_song_pic"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_margin="0dp"
-        android:adjustViewBounds="true"
-        android:cropToPadding="false"
-        android:padding="0dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/cover___sample_song_art"
-        app:layout_constraintBottom_toTopOf="@+id/gl_hori_4_player"
-        app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_player"
-        app:layout_constraintHorizontal_bias="0.50"
-        app:layout_constraintStart_toStartOf="@+id/gl_vert_6_player"
-        app:layout_constraintTop_toTopOf="@+id/gl_hori_3_player"
-        tools:srcCompat="@drawable/cover___sample_song_art" />
-
     <TextView
         android:id="@+id/tv_curr_song"
         android:layout_width="wrap_content"
@@ -233,5 +216,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.75" />
+
+    <ImageView
+        android:id="@+id/iv_curr_song_pic"
+        android:layout_width="270dp"
+        android:layout_height="267dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_curr_song"
+        app:layout_constraintEnd_toStartOf="@+id/gl_vert_4_player"
+        app:layout_constraintStart_toStartOf="@+id/gl_vert_6_player"
+        app:layout_constraintTop_toTopOf="@+id/gl_hori_3_player"
+        app:srcCompat="@drawable/cover___sample_song_art" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

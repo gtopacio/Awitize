@@ -34,24 +34,26 @@ public class PlayerService extends Service {
 
     private SimpleExoPlayer player;
     private LinkedList<MusicData> queue;
-    private boolean playedOnce;
-    private MusicData nowPlaying;
 
     private static final String TAG = "PlayerService";
 
     private BroadcastReceiver playReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            player.setPlayWhenReady(true);
-            GlobalState.setIsPlaying(player.getPlayWhenReady());
+            if(!player.isPlaying()){
+                player.setPlayWhenReady(true);
+                GlobalState.setIsPlaying(player.getPlayWhenReady());
+            }
         }
     };
 
     private BroadcastReceiver pauseReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            player.setPlayWhenReady(false);
-            GlobalState.setIsPlaying(player.getPlayWhenReady());
+            if(player.isPlaying()){
+                player.setPlayWhenReady(false);
+                GlobalState.setIsPlaying(player.getPlayWhenReady());
+            }
         }
     };
 
@@ -62,7 +64,6 @@ public class PlayerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         player = new SimpleExoPlayer.Builder(this).build();
         queue = new LinkedList<>();
-        playedOnce = false;
         player.addListener(new Player.Listener() {
 
             @Override
@@ -89,8 +90,11 @@ public class PlayerService extends Service {
                 if(playbackState == Player.STATE_ENDED && queue.size() > 0){
                     playSong(queue.pollFirst());
                 }
-                else if(playbackState == Player.STATE_IDLE && playedOnce){
-                    stopSelf();
+                else if(playbackState == Player.STATE_ENDED){
+                    GlobalState.setNowPlaying(null);
+                    GlobalState.setIsPlaying(false);
+                    Intent i = new Intent(PlayerEvents.NEW_SONG.name());
+                    LocalBroadcastManager.getInstance(PlayerService.this).sendBroadcast(i);
                 }
                 else{
                     GlobalState.setIsPlaying(player.isPlaying());
@@ -107,15 +111,22 @@ public class PlayerService extends Service {
     }
 
     public void queueSong(MusicData musicData){
+
+        if(player.isPlaying()){
+            Toast.makeText(this, "Queued " + musicData.getArtist() + " - " + musicData.getTitle(), Toast.LENGTH_SHORT).show();
+        }
+
         queue.add(musicData);
-        if(!playedOnce){
-            playedOnce = true;
+        if(!player.isPlaying()){
             playSong(queue.pollFirst());
         }
     }
 
-    public SimpleExoPlayer getPlayer(){
-        return player;
+    public void destroySession(){
+        player.setPlayWhenReady(false);
+        queue.clear();
+        GlobalState.setNowPlaying(null);
+        GlobalState.setIsPlaying(player.getPlayWhenReady());
     }
 
     private void playSong(MusicData musicData){
@@ -126,7 +137,6 @@ public class PlayerService extends Service {
         player.setMediaItem(mediaItem);
         player.prepare();
         player.setPlayWhenReady(true);
-        nowPlaying = musicData;
     }
 
     @Override

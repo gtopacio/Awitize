@@ -40,6 +40,7 @@ import java.util.Iterator;
 
 public class ShowCategoryActivity extends AppCompatActivity implements QueueSong {
 
+    private static final String TAG = "ShowCategoryActivity";
     private ArrayList<MusicData> songs;
     private ConstraintLayout clMusicPlayer;
     private TextView songName;
@@ -96,6 +97,7 @@ public class ShowCategoryActivity extends AppCompatActivity implements QueueSong
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected: ShowCategoryActivity Bound State: " + false);
             isServiceBounded = false;
         }
     };
@@ -138,6 +140,12 @@ public class ShowCategoryActivity extends AppCompatActivity implements QueueSong
             }
         });
 
+        songName.setOnClickListener(v -> {
+            Intent i = new Intent(this, MusicPlayerActivity.class);
+            startActivity(i);
+            finish();
+        });
+
         Intent intent = getIntent();
 
         categoryName = intent.getStringExtra(CategoryConstants.CATEGORY_NAME.name());
@@ -164,23 +172,33 @@ public class ShowCategoryActivity extends AppCompatActivity implements QueueSong
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        songAdapter.detachQueuer();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(loadSongReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(newSongReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(playerStateChanged);
+        databaseHelper.detachContext();
+        unbindService(connection);
     }
 
     private void updateUI(){
         MusicData curr = GlobalState.getNowPlaying();
         if(curr != null){
-            songArtistName.setText(curr.getTitle());
-            songName.setText(curr.getArtist());
+            songArtistName.setText(curr.getArtist());
+            songName.setText(curr.getTitle());
             int image = GlobalState.isIsPlaying() ? R.drawable.ic___70_pause_button : R.drawable.ic___72_play_button;
+            playButton.setBackgroundResource(image);
+        }
+        else{
+            songArtistName.setText("No Song");
+            songName.setText("No Artist");
+            int image = R.drawable.ic___72_play_button;
             playButton.setBackgroundResource(image);
         }
     }
 
     @Override
     public void queueMusic(MusicData musicData) {
+        Log.d(TAG, "queueMusic: Queue " + musicData.getTitle() + " - " + musicData.getArtist() + " boundedState: " + isServiceBounded);
         if(isServiceBounded){
             playerService.queueSong(musicData);
         }

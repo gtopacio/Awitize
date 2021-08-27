@@ -1,7 +1,13 @@
 package com.mobdeve.awitize;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,67 +30,99 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mobdeve.awitize.services.PlayerEvents;
+import com.mobdeve.awitize.services.PlayerService;
+import com.mobdeve.awitize.state.GlobalState;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MyLibraryActivity extends AppCompatActivity {
     private FirebaseUser user;
-    private TextView emailView;
-    private ArrayList<MusicData> songs;
     private ArrayList<Playlist> playlists;
     private RecyclerView rvDasboard;
     private PlaylistAdapter playlistAdapter;
-    private TextView nowPlaying;
     private FloatingActionButton pageSelect;
     private ImageButton accountButton;
+
+    private TextView nowPlayingTitle;
+    private TextView nowPlayingArtist;
+    private ImageButton playPauseButton;
+
+    private BroadcastReceiver newSongReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUI();
+        }
+    };
+
+    private BroadcastReceiver playerStateChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUI();
+        }
+    };
+
+    private PlayerService playerService;
+    private boolean isServiceBounded = false;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) service;
+            playerService = binder.getService();
+            isServiceBounded = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isServiceBounded = false;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
-
         checkSession();
-
         loadComponents();
-//        // FOR TESTING ONLY
-//        Spinner spinner = findViewById(R.id.sp_category_select);
-//        ArrayList<String> arrayList = new ArrayList<>();
-//        arrayList.add("SONGS");
-//        arrayList.add("ALBUM");
-//        arrayList.add("GENRE");
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arrayList);
-//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinner.setAdapter(arrayAdapter);
-//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                String tutorialsName = parent.getItemAtPosition(position).toString();
-////                Toast.makeText(parent.getContext(), "Selected: " + tutorialsName, Toast.LENGTH_LONG).show();
-//            }
-//            @Override
-//            public void onNothingSelected(AdapterView <?> parent) {
-//            }
-//        });
+
+        Intent serviceIntent = new Intent(this, PlayerService.class);
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(newSongReceiver, new IntentFilter(PlayerEvents.NEW_SONG.name()));
+        LocalBroadcastManager.getInstance(this).registerReceiver(playerStateChanged, new IntentFilter(PlayerEvents.STATE_CHANGED.name()));
 
         initRecyclerView();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateUI();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(newSongReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(playerStateChanged);
+        unbindService(connection);
+    }
+
     private void loadComponents() {
-        //nowPlaying = findViewById(R.id.tv_now_playing_lib);
+        nowPlayingTitle = findViewById(R.id.tv_now_playing_lib_title);
+        nowPlayingArtist = findViewById(R.id.tv_now_playing_lib_artist);
+        playPauseButton = findViewById(R.id.ib_play_lib);
         pageSelect = findViewById(R.id.fab_page_select_lib);
         accountButton = findViewById(R.id.ib_account_lib);
 
-//        nowPlaying.setOnClickListener(v -> {
-//            Intent i = new Intent(MyLibraryActivity.this, MusicPlayerActivity.class);
-//            MusicData song = songs.get(0);
-//            i.putExtra(SongAttributes.TITLE.name(), song.getTitle());
-//            i.putExtra(SongAttributes.ARTIST.name(), song.getArtist());
-//            i.putExtra(SongAttributes.URL.name(), song.getUrl());
-//            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
-//            startActivity(i);
-//            finish();
-//        });
+        nowPlayingTitle.setOnClickListener(v -> {
+            Intent i = new Intent(MyLibraryActivity.this, MusicPlayerActivity.class);
+            i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
+            startActivity(i);
+            finish();
+        });
 
         pageSelect.setOnClickListener(v -> {
             Intent i = new Intent(MyLibraryActivity.this, DashboardActivity.class);
@@ -96,6 +135,17 @@ public class MyLibraryActivity extends AppCompatActivity {
             i.putExtra(IntentKeys.PREVIOUS_CLASS.name(), this.getClass().getName());
             startActivity(i);
             finish();
+        });
+
+        playPauseButton.setOnClickListener(v -> {
+            if(GlobalState.isIsPlaying()){
+                Intent i = new Intent(PlayerEvents.PAUSE.name());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+            }
+            else{
+                Intent i = new Intent(PlayerEvents.PLAY.name());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+            }
         });
     }
 
@@ -116,6 +166,22 @@ public class MyLibraryActivity extends AppCompatActivity {
             i.putExtra("Illegal Access", true);
             startActivity(i);
             finish();
+        }
+    }
+
+    private void updateUI(){
+        MusicData curr = GlobalState.getNowPlaying();
+        if(curr != null){
+            nowPlayingTitle.setText(curr.getTitle());
+            nowPlayingArtist.setText(curr.getArtist());
+            int image = GlobalState.isIsPlaying() ? R.drawable.ic___70_pause_button : R.drawable.ic___72_play_button;
+            playPauseButton.setBackgroundResource(image);
+        }
+        else{
+            nowPlayingTitle.setText("No Song");
+            nowPlayingArtist.setText("No Artist");
+            int image = GlobalState.isIsPlaying() ? R.drawable.ic___70_pause_button : R.drawable.ic___72_play_button;
+            playPauseButton.setBackgroundResource(image);
         }
     }
 }

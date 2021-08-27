@@ -36,4 +36,8 @@ public class MusicData {
     public ArrayList<String> getGenres() {return genres;}
 
     public String getAlbum() {return album;}
+
+    public String getAlbumCoverURL() {
+        return albumCoverURL;
+    }
 }

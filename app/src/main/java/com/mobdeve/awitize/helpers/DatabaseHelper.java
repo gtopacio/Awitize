@@ -96,4 +96,8 @@ public class DatabaseHelper {
             }
         });
     }
+
+    public void detachContext() {
+        context = null;
+    }
 }

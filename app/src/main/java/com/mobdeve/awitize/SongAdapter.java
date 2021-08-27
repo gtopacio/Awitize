@@ -52,6 +52,16 @@ public class SongAdapter extends RecyclerView.Adapter<SongViewHolder> {
     }
 
     @Override
+    public void onViewDetachedFromWindow(@NonNull @NotNull SongViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.getLayout().setOnClickListener(null);
+    }
+
+    public void detachQueuer(){
+        songQueuer = null;
+    }
+
+    @Override
     public int getItemCount() {
         return this.songs.size();
     }
