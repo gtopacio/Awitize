@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Awitize">
-        <activity android:name=".ShowCategoryActivity"></activity>
+        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".ShowCategoryActivity" />
 
         <service
             android:name=".services.DatabaseUpdater"
