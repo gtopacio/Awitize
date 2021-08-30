@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "619225297305",
+    "firebase_url": "https://awitize-d10e3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "awitize-d10e3",
+    "storage_bucket": "awitize-d10e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619225297305:android:7e6fb7480ad094327b6308",
+        "android_client_info": {
+          "package_name": "com.mobdeve.awitize"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619225297305-g3gel47jj13afo8tq45irhtavs8hb1fh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAuF3XVBI-yoHuuCIGbg5DGHDpO_9kPJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619225297305-g3gel47jj13afo8tq45irhtavs8hb1fh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
