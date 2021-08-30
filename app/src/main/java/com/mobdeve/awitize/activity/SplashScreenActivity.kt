@@ -1,11 +1,13 @@
 package com.mobdeve.awitize.activity
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.WindowManager
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.service.PlayerService
 
 @Suppress("DEPRECATION")
 class SplashScreenActivity : AppCompatActivity() {
