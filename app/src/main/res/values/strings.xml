@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Awitize</string>
+    <string-array name="Categories">
+        <item>Genre</item>
+        <item>Album</item>
+        <item>Artist</item>
+    </string-array>
 </resources>

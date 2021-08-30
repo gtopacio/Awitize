@@ -4,72 +4,168 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MusicPlayer">
+    android:background="@color/dark_01"
+    tools:context=".activity.MusicPlayerActivity">
 
-
-    <ImageButton
-        android:id="@+id/ib_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ib_skip_next"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ib_skip_prev"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/exo_controls_play" />
-
-    <ImageButton
-        android:id="@+id/ib_skip_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_player_queue"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/miniplayer_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ib_play"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/exo_controls_next" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline29" />
 
     <ImageButton
-        android:id="@+id/ib_skip_prev"
-        android:layout_width="wrap_content"
+        android:id="@+id/ib_player_next"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/guideline29"
+        app:layout_constraintEnd_toEndOf="@+id/pb_player_duration"
+        app:layout_constraintTop_toBottomOf="@+id/pb_player_duration"
+        app:srcCompat="@drawable/ic___skip" />
+
+    <ImageButton
+        android:id="@+id/ib_player_prev"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/guideline29"
+        app:layout_constraintStart_toStartOf="@+id/pb_player_duration"
+        app:layout_constraintTop_toBottomOf="@+id/pb_player_duration"
+        app:srcCompat="@drawable/ic___previous" />
+
+    <ImageButton
+        android:id="@+id/ib_player_play"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/guideline29"
+        app:layout_constraintEnd_toStartOf="@+id/ib_player_next"
+        app:layout_constraintStart_toEndOf="@+id/ib_player_prev"
+        app:layout_constraintTop_toBottomOf="@+id/pb_player_duration"
+        app:srcCompat="@drawable/ic___play" />
+
+    <ProgressBar
+        android:id="@+id/pb_player_duration"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ib_play"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/exo_controls_previous" />
+        android:max="100"
+        android:progress="36"
+        android:progressTint="@color/dark_02"
+        app:layout_constraintEnd_toEndOf="@+id/textView9"
+        app:layout_constraintStart_toStartOf="@+id/textView9"
+        app:layout_constraintTop_toTopOf="@+id/guideline28" />
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/tv_player_artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="52dp"
-        android:text="TITLE HERE"
-        app:layout_constraintBottom_toTopOf="@+id/ib_play"
+        android:fontFamily="@font/kollektif_normal"
+        android:text="Artist"
+        android:textColor="@color/dark_02"
+        android:textSize="20sp"
+        android:ellipsize="marquee"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:marqueeRepeatLimit="marquee_forever"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_queue_song1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
-        android:text="Song 1"
-        app:layout_constraintEnd_toStartOf="@+id/btn_queue_song2"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ib_play" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_player_title" />
 
-    <Button
-        android:id="@+id/btn_queue_song2"
+    <TextView
+        android:id="@+id/tv_player_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
-        android:text="Song 2"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/kollektif_normal"
+        android:text="Song"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:ellipsize="marquee"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:marqueeRepeatLimit="marquee_forever"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn_queue_song1"
-        app:layout_constraintTop_toBottomOf="@+id/ib_play" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_player_album" />
+
+    <ImageView
+        android:id="@+id/iv_player_album"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/guideline27"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9"
+        app:srcCompat="@drawable/test___album_art" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/frag_player_nav"
+        android:name="com.mobdeve.awitize.fragment.NavFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline25"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/kollektif_normal"
+        android:text="Now Playing"
+        android:textColor="@color/white"
+        android:textSize="64sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frag_player_nav" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline27"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline28"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline29"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.050" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

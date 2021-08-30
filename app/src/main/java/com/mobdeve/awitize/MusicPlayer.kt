@@ -78,7 +78,7 @@ class MusicPlayer : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_music_player)
+        setContentView(R.layout.activity_music_player2)
 
         btnSong1 = findViewById(R.id.btn_queue_song1)
         btnSong2 = findViewById(R.id.btn_queue_song2)

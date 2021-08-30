@@ -5,31 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_01"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.LibraryActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_main_category"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/frag_main_player"
+        android:layout_marginTop="6dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline19"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sp_main_category"
-        app:layout_constraintVertical_bias="0.686" />
-
-    <Spinner
-        android:id="@+id/sp_main_category"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/textView5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_main"
+        android:id="@+id/fab_lib"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="6dp"
@@ -37,53 +26,53 @@
         android:backgroundTint="@color/light_02"
         android:clickable="true"
         app:tint="@color/dark_01"
-        app:layout_constraintBottom_toTopOf="@+id/guideline10"
+        app:layout_constraintBottom_toTopOf="@+id/guideline19"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic___folder" />
+        app:srcCompat="@drawable/ic___home" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:fontFamily="@font/kollektif_normal"
-        android:text="Discover"
+        android:text="My Stuffs"
         android:textColor="@color/white"
         android:textSize="64sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline13" />
+        app:layout_constraintTop_toTopOf="@+id/guideline20" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/frag_main_nav"
+        android:id="@+id/frag_lib_nav"
         android:name="com.mobdeve.awitize.fragment.NavFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline13"
+        app:layout_constraintBottom_toTopOf="@+id/guideline20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/frag_main_player"
+        android:id="@+id/frag_lib_player"
         android:name="com.mobdeve.awitize.fragment.PlayerFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline10" />
+        app:layout_constraintTop_toTopOf="@+id/guideline19" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline13"
+        android:id="@+id/guideline20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.05" />
+        app:layout_constraintGuide_percent=".050" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline10"
+        android:id="@+id/guideline19"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.9" />
+        app:layout_constraintGuide_percent=".90" />
 </androidx.constraintlayout.widget.ConstraintLayout>

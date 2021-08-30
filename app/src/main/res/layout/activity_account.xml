@@ -5,83 +5,91 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_01"
-    tools:context=".activity.MainActivity">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_main_category"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/frag_main_player"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sp_main_category"
-        app:layout_constraintVertical_bias="0.686" />
-
-    <Spinner
-        android:id="@+id/sp_main_category"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/textView5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
-        android:layout_marginBottom="6dp"
-        android:backgroundTint="@color/light_02"
-        android:clickable="true"
-        app:tint="@color/dark_01"
-        app:layout_constraintBottom_toTopOf="@+id/guideline10"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic___folder" />
+    tools:context=".activity.AccountActivity">
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/tv_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/kollektif_normal"
+        android:text="Delete Account"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/frag_acc_player"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_logout" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_logout"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_bg_1"
+        android:fontFamily="@font/kollektif_normal"
+        android:text="Log out"
+        android:textColor="@color/dark_01"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/frag_acc_player"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_acc_email"
+        app:layout_constraintVertical_bias="0.7" />
+
+    <TextView
+        android:id="@+id/tv_acc_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/kollektif_normal"
+        android:text="jbrines0401@gmail.com"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/frag_acc_player"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frag_acc_nav"
+        app:layout_constraintVertical_bias="0.4" />
+
+    <TextView
+        android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:fontFamily="@font/kollektif_normal"
-        android:text="Discover"
+        android:text="Account"
         android:textColor="@color/white"
         android:textSize="64sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline13" />
+        app:layout_constraintTop_toTopOf="@+id/guideline21" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/frag_main_nav"
+        android:id="@+id/frag_acc_nav"
         android:name="com.mobdeve.awitize.fragment.NavFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline13"
+        app:layout_constraintBottom_toTopOf="@+id/guideline21"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/frag_main_player"
+        android:id="@+id/frag_acc_player"
         android:name="com.mobdeve.awitize.fragment.PlayerFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline10" />
+        app:layout_constraintTop_toTopOf="@+id/guideline22" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline13"
+        android:id="@+id/guideline21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.05" />
+        app:layout_constraintGuide_percent="0.050" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline10"
+        android:id="@+id/guideline22"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
