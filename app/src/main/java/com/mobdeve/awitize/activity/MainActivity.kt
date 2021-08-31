@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 //        val i = Intent(this, MusicPlayer :: class.java)
 //        startActivity(i)
 //        finish()
-
+        /*
         val categories = resources.getStringArray(R.array.Categories)
         val spinner = findViewById<Spinner>(R.id.sp_main_category)
         if (spinner != null) {
@@ -41,6 +41,6 @@ class MainActivity : AppCompatActivity() {
 
                 }
             }
-        }
+        }*/
     }
 }
