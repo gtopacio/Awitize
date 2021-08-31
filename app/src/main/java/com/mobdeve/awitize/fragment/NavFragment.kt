@@ -15,7 +15,7 @@ class NavFragment : Fragment() {
     interface NavListener{
         fun tapSearch()
         fun tapAccount()
-        fun tapBack()
+        fun tapHome()
     }
 
     private var listener : NavListener ? = null
@@ -33,7 +33,7 @@ class NavFragment : Fragment() {
         search = view.findViewById(R.id.ib_search)
         account = view.findViewById(R.id.ib_account)
         back.setOnClickListener{
-            listener?.tapBack()
+            listener?.tapHome()
         }
         search.setOnClickListener{
             listener?.tapSearch()

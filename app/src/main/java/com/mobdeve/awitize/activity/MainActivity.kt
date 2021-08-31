@@ -6,13 +6,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.auth.FirebaseAuth
 import com.mobdeve.awitize.MusicPlayer
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.fragment.*
 import com.mobdeve.awitize.helpers.DatabaseHelper
 
-class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFragment.NavListener, HomeFragment.HomeListener, LibraryFragment.LibraryListener {
+class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFragment.NavListener, HomeFragment.HomeListener {
 
     private val TAG = "MainActivity"
 
@@ -42,6 +44,7 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
     }
 
     override fun logout() {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(PlayerServiceEvents.SESSION_DESTROY.name))
         FirebaseAuth.getInstance().signOut()
         val i = Intent(this, LoginActivity::class.java)
         startActivity(i)
@@ -53,6 +56,7 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
         databaseHelper.deleteUser(this, uid?:"")
         FirebaseAuth.getInstance().currentUser?.delete()?.addOnCompleteListener{
             if(it.isSuccessful){
+                LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(PlayerServiceEvents.SESSION_DESTROY.name))
                 FirebaseAuth.getInstance().signOut()
                 val i = Intent(this, LoginActivity::class.java)
                 startActivity(i)
@@ -67,7 +71,6 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
     override fun tapSearch() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frag_main, searchFragment)
-            addToBackStack(null)
             commit()
         }
     }
@@ -75,19 +78,13 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
     override fun tapAccount() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frag_main, accountFragment)
-            addToBackStack(null)
             commit()
         }
-    }
-
-    override fun tapBack() {
-        super.onBackPressed()
     }
 
     override fun tapLibrary() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frag_main, libraryFragment)
-            addToBackStack(null)
             commit()
         }
     }
@@ -95,7 +92,6 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
     override fun tapHome() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frag_main, homeFragment)
-            addToBackStack(null)
             commit()
         }
     }

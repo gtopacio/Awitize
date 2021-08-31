@@ -45,6 +45,12 @@ class PlayerService : Service() {
         }
     }
 
+    private val sessionDestroyReceiver = object: BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            destroySession()
+        }
+    }
+
     private val newSongReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             val message = intent?.getStringExtra("message")
@@ -143,6 +149,34 @@ class PlayerService : Service() {
         return PlayerBinder()
     }
 
+    private fun destroySession() {
+        player.release()
+        player = SimpleExoPlayer.Builder(this).build()
+        player.addListener(object: Player.Listener{
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
+                LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
+                if(playbackState == ExoPlayer.STATE_ENDED){
+                    playNextSong()
+                }
+            }
+
+            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
+                LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
+            }
+
+            override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
+                val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
+                LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
+            }
+        })
+        queue.clear()
+        history.clear()
+        nowPlaying = null
+    }
+
     override fun onCreate() {
         super.onCreate()
         player = SimpleExoPlayer.Builder(this).build()
@@ -174,6 +208,7 @@ class PlayerService : Service() {
         LocalBroadcastManager.getInstance(this).registerReceiver(playPauseReceiver, IntentFilter(PlayerServiceEvents.PLAY_PAUSE.name))
         LocalBroadcastManager.getInstance(this).registerReceiver(skipNextReceiver, IntentFilter(PlayerServiceEvents.SKIP_NEXT.name))
         LocalBroadcastManager.getInstance(this).registerReceiver(skipPrevReceiver, IntentFilter(PlayerServiceEvents.SKIP_PREV.name))
+        LocalBroadcastManager.getInstance(this).registerReceiver(sessionDestroyReceiver, IntentFilter(PlayerServiceEvents.SESSION_DESTROY.name))
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -185,5 +220,6 @@ class PlayerService : Service() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(playPauseReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(skipNextReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(skipPrevReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(sessionDestroyReceiver)
     }
 }

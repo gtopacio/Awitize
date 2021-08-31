@@ -22,11 +22,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class LibraryFragment : Fragment() {
 
-    interface LibraryListener{
-        fun tapHome()
-    }
-
-    private var listener : LibraryListener? = null
     private lateinit var fab : FloatingActionButton
 
     // TODO: Rename and change types of parameters
@@ -46,24 +41,7 @@ class LibraryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_library, container, false)
-        fab = view.findViewById(R.id.fab_frag_lib)
-        fab.setOnClickListener{
-            listener?.tapHome()
-        }
         return view
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if(context is LibraryListener)
-            listener = context
-        else
-            throw RuntimeException("$context must implement LibraryListener")
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
     }
 
     companion object {
