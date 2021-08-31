@@ -29,7 +29,7 @@ class NavFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_nav, container, false)
-        back = view.findViewById(R.id.ib_back)
+        back = view.findViewById(R.id.ib_home)
         search = view.findViewById(R.id.ib_search)
         account = view.findViewById(R.id.ib_account)
         back.setOnClickListener{

@@ -45,7 +45,7 @@
         app:tint="@color/dark_02" />
 
     <ImageButton
-        android:id="@+id/ib_back"
+        android:id="@+id/ib_home"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="36dp"
@@ -55,7 +55,7 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic___back"
+        android:src="@drawable/ic___home"
         app:layout_constraintBottom_toTopOf="@+id/guideline16"
         app:layout_constraintEnd_toStartOf="@+id/guideline17"
         app:layout_constraintHorizontal_bias="0.27"
