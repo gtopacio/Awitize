@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.*
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.service.PlayerService
+import kotlin.math.max
 
 class MusicPlayer : AppCompatActivity() {
     private var TAG = "MusicPlayer"
@@ -22,6 +23,8 @@ class MusicPlayer : AppCompatActivity() {
     private lateinit var skipNext : ImageButton
     private lateinit var skipPrev : ImageButton
     private lateinit var title : TextView
+    private lateinit var currDuration : TextView
+    private lateinit var maxDuration : TextView
     private lateinit var btnSong1 : Button
     private lateinit var btnSong2 : Button
 
@@ -66,9 +69,11 @@ class MusicPlayer : AppCompatActivity() {
         else
             play.setImageResource(R.drawable.exo_controls_play)
 
+        maxDuration.text = "${playerService.getMaxDuration()}"
+        currDuration.text = "${playerService.getCurrentDuration()}"
+
         if(nowPlaying == null){
             title.text = "No Song"
-
             return
         }
 
@@ -83,6 +88,8 @@ class MusicPlayer : AppCompatActivity() {
         btnSong1 = findViewById(R.id.btn_queue_song1)
         btnSong2 = findViewById(R.id.btn_queue_song2)
         title = findViewById(R.id.tv_title)
+        currDuration = findViewById(R.id.tv_curr)
+        maxDuration = findViewById(R.id.tv_max)
         play = findViewById(R.id.ib_play)
         skipNext = findViewById(R.id.ib_skip_next)
         skipPrev = findViewById(R.id.ib_skip_prev)
