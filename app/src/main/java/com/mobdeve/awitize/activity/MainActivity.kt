@@ -4,11 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.auth.FirebaseAuth
-import com.mobdeve.awitize.MusicPlayer
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.fragment.*

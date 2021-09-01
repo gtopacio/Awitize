@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Awitize">
-        <activity android:name=".activity.MusicPlayerActivity"></activity>
+        <activity android:name=".activity.MusicPlayerActivity" />
         <activity android:name=".activity.SearchActivity" />
         <activity android:name=".activity.AccountActivity" />
         <activity android:name=".activity.LibraryActivity" />
@@ -33,7 +33,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MusicPlayer" />
     </application>
 
 </manifest>

@@ -60,29 +60,29 @@ class HomeFragment : Fragment() {
             listener?.tapLibrary()
         }
 
-//        val categories = resources.getStringArray(R.array.Categories)
-//        val spinner = view.findViewById<Spinner>(R.id.sp_frag_home_category)
-//        if (spinner != null) {
-//            val adapter = attachedContext?.let {
-//                ArrayAdapter(
-//                    it,
-//                    android.R.layout.simple_spinner_item, categories
-//                )
-//            }
-//            spinner.adapter = adapter
-//
-//            spinner.onItemSelectedListener = object :
-//                AdapterView.OnItemSelectedListener {
-//                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-//                    Toast.makeText(attachedContext, "Selected ${categories.get(position)}", Toast.LENGTH_SHORT).show()
-//                }
-//
-//                override fun onNothingSelected(parent: AdapterView<*>) {
-//
-//                }
-//            }
-//        }
+        val categories = resources.getStringArray(R.array.Categories)
+        val spinner = view.findViewById<Spinner>(R.id.sp_frag_home_category)
+        if (spinner != null) {
+            val adapter = ArrayAdapter(
+                view.context,
+                android.R.layout.simple_spinner_item, categories
+            )
+            spinner.adapter = adapter
+            spinner.onItemSelectedListener = object :
+                AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    Toast.makeText(parent?.context, "Selected ${categories.get(position)}", Toast.LENGTH_SHORT).show()
+                }
 
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+            }
+        }
         return view
     }
 
