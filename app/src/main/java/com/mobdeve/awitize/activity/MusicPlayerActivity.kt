@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.ui.PlayerView
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.model.Music
@@ -22,6 +23,7 @@ class MusicPlayerActivity : AppCompatActivity() {
     private lateinit var play : ImageButton
     private lateinit var next : ImageButton
     private lateinit var prev : ImageButton
+    private lateinit var playerView : PlayerView
 
     //Service Connections
     private var serviceBounded : Boolean = false
@@ -31,11 +33,12 @@ class MusicPlayerActivity : AppCompatActivity() {
             serviceBounded = true
             playerService = (service as PlayerService.PlayerBinder).getService()
             updateUI()
-            playerService?.queueSong(Music("Beautiful Moon","Noiseless-World","https://drive.google.com/uc?id=1E9alcqJwVotLNx-uzVE7QWSIuFk6WJkI", "https://drive.google.com/uc?id=1-ZkHAIGn0SrpSQmEv3l1mbK8UgODfo9g"))
+            playerService?.connectPlayerView(playerView)
         }
         override fun onServiceDisconnected(name: ComponentName?) {
             playerService = null
             serviceBounded = false
+            playerView.player = null
         }
     }
 
@@ -68,6 +71,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         artist.text = metaData?.artist
         title.text = metaData?.title
         play.setImageResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause else R.drawable.ic___play)
+        playerView.showController()
     }
 
     private fun initComponents(){
@@ -77,6 +81,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         play = findViewById(R.id.ib_player_play)
         next = findViewById(R.id.ib_player_next)
         prev = findViewById(R.id.ib_player_prev)
+        playerView = findViewById(R.id.playerView)
 
         play.setOnClickListener{
             val i = Intent(PlayerServiceEvents.PLAY_PAUSE.name)

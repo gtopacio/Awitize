@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.PlaybackStatsListener
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import com.google.android.exoplayer2.ui.PlayerView
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.model.Music
 import java.net.URL
@@ -221,5 +222,9 @@ class PlayerService : Service() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(skipNextReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(skipPrevReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(sessionDestroyReceiver)
+    }
+
+    fun connectPlayerView(playerView: PlayerView) {
+        playerView.player = player
     }
 }
