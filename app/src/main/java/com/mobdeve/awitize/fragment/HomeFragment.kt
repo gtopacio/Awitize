@@ -40,10 +40,14 @@ class HomeFragment : Fragment() {
     private var param2: String? = null
 
     private var attachedContext : Context? = null
+    private lateinit var categories: String
+    private lateinit var spinner: Spinner
 
     private lateinit var recycler_view: RecyclerView
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>? = null
+
+    private lateinit var text:String
 
     private lateinit var fab : FloatingActionButton
 
@@ -71,11 +75,11 @@ class HomeFragment : Fragment() {
         val categories = resources.getStringArray(R.array.Categories)
         val spinner = view.findViewById<Spinner>(R.id.sp_frag_home_category)
         if (spinner != null) {
-            val adapter = ArrayAdapter(
+            val spinneradapter = ArrayAdapter(
                 view.context,
                 android.R.layout.simple_spinner_item, categories
             )
-            spinner.adapter = adapter
+            spinner.adapter = spinneradapter
             spinner.onItemSelectedListener = object :
                 AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -84,7 +88,11 @@ class HomeFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    
+                    val text: String = parent?.getItemAtPosition(position).toString()
+                    recycler_view.apply {
+                        layoutManager = LinearLayoutManager(activity)
+                        adapter = RecyclerAdapter(text)
+                    }
                     Toast.makeText(parent?.context, "Selected ${categories.get(position)}", Toast.LENGTH_SHORT).show()
                 }
 
@@ -97,10 +105,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recycler_view.apply {
-            layoutManager = LinearLayoutManager(activity)
-            adapter = RecyclerAdapter()
-        }
+
     }
 
     override fun onAttach(context: Context) {
