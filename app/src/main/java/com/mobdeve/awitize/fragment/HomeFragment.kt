@@ -27,7 +27,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
+class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fragment() {
 
     interface HomeListener{
         fun tapLibrary()
@@ -50,6 +50,12 @@ class HomeFragment : Fragment() {
     private lateinit var text:String
 
     private lateinit var fab : FloatingActionButton
+
+    private var collectionListener: RecyclerAdapter.CollectionListener
+
+    init {
+        this.collectionListener = collectionListener
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +97,7 @@ class HomeFragment : Fragment() {
                     val text: String = parent?.getItemAtPosition(position).toString()
                     recycler_view.apply {
                         layoutManager = LinearLayoutManager(activity)
-                        adapter = RecyclerAdapter(text)
+                        adapter = RecyclerAdapter(text, collectionListener)
                     }
                     Toast.makeText(parent?.context, "Selected ${categories.get(position)}", Toast.LENGTH_SHORT).show()
                 }
@@ -123,6 +129,7 @@ class HomeFragment : Fragment() {
         listener = null
     }
 
+    /*
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -142,4 +149,5 @@ class HomeFragment : Fragment() {
                 }
             }
     }
+    */
 }

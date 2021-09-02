@@ -4,14 +4,16 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.auth.FirebaseAuth
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.fragment.*
 import com.mobdeve.awitize.helpers.DatabaseHelper
+import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
 
-class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFragment.NavListener, HomeFragment.HomeListener {
+class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFragment.NavListener, HomeFragment.HomeListener, RecyclerAdapter.CollectionListener {
 
     private val TAG = "MainActivity"
 
@@ -21,17 +23,21 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
     private lateinit var searchFragment : SearchFragment
     private lateinit var navFragment: NavFragment
 
+    private lateinit var collectionFragment: CollectionTemplateFragment
+
     private val databaseHelper : DatabaseHelper = DatabaseHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        homeFragment = HomeFragment()
+        homeFragment = HomeFragment(this)
         accountFragment = AccountFragment()
         searchFragment = SearchFragment()
         navFragment = NavFragment()
         libraryFragment = LibraryFragment()
+
+        collectionFragment = CollectionTemplateFragment()
 
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frag_main_nav, navFragment)
@@ -89,6 +95,13 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
     override fun tapHome() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frag_main, homeFragment)
+            commit()
+        }
+    }
+
+    override fun onClickCollectionListener() {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.frag_main, collectionFragment)
             commit()
         }
     }
