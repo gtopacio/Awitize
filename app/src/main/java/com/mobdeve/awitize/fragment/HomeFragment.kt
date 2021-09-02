@@ -10,8 +10,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
 import java.lang.RuntimeException
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,6 +41,10 @@ class HomeFragment : Fragment() {
 
     private var attachedContext : Context? = null
 
+    private lateinit var recycler_view: RecyclerView
+    private var layoutManager: RecyclerView.LayoutManager? = null
+    private var adapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>? = null
+
     private lateinit var fab : FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +61,7 @@ class HomeFragment : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        recycler_view = view.findViewById(R.id.rv_frag_home)
 
         fab = view.findViewById(R.id.fab_frag_home)
         fab.setOnClickListener{
@@ -76,6 +84,7 @@ class HomeFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
+                    
                     Toast.makeText(parent?.context, "Selected ${categories.get(position)}", Toast.LENGTH_SHORT).show()
                 }
 
@@ -84,6 +93,14 @@ class HomeFragment : Fragment() {
             }
         }
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        recycler_view.apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = RecyclerAdapter()
+        }
     }
 
     override fun onAttach(context: Context) {
