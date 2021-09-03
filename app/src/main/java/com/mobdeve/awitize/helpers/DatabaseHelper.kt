@@ -12,13 +12,23 @@ class DatabaseHelper {
     private val users : DatabaseReference = db.reference.child(DatabaseCollections.users.name)
     private val musics : DatabaseReference = db.reference.child(DatabaseCollections.musics.name)
 
-    public fun registerUser(context: Context, email: String, uid:String){
+    fun registerUser(context: Context, email: String, uid:String){
         val user = User(email)
         users.child(uid).setValue(user)
     }
 
-    public fun deleteUser(context: Context, uid: String){
+    fun deleteUser(context: Context, uid: String){
         users.child(uid).removeValue()
     }
 
+    companion object{
+        private var instance: DatabaseHelper? = null
+        fun getInstance(): DatabaseHelper = getIns()
+        private fun getIns() : DatabaseHelper{
+            if(instance == null){
+                this.instance = DatabaseHelper()
+            }
+            return instance as DatabaseHelper
+        }
+    }
 }

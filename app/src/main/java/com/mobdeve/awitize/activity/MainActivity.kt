@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
 
     private lateinit var collectionFragment: CollectionTemplateFragment
 
-    private val databaseHelper : DatabaseHelper = DatabaseHelper()
+    private val databaseHelper : DatabaseHelper = DatabaseHelper.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

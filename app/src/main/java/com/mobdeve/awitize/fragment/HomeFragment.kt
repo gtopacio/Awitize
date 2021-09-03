@@ -2,6 +2,7 @@ package com.mobdeve.awitize.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,14 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
+import com.mobdeve.awitize.viewmodel.HomeFragmentViewModel
 import java.lang.RuntimeException
 
 // TODO: Rename parameter arguments, choose names that match
@@ -22,11 +26,8 @@ import java.lang.RuntimeException
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+private const val TAG = "HomeFragment"
+
 class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fragment() {
 
     interface HomeListener{
@@ -44,13 +45,10 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
     private lateinit var spinner: Spinner
 
     private lateinit var recycler_view: RecyclerView
-    private var layoutManager: RecyclerView.LayoutManager? = null
-    private var adapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>? = null
-
-    private lateinit var text:String
+    private lateinit var recyclerAdapter: RecyclerAdapter
+    private lateinit var viewModel : HomeFragmentViewModel
 
     private lateinit var fab : FloatingActionButton
-
     private var collectionListener: RecyclerAdapter.CollectionListener
 
     init {
@@ -78,43 +76,46 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
             listener?.tapLibrary()
         }
 
-        val categories = resources.getStringArray(R.array.Categories)
-        val spinner = view.findViewById<Spinner>(R.id.sp_frag_home_category)
-        if (spinner != null) {
-            val spinneradapter = ArrayAdapter(
-                view.context,
-                android.R.layout.simple_spinner_item, categories
-            )
-            spinner.adapter = spinneradapter
-            spinner.onItemSelectedListener = object :
-                AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val text: String = parent?.getItemAtPosition(position).toString()
-                    recycler_view.apply {
-                        layoutManager = LinearLayoutManager(activity)
-                        adapter = RecyclerAdapter(text, collectionListener)
-                    }
-                    Toast.makeText(parent?.context, "Selected ${categories.get(position)}", Toast.LENGTH_SHORT).show()
-                }
+        recyclerAdapter = RecyclerAdapter(collectionListener)
+        recycler_view.apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = recyclerAdapter
+        }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                }
+        viewModel = ViewModelProvider(this).get(HomeFragmentViewModel::class.java)
+        viewModel.init()
+
+        viewModel.displayedData.observe(viewLifecycleOwner, Observer {
+            recyclerAdapter.setData(it)
+        })
+
+        val categories = resources.getStringArray(R.array.Categories)
+        spinner = view.findViewById(R.id.sp_frag_home_category)
+        val spinneradapter = ArrayAdapter(
+            view.context,
+            android.R.layout.simple_spinner_item, categories
+        )
+        spinner.adapter = spinneradapter
+        spinner.onItemSelectedListener = object :
+            AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val text: String = parent?.getItemAtPosition(position).toString()
+                viewModel.setCategory(text)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-    }
-
     override fun onAttach(context: Context) {
+
         super.onAttach(context)
         this.attachedContext = context
         if(context is HomeListener)

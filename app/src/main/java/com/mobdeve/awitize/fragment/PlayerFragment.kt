@@ -36,7 +36,7 @@ class PlayerFragment : Fragment() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             serviceBounded = true
             playerService = (service as PlayerService.PlayerBinder).getService()
-            playerService?.queueSong(Music("Beautiful Moon","Noiseless-World","https://drive.google.com/uc?id=1E9alcqJwVotLNx-uzVE7QWSIuFk6WJkI", "https://drive.google.com/uc?id=1-ZkHAIGn0SrpSQmEv3l1mbK8UgODfo9g"))
+            playerService?.queueSong(Music("Beautiful Moon","Noiseless-World","https://drive.google.com/uc?id=1E9alcqJwVotLNx-uzVE7QWSIuFk6WJkI", "https://drive.google.com/uc?id=1-ZkHAIGn0SrpSQmEv3l1mbK8UgODfo9g", arrayOf("United States")))
         }
         override fun onServiceDisconnected(name: ComponentName?) {
             playerService = null
@@ -78,6 +78,11 @@ class PlayerFragment : Fragment() {
             LocalBroadcastManager.getInstance(view.context).sendBroadcast(Intent(PlayerServiceEvents.PLAY_PAUSE.name))
         }
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        updateUI()
     }
 
     override fun onAttach(context: Context) {

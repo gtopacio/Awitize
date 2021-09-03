@@ -19,7 +19,7 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var etPassword: EditText
     private lateinit var etConfirmPassword: EditText
     private var mAuth : FirebaseAuth = FirebaseAuth.getInstance()
-    private val db : DatabaseHelper = DatabaseHelper()
+    private val db : DatabaseHelper = DatabaseHelper.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,43 +1,59 @@
 package com.mobdeve.awitize.service
 
-import android.app.IntentService
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
-import android.os.Binder
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.util.Log
 import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.analytics.AnalyticsListener
-import com.google.android.exoplayer2.analytics.PlaybackStatsListener
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.gms.location.*
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.model.Music
-import java.net.URL
 import java.util.*
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import java.util.function.Consumer
 
 class PlayerService : Service() {
 
-    private val TAG = "PlayerService"
-
     inner class PlayerBinder : Binder(){
-        public fun getService() : PlayerService?{
+        fun getService() : PlayerService{
             return this@PlayerService
         }
     }
 
+    private val TAG = "PlayerService"
     private var nowPlaying : MediaItem? = null
     private lateinit var player : SimpleExoPlayer
     private var queue : LinkedList<MediaItem> = LinkedList()
     private var history : LinkedList<MediaItem> = LinkedList()
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private var currentLocation : String? = null
+
+    private var locationCallback = object: LocationCallback() {
+        override fun onLocationResult(p0: LocationResult?) {
+            super.onLocationResult(p0)
+            val geocoder = Geocoder(this@PlayerService)
+            val location = p0?.locations?.first()
+            currentLocation =
+                location?.latitude?.let { geocoder.getFromLocation(it, location.longitude, 1).first().countryName }
+        }
+    }
+
+    private var locationRequest = LocationRequest.create()
 
     //BroadcastReceivers
     private val destroyReceiver = object: BroadcastReceiver(){
@@ -80,19 +96,17 @@ class PlayerService : Service() {
         }
     }
 
-    public fun queueSong(music: Music){
+    fun queueSong(music: Music){
         val queueThread = object: Thread(){
             override fun run() {
                 Looper.prepare()
                 val metaData = MediaMetadata.Builder()
-                val albumURL = URL(music.albumCoverURL)
                 metaData.setTitle(music.title)
                 metaData.setArtist(music.artist)
                 metaData.setArtworkUri(Uri.parse(music.albumCoverURL))
-//                metaData.setArtworkData(albumURL.readBytes(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-                var mediaItem = MediaItem.Builder().setUri(music.audioFileURL).setMediaMetadata(metaData.build()).build()
+                val mediaItem = MediaItem.Builder().setUri(music.audioFileURL).setMediaMetadata(metaData.build()).build()
                 queue.add(mediaItem)
-                var i = Intent(PlayerServiceEvents.NEW_SONG.name)
+                val i = Intent(PlayerServiceEvents.NEW_SONG.name)
                 i.putExtra("message", "Queued " + music.artist + " - " + music.title)
                 LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
             }
@@ -100,7 +114,17 @@ class PlayerService : Service() {
         queueThread.start()
     }
 
+    @SuppressLint("MissingPermission")
     private fun playNextSong() {
+
+        val geocoder = Geocoder(this)
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+            if(it != null){
+                val countryName = geocoder.getFromLocation(it.latitude, it.longitude, 1).first().countryName
+                Log.d(TAG, "playNextSong: $countryName")
+            }
+        }
+
         if(queue.size > 0){
             if(history.size > 5)
                 history.pollFirst()
@@ -130,20 +154,12 @@ class PlayerService : Service() {
         }
     }
 
-    public fun isPlaying(): Boolean{
+    fun isPlaying(): Boolean{
         return player.playWhenReady
     }
 
-    public fun getNowPlaying(): MediaItem?{
+    fun getNowPlaying(): MediaItem?{
         return nowPlaying
-    }
-
-    public fun getCurrentDuration(): Long{
-        return player.currentPosition
-    }
-
-    public fun getMaxDuration(): Long{
-        return player.contentDuration
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -178,8 +194,16 @@ class PlayerService : Service() {
         nowPlaying = null
     }
 
+    @SuppressLint("MissingPermission")
     override fun onCreate() {
         super.onCreate()
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        locationRequest.interval = 1000
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+
         player = SimpleExoPlayer.Builder(this).build()
         player.addListener(object: Player.Listener{
 
@@ -201,6 +225,8 @@ class PlayerService : Service() {
                 LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
             }
         })
+
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
