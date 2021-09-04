@@ -36,7 +36,6 @@ class PlayerFragment : Fragment() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             serviceBounded = true
             playerService = (service as PlayerService.PlayerBinder).getService()
-            playerService?.queueSong(Music("Beautiful Moon","Noiseless-World","https://drive.google.com/uc?id=1E9alcqJwVotLNx-uzVE7QWSIuFk6WJkI", "https://drive.google.com/uc?id=1-ZkHAIGn0SrpSQmEv3l1mbK8UgODfo9g", arrayOf("United States")))
         }
         override fun onServiceDisconnected(name: ComponentName?) {
             playerService = null
@@ -53,9 +52,17 @@ class PlayerFragment : Fragment() {
 
     private fun updateUI() {
         val metaData = playerService?.getNowPlaying()?.mediaMetadata
-        attachedContext?.let { Glide.with(it).load(metaData?.artworkUri).into(albumCover) }
-        artist.text = metaData?.artist
-        title.text = metaData?.title
+        if(metaData == null){
+            attachedContext?.let { Glide.with(it).load(R.drawable.logo___awitize).into(albumCover) }
+            artist.text = "No Song"
+            title.text = "No Artist"
+        }
+        else{
+            attachedContext?.let { Glide.with(it).load(metaData?.artworkUri).into(albumCover) }
+            artist.text = metaData.artist
+            title.text = metaData.title
+        }
+
         playPauseButton.setBackgroundResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause else R.drawable.ic___play)
     }
 

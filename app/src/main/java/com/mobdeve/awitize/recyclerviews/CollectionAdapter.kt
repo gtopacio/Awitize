@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.model.Music
 
-class CollectionAdapter: RecyclerView.Adapter<CollectionAdapter.ViewHolder>(){
+class CollectionAdapter(private var queuer: MusicQueuer?) :
+    RecyclerView.Adapter<CollectionAdapter.ViewHolder>() {
+
+    interface MusicQueuer{
+        fun queueMusic(music: Music)
+    }
 
     private val TAG = "CollectionAdapter"
     private var songs : ArrayList<Music> = ArrayList()
@@ -39,14 +42,18 @@ class CollectionAdapter: RecyclerView.Adapter<CollectionAdapter.ViewHolder>(){
         notifyDataSetChanged()
     }
 
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        queuer = null
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var artist: TextView = itemView.findViewById(R.id.tv_item_artist)
         var title: TextView = itemView.findViewById(R.id.tv_item_title)
 
         init{
             itemView.setOnClickListener {
-                val position: Int = bindingAdapterPosition
-                Toast.makeText(itemView.context, " ${position} clicked", Toast.LENGTH_SHORT).show()
+                this@CollectionAdapter.queuer?.queueMusic(songs[bindingAdapterPosition])
             }
         }
     }

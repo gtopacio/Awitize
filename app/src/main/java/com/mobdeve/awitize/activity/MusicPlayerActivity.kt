@@ -63,13 +63,21 @@ class MusicPlayerActivity : AppCompatActivity() {
         super.onDestroy()
         unbindService(conn)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(stateChangeReceiver)
+        playerView.player = null
     }
 
     private fun updateUI() {
         val metaData = playerService?.getNowPlaying()?.mediaMetadata
-        Glide.with(this).load(metaData?.artworkUri).into(albumCover)
-        artist.text = metaData?.artist
-        title.text = metaData?.title
+        if(metaData == null){
+            Glide.with(this).load(R.drawable.logo___awitize).into(albumCover)
+            artist.text = "No Song"
+            title.text = "No Artist"
+        }
+        else{
+            Glide.with(this).load(metaData.artworkUri).into(albumCover)
+            artist.text = metaData.artist
+            title.text = metaData.title
+        }
         play.setImageResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause else R.drawable.ic___play)
         playerView.showController()
     }

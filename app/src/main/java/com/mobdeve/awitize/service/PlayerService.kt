@@ -80,7 +80,9 @@ class PlayerService : Service() {
 
     private val playPauseReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
-            player.playWhenReady = !player.playWhenReady
+            if(nowPlaying != null){
+                player.playWhenReady = !player.playWhenReady
+            }
         }
     }
 
@@ -176,6 +178,9 @@ class PlayerService : Service() {
                 LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
                 if(playbackState == ExoPlayer.STATE_ENDED){
                     playNextSong()
+                }
+                else if(playbackState == ExoPlayer.STATE_IDLE){
+                    nowPlaying = null
                 }
             }
 

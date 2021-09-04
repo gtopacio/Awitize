@@ -41,7 +41,6 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
     private var param2: String? = null
 
     private var attachedContext : Context? = null
-    private lateinit var categories: String
     private lateinit var spinner: Spinner
 
     private lateinit var recycler_view: RecyclerView
