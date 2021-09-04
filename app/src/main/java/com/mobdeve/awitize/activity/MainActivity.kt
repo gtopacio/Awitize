@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.auth.FirebaseAuth
 import com.mobdeve.awitize.R
@@ -12,6 +11,7 @@ import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.fragment.*
 import com.mobdeve.awitize.helpers.DatabaseHelper
 import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
+import com.mobdeve.awitize.model.Collection
 
 class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFragment.NavListener, HomeFragment.HomeListener, RecyclerAdapter.CollectionListener {
 
@@ -99,7 +99,8 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
         }
     }
 
-    override fun onClickCollectionListener() {
+    override fun onClickCollectionListener(collection: Collection) {
+        collectionFragment.setDisplayedCollection(collection)
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frag_main, collectionFragment)
             commit()

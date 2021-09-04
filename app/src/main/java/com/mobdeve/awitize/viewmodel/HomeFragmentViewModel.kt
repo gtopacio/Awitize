@@ -30,7 +30,7 @@ class HomeFragmentViewModel : ViewModel() {
                     if(data != null){
                         val key = data.key
                         val count = data.childrenCount
-                        artists.add(Collection(key?:"", count))
+                        artists.add(Collection("artists", key?:"", count))
                     }
                 }
                 if(category == "Artist"){
@@ -48,7 +48,7 @@ class HomeFragmentViewModel : ViewModel() {
                     if(data != null){
                         val key = data.key
                         val count = data.childrenCount
-                        albums.add(Collection(key?:"", count))
+                        albums.add(Collection("albums",key?:"", count))
                     }
                 }
                 if(category == "Album"){
@@ -67,7 +67,7 @@ class HomeFragmentViewModel : ViewModel() {
                     if(data != null){
                         val key = data.key
                         val count = data.childrenCount
-                        genres.add(Collection(key?:"", count))
+                        genres.add(Collection("genres",key?:"", count))
                     }
                 }
                 if(category == "Genre"){

@@ -23,7 +23,7 @@ class RecyclerAdapter(collectionListener: CollectionListener) :
     private var collectionListener = collectionListener
 
     interface CollectionListener{
-        fun onClickCollectionListener()
+        fun onClickCollectionListener(collection: Collection)
     }
 
     fun setData(newData : ArrayList<Collection>){
@@ -54,8 +54,7 @@ class RecyclerAdapter(collectionListener: CollectionListener) :
 
             itemView.setOnClickListener {
                 val position: Int = bindingAdapterPosition
-                collectionListener?.onClickCollectionListener()
-                Toast.makeText(itemView.context, " ${position} clicked", Toast.LENGTH_SHORT).show()
+                collectionListener.onClickCollectionListener(displayedData[position])
             }
         }
     }

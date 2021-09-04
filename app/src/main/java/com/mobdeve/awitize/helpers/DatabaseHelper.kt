@@ -21,6 +21,10 @@ class DatabaseHelper {
         users.child(uid).removeValue()
     }
 
+    fun getSong(id : String) : DatabaseReference{
+        return musics.child(id)
+    }
+
     companion object{
         private var instance: DatabaseHelper? = null
         fun getInstance(): DatabaseHelper = getIns()
