@@ -1,32 +1,34 @@
 package com.mobdeve.awitize.service
 
-import android.annotation.SuppressLint
-import android.app.Service
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationManager
+import android.app.Notification
+import android.app.PendingIntent
+import android.content.*
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.*
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.gms.location.*
+import com.mobdeve.awitize.R
 import com.mobdeve.awitize.enums.PlayerServiceEvents
+import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Music
 import java.util.*
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
-import java.util.function.Consumer
+import kotlin.collections.ArrayList
 
-class PlayerService : Service() {
+
+class PlayerService : LifecycleService() {
 
     inner class PlayerBinder : Binder(){
         fun getService() : PlayerService{
@@ -39,35 +41,23 @@ class PlayerService : Service() {
     private lateinit var player : SimpleExoPlayer
     private var queue : LinkedList<MediaItem> = LinkedList()
     private var history : LinkedList<MediaItem> = LinkedList()
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private var currentCountry : String? = null
+    private var locationHelper : LocationHelper? = null
 
-    private var currentLocation : String? = null
-
-    private var locationCallback = object: LocationCallback() {
-        override fun onLocationResult(p0: LocationResult?) {
-            super.onLocationResult(p0)
-            val geocoder = Geocoder(this@PlayerService)
-            val location = p0?.locations?.first()
-            currentLocation =
-                location?.latitude?.let { geocoder.getFromLocation(it, location.longitude, 1).first().countryName }
-        }
-    }
-
-    private var locationRequest = LocationRequest.create()
+    //Notification
+    private var notif : Notification? = null
 
     //BroadcastReceivers
     private val destroyReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
-            stopSelf()
+            this@PlayerService.stopSelf()
         }
     }
-
     private val sessionDestroyReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             destroySession()
         }
     }
-
     private val newSongReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             val message = intent?.getStringExtra("message")
@@ -77,7 +67,6 @@ class PlayerService : Service() {
             }
         }
     }
-
     private val playPauseReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             if(nowPlaying != null){
@@ -85,24 +74,34 @@ class PlayerService : Service() {
             }
         }
     }
-
     private val skipPrevReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             playPrevSong()
         }
     }
-
     private val skipNextReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             playNextSong()
         }
     }
 
+    override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
+        return PlayerBinder()
+    }
+
     fun queueSong(music: Music){
         val queueThread = object: Thread(){
             override fun run() {
                 Looper.prepare()
+                Log.d(TAG, "run: ${music.banned.size}")
+                for(x in music.banned){
+                    Log.d(TAG, "run: $x")
+                }
                 val metaData = MediaMetadata.Builder()
+                val bannedBundle = Bundle()
+                bannedBundle.putStringArrayList("banned", music.banned)
+                metaData.setExtras(bannedBundle)
                 metaData.setTitle(music.title)
                 metaData.setArtist(music.artist)
                 metaData.setArtworkUri(Uri.parse(music.albumCoverURL))
@@ -116,30 +115,39 @@ class PlayerService : Service() {
         queueThread.start()
     }
 
-    @SuppressLint("MissingPermission")
     private fun playNextSong() {
-
-        val geocoder = Geocoder(this)
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            if(it != null){
-                val countryName = geocoder.getFromLocation(it.latitude, it.longitude, 1).first().countryName
-                Log.d(TAG, "playNextSong: $countryName")
-            }
-        }
-
         if(queue.size > 0){
             if(history.size > 5)
                 history.pollFirst()
             if(nowPlaying != null){
                 history.add(nowPlaying!!)
             }
-            nowPlaying = queue.pollFirst()
+            val nextMusic = queue.pollFirst()
+            val banned = (nextMusic.mediaMetadata.extras?.get("banned") as ArrayList<String>)
+            if(banned.size > 0 && (currentCountry == null || currentCountry == "")){
+                Toast.makeText(this, "Skipped ${nextMusic.mediaMetadata.artist} - ${nextMusic.mediaMetadata.title} because of region-lock (Location not available)", Toast.LENGTH_SHORT).show()
+                playNextSong()
+                return
+            }
+            if(banned.indexOf(currentCountry) > -1){
+                Toast.makeText(this, "Skipped ${nextMusic.mediaMetadata.artist} - ${nextMusic.mediaMetadata.title} because the song is not available in your country.", Toast.LENGTH_SHORT).show()
+                playNextSong()
+                return
+            }
+            nowPlaying = nextMusic
             player.setMediaItem(nowPlaying!!)
             player.prepare()
             player.playWhenReady = true
         }
         else{
             Toast.makeText(this, "No Next Song in Queue", Toast.LENGTH_SHORT).show()
+            if(!player.isPlaying && player.playbackState == ExoPlayer.STATE_ENDED){
+                nowPlaying = null
+                player.playWhenReady = false
+                player.removeMediaItem(0)
+                val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
+                LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
+            }
         }
     }
 
@@ -164,55 +172,25 @@ class PlayerService : Service() {
         return nowPlaying
     }
 
-    override fun onBind(intent: Intent): IBinder {
-        return PlayerBinder()
+    fun connectPlayerView(playerView: PlayerView) {
+        playerView.player = player
     }
 
     private fun destroySession() {
         player.release()
-        player = SimpleExoPlayer.Builder(this).build()
-        player.addListener(object: Player.Listener{
-
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
-                LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
-                if(playbackState == ExoPlayer.STATE_ENDED){
-                    playNextSong()
-                }
-                else if(playbackState == ExoPlayer.STATE_IDLE){
-                    nowPlaying = null
-                }
-            }
-
-            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-                val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
-                LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
-            }
-
-            override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
-                val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
-                LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
-            }
-        })
+        initPlayer()
         queue.clear()
         history.clear()
         nowPlaying = null
     }
 
-    @SuppressLint("MissingPermission")
-    override fun onCreate() {
-        super.onCreate()
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        locationRequest.interval = 1000
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-
-        player = SimpleExoPlayer.Builder(this).build()
+    private fun initPlayer() {
+        val extractor = DefaultExtractorsFactory().setMp3ExtractorFlags(Mp3Extractor.FLAG_ENABLE_CONSTANT_BITRATE_SEEKING)
+        player = SimpleExoPlayer.Builder(this).setMediaSourceFactory(DefaultMediaSourceFactory(this, extractor)).build()
         player.addListener(object: Player.Listener{
 
             override fun onPlaybackStateChanged(playbackState: Int) {
+                Log.d(TAG, "onPlaybackStateChanged: ${player.duration}")
                 val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
                 LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
                 if(playbackState == ExoPlayer.STATE_ENDED){
@@ -231,21 +209,73 @@ class PlayerService : Service() {
             }
         })
 
+        var playerNotificationManager = PlayerNotificationManager.Builder(this, 1, "Awitize")
+        playerNotificationManager.setMediaDescriptionAdapter(createMediaDescriptionAdapter())
+        playerNotificationManager.setNotificationListener(object: PlayerNotificationManager.NotificationListener{
+            override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
+                super.onNotificationCancelled(notificationId, dismissedByUser)
+                if(dismissedByUser){
+                    stopSelf()
+                }
+            }
+        })
+        playerNotificationManager.build().setPlayer(player)
+    }
 
+    private fun createMediaDescriptionAdapter(): PlayerNotificationManager.MediaDescriptionAdapter {
+        return object: PlayerNotificationManager.MediaDescriptionAdapter{
+            override fun getCurrentContentTitle(player: Player): CharSequence {
+                return "Awitize"
+            }
+
+            override fun createCurrentContentIntent(player: Player): PendingIntent? {
+                return null
+            }
+
+            override fun getCurrentContentText(player: Player): CharSequence? {
+                val title = if(nowPlaying == null) "No Song" else nowPlaying!!.mediaMetadata.title.toString()
+                val artist = if(nowPlaying == null) "No Song" else nowPlaying!!.mediaMetadata.artist.toString()
+                return "$artist - $title"
+            }
+
+            override fun getCurrentLargeIcon(
+                player: Player,
+                callback: PlayerNotificationManager.BitmapCallback
+            ): Bitmap? {
+                return null
+            }
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        initPlayer()
+        locationHelper = LocationHelper(this)
+        locationHelper?.currentCountry?.observe(this, androidx.lifecycle.Observer {
+            currentCountry = it
+        })
+//        val builder = NotificationCompat.Builder(this@PlayerService, "Awitize")
+//        builder.setContentTitle("Awitize")
+//        builder.setContentText("Notification for Audio Playback")
+//        builder.setSmallIcon(R.drawable.logo___awitize)
+//        notif = builder.build()
+//        startForeground(1, notif)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         LocalBroadcastManager.getInstance(this).registerReceiver(destroyReceiver, IntentFilter(PlayerServiceEvents.DESTROY.name))
         LocalBroadcastManager.getInstance(this).registerReceiver(newSongReceiver, IntentFilter(PlayerServiceEvents.NEW_SONG.name))
         LocalBroadcastManager.getInstance(this).registerReceiver(playPauseReceiver, IntentFilter(PlayerServiceEvents.PLAY_PAUSE.name))
         LocalBroadcastManager.getInstance(this).registerReceiver(skipNextReceiver, IntentFilter(PlayerServiceEvents.SKIP_NEXT.name))
         LocalBroadcastManager.getInstance(this).registerReceiver(skipPrevReceiver, IntentFilter(PlayerServiceEvents.SKIP_PREV.name))
         LocalBroadcastManager.getInstance(this).registerReceiver(sessionDestroyReceiver, IntentFilter(PlayerServiceEvents.SESSION_DESTROY.name))
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        locationHelper?.destroy()
         player.release()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(destroyReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(newSongReceiver)
@@ -253,9 +283,5 @@ class PlayerService : Service() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(skipNextReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(skipPrevReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(sessionDestroyReceiver)
-    }
-
-    fun connectPlayerView(playerView: PlayerView) {
-        playerView.player = player
     }
 }

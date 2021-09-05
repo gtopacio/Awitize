@@ -1,6 +1,5 @@
 package com.mobdeve.awitize.recyclerviews
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,9 +35,6 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
 
     fun setSongs(newSongs : ArrayList<Music>){
         songs = newSongs
-        for(x in songs){
-            Log.d(TAG, "setSongs: ${x.title} ${x.artist}")
-        }
         notifyDataSetChanged()
     }
 

@@ -32,8 +32,8 @@ class MusicPlayerActivity : AppCompatActivity() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             serviceBounded = true
             playerService = (service as PlayerService.PlayerBinder).getService()
-            updateUI()
             playerService?.connectPlayerView(playerView)
+            updateUI()
         }
         override fun onServiceDisconnected(name: ComponentName?) {
             playerService = null
@@ -55,7 +55,6 @@ class MusicPlayerActivity : AppCompatActivity() {
         initComponents()
         val i = Intent(this, PlayerService::class.java)
         bindService(i, conn, Context.BIND_AUTO_CREATE)
-
         LocalBroadcastManager.getInstance(this).registerReceiver(stateChangeReceiver, IntentFilter(PlayerServiceEvents.PLAYER_STATE_CHANGED.name))
     }
 
@@ -68,18 +67,11 @@ class MusicPlayerActivity : AppCompatActivity() {
 
     private fun updateUI() {
         val metaData = playerService?.getNowPlaying()?.mediaMetadata
-        if(metaData == null){
-            Glide.with(this).load(R.drawable.logo___awitize).into(albumCover)
-            artist.text = "No Song"
-            title.text = "No Artist"
-        }
-        else{
-            Glide.with(this).load(metaData.artworkUri).into(albumCover)
-            artist.text = metaData.artist
-            title.text = metaData.title
-        }
+        artist.text = if(metaData == null) "No Artist" else metaData.artist
+        title.text = if(metaData == null) "No Song" else metaData.title
         play.setImageResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause else R.drawable.ic___play)
         playerView.showController()
+        Glide.with(this).load(metaData?.artworkUri).error(R.drawable.logo___awitize).into(albumCover)
     }
 
     private fun initComponents(){

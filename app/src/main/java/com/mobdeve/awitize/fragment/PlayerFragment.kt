@@ -52,17 +52,9 @@ class PlayerFragment : Fragment() {
 
     private fun updateUI() {
         val metaData = playerService?.getNowPlaying()?.mediaMetadata
-        if(metaData == null){
-            attachedContext?.let { Glide.with(it).load(R.drawable.logo___awitize).into(albumCover) }
-            artist.text = "No Song"
-            title.text = "No Artist"
-        }
-        else{
-            attachedContext?.let { Glide.with(it).load(metaData?.artworkUri).into(albumCover) }
-            artist.text = metaData.artist
-            title.text = metaData.title
-        }
-
+        attachedContext?.let { Glide.with(it).load(metaData?.artworkUri).error(R.drawable.logo___awitize).into(albumCover) }
+        artist.text = if(metaData == null) "No Artist" else metaData.artist
+        title.text = if(metaData == null) "No Song" else metaData.title
         playPauseButton.setBackgroundResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause else R.drawable.ic___play)
     }
 

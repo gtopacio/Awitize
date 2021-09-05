@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".Awitize"
@@ -16,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Awitize">
+
         <activity android:name=".activity.MusicPlayerActivity" />
         <activity android:name=".activity.SearchActivity" />
         <activity android:name=".activity.AccountActivity" />
@@ -24,7 +26,8 @@
         <service
             android:name=".service.PlayerService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback|location" />
 
         <activity android:name=".activity.SignupActivity" />
         <activity android:name=".activity.LoginActivity" />
@@ -32,7 +35,6 @@
         <activity android:name=".activity.SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
