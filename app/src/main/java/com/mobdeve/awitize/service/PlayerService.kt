@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.*
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.*
@@ -20,7 +19,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.gms.location.*
-import com.mobdeve.awitize.R
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Music

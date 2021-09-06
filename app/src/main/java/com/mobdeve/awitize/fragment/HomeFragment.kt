@@ -1,7 +1,11 @@
 package com.mobdeve.awitize.fragment
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,7 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.model.Music
+import com.mobdeve.awitize.recyclerviews.CollectionAdapter
 import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
+import com.mobdeve.awitize.service.PlayerService
 import com.mobdeve.awitize.viewmodel.HomeFragmentViewModel
 import java.lang.RuntimeException
 
@@ -28,7 +35,7 @@ private const val ARG_PARAM2 = "param2"
 
 private const val TAG = "HomeFragment"
 
-class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fragment() {
+class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fragment(), CollectionAdapter.MusicQueuer {
 
     interface HomeListener{
         fun tapLibrary()
@@ -45,10 +52,26 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
 
     private lateinit var recycler_view: RecyclerView
     private lateinit var recyclerAdapter: RecyclerAdapter
+    private lateinit var collectionAdapter: CollectionAdapter
     private lateinit var viewModel : HomeFragmentViewModel
 
     private lateinit var fab : FloatingActionButton
     private var collectionListener: RecyclerAdapter.CollectionListener
+
+    //Service Connections
+    private var serviceBounded : Boolean = false
+    private var playerService : PlayerService? = null
+    private var conn = object: ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            serviceBounded = true
+            playerService = (service as PlayerService.PlayerBinder).getService()
+        }
+        override fun onServiceDisconnected(name: ComponentName?) {
+            playerService = null
+            serviceBounded = false
+        }
+    }
+
 
     init {
         this.collectionListener = collectionListener
@@ -75,6 +98,7 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
             listener?.tapLibrary()
         }
 
+        collectionAdapter = CollectionAdapter(this)
         recyclerAdapter = RecyclerAdapter(collectionListener)
         recycler_view.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -86,6 +110,9 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
 
         viewModel.displayedData.observe(viewLifecycleOwner, Observer {
             recyclerAdapter.setData(it)
+        })
+        viewModel.recommendations.observe(viewLifecycleOwner, Observer {
+            collectionAdapter.setSongs(it)
         })
 
         val categories = resources.getStringArray(R.array.Categories)
@@ -104,6 +131,12 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
                 id: Long
             ) {
                 val text: String = parent?.getItemAtPosition(position).toString()
+                if(text == "Recommendation"){
+                    viewModel.generateRecommendations()
+                    recycler_view.adapter = collectionAdapter
+                    return
+                }
+                recycler_view.adapter =  recyclerAdapter
                 viewModel.setCategory(text)
             }
 
@@ -114,19 +147,25 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
     }
 
     override fun onAttach(context: Context) {
-
         super.onAttach(context)
         this.attachedContext = context
         if(context is HomeListener)
             listener = context
         else
             throw RuntimeException("$context must implement HomeListener")
+        val i = Intent(context, PlayerService::class.java)
+        context.bindService(i, conn, Context.BIND_AUTO_CREATE)
     }
 
     override fun onDetach() {
         super.onDetach()
         attachedContext = null
         listener = null
+        context?.unbindService(conn)
+    }
+
+    override fun queueMusic(music: Music) {
+        playerService?.queueSong(music)
     }
 
     /*
