@@ -9,12 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.enums.DatabaseCollections
+import com.mobdeve.awitize.model.Collection
+import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
 
 // TODO: Rename parameter arguments, choose names that match
@@ -40,6 +42,8 @@ class SearchFragment : Fragment() {
 
     private lateinit var editText: EditText
 
+    private var musicData = ArrayList<Music>()
+    private var searchResults = ArrayList<Music>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +72,29 @@ class SearchFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 FirebaseDatabase.getInstance().getReference("music").addValueEventListener(object : ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
+                        musicData.clear()
+                        snapshot.children.forEach{ data ->
+                            if(data != null){
+                                val title = snapshot.child("title").value.toString()
+                                val artist = snapshot.child("artist").value.toString()
+                                val audioFileURL = snapshot.child("audioFileURL").value.toString()
+                                val albumCoverURL = snapshot.child("albumCoverURL").value.toString()
+                                val banned : ArrayList<String> = ArrayList()
+                                val bannedRegions = snapshot.child("bannedRegions")
+                                bannedRegions.children.forEach {
+                                    it?.key?.let { it1 -> banned.add(it1) }
+                                }
+                                musicData.add(Music(title, artist, audioFileURL, albumCoverURL, banned))
+                            }
+                        }
+
+                        for (result in musicData)
+                            if (result.title.replace("\\s".toRegex(), "").contains(s.toString(), ignoreCase = true))
+                                searchResults.add(result)
+
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
                         TODO("Not yet implemented")
                     }
                 })
