@@ -1,10 +1,12 @@
 package com.mobdeve.awitize.recyclerviews
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.model.Collection
@@ -39,6 +41,12 @@ class RecyclerAdapter(collectionListener: CollectionListener) :
     override fun onBindViewHolder(holder: RecyclerAdapter.ViewHolder, position: Int) {
         holder.categoryName.text = displayedData.get(position).categoryName
         holder.categoryCount.text = displayedData.get(position).count.toString()
+        if (position % 2 == 1) {
+            holder.categoryCL.setBackgroundColor(Color.parseColor("#1C2120"))
+        }
+        else {
+            holder.categoryCL.setBackgroundColor(Color.parseColor("#152D2E"))
+        }
     }
 
     override fun getItemCount(): Int {
@@ -48,9 +56,12 @@ class RecyclerAdapter(collectionListener: CollectionListener) :
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var categoryName: TextView
         var categoryCount: TextView
+        var categoryCL: ConstraintLayout
         init {
             categoryName = itemView.findViewById(R.id.tv_category_name)
             categoryCount = itemView.findViewById(R.id.tv_category_count)
+            categoryCL = itemView.findViewById(R.id.cl_category)
+
 
             itemView.setOnClickListener {
                 val position: Int = bindingAdapterPosition
