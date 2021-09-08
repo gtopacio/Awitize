@@ -5,7 +5,6 @@
     android:id="@+id/cl_frag_nav"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/nav_bg"
     tools:context=".fragment.NavFragment">
 
     <ImageButton

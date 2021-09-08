@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/light_01" />
-    <!--
+    <!-- <solid android:color="@color/light_03" /> -->
+
     <gradient
-        android:startColor = "@color/light_01"
-        android:endColor = "#F2EFEB"
-        android:angle = "270"
+        android:startColor = "@color/dark_04"
+        android:endColor = "#00152D2E"
+        android:angle = "90"
         android:type = "linear" />
-    -->
+
 </shape>
