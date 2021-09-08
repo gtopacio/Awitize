@@ -23,7 +23,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline18"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/dark_02" />
+        app:tint="@color/light_01" />
 
     <ImageButton
         android:id="@+id/ib_account"
@@ -41,7 +41,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline18"
         app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/dark_02" />
+        app:tint="@color/light_01" />
 
     <ImageButton
         android:id="@+id/ib_home"
@@ -60,7 +60,7 @@
         app:layout_constraintHorizontal_bias="0.27"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/dark_02" />
+        app:tint="@color/light_01" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline18"

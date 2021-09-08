@@ -35,7 +35,7 @@
         android:fontFamily="@font/kollektif_normal"
         android:text="Rock"
         android:textColor="@color/white"
-        android:textSize="48sp"
+        android:textSize="36sp"
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever"
         android:scrollHorizontally="true"
