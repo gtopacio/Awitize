@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +27,7 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.artist.text = position.toString()
+        holder.artist.text = songs[position].artist
         holder.title.text = songs[position].title
         if (position % 2 == 1) {
             holder.conslay.setBackgroundColor(Color.parseColor("#1C2120"))
@@ -55,9 +56,10 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         var artist: TextView = itemView.findViewById(R.id.tv_item_artist)
         var title: TextView = itemView.findViewById(R.id.tv_item_title)
         var conslay: ConstraintLayout = itemView.findViewById(R.id.item_cl_song)
+        var queue: ImageButton = itemView.findViewById(R.id.ib_song_queue)
 
         init{
-            itemView.setOnClickListener {
+            queue.setOnClickListener {
                 this@CollectionAdapter.queuer?.queueMusic(songs[bindingAdapterPosition])
             }
         }
