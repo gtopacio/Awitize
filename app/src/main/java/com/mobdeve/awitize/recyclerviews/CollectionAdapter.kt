@@ -61,6 +61,11 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         queuer = null
     }
 
+    override fun onViewRecycled(holder: ViewHolder) {
+        super.onViewRecycled(holder)
+        Log.d(TAG, "onViewRecycled: recycled")
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var artist: TextView = itemView.findViewById(R.id.tv_item_artist)
         var title: TextView = itemView.findViewById(R.id.tv_item_title)

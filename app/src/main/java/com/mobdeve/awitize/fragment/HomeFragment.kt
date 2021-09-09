@@ -28,14 +28,9 @@ import com.mobdeve.awitize.service.PlayerService
 import com.mobdeve.awitize.viewmodel.HomeFragmentViewModel
 import java.lang.RuntimeException
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 private const val TAG = "HomeFragment"
 
-class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fragment(), CollectionAdapter.MusicQueuer {
+class HomeFragment(private var collectionListener: RecyclerAdapter.CollectionListener) : Fragment(), CollectionAdapter.MusicQueuer {
 
     interface HomeListener{
         fun tapLibrary()
@@ -43,11 +38,6 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
 
     private var listener : HomeListener? = null
 
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    private var attachedContext : Context? = null
     private lateinit var spinner: Spinner
 
     private lateinit var recycler_view: RecyclerView
@@ -56,7 +46,6 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
     private lateinit var viewModel : HomeFragmentViewModel
 
     private lateinit var fab : FloatingActionButton
-    private var collectionListener: RecyclerAdapter.CollectionListener
 
     //Service Connections
     private var serviceBounded : Boolean = false
@@ -72,17 +61,10 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
         }
     }
 
-
-    init {
-        this.collectionListener = collectionListener
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        collectionAdapter = CollectionAdapter(this)
+        recyclerAdapter = RecyclerAdapter(collectionListener)
     }
 
     override fun onCreateView(
@@ -98,8 +80,6 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
             listener?.tapLibrary()
         }
 
-        collectionAdapter = CollectionAdapter(this)
-        recyclerAdapter = RecyclerAdapter(collectionListener)
         recycler_view.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = recyclerAdapter
@@ -148,7 +128,6 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        this.attachedContext = context
         if(context is HomeListener)
             listener = context
         else
@@ -159,34 +138,15 @@ class HomeFragment(collectionListener: RecyclerAdapter.CollectionListener) : Fra
 
     override fun onDetach() {
         super.onDetach()
-        attachedContext = null
         listener = null
         context?.unbindService(conn)
+        recycler_view.apply {
+            layoutManager = null
+            adapter = null
+        }
     }
 
     override fun queueMusic(music: Music) {
         playerService?.queueSong(music)
     }
-
-    /*
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
-    */
 }

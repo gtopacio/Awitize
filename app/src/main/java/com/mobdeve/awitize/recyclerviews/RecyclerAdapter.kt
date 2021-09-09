@@ -18,13 +18,6 @@ import com.mobdeve.awitize.model.Collection
 class RecyclerAdapter(collectionListener: CollectionListener) :
     RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
-//    private var genre = arrayOf("Genre 1", "Genre 2", "Genre 3")
-//    private var genreSongs = arrayOf(69, 420, 69420)
-//    private var artist = arrayOf("Artist 1", "Artist 2", "Artist 3")
-//    private var artistSongs = arrayOf(1, 2, 3)
-//    private var album = arrayOf("Album 1", "Album 2", "Album 3")
-//    private var albumSongs = arrayOf(69696969, 12345, 15)
-
     private var displayedData = ArrayList<Collection>()
     private var collectionListener = collectionListener
 

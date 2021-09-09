@@ -57,6 +57,7 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
         collectionName = view.findViewById(R.id.tv_collection)
         recyclerView = view.findViewById(R.id.rv_frag_songs)
         collectionAdapter = CollectionAdapter(this)
+
         recyclerView.apply {
             adapter = collectionAdapter
             layoutManager = LinearLayoutManager(activity)
@@ -78,6 +79,10 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
         super.onDetach()
         context?.unbindService(conn)
         viewModel = null
+        recyclerView.apply {
+            adapter = null
+            layoutManager = null
+        }
     }
 
     fun setDisplayedCollection(newCollection : Collection){
