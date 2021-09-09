@@ -1,6 +1,7 @@
 package com.mobdeve.awitize.recyclerviews
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,8 @@ import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.model.Collection
 
+private const val TAG = "SearchFragment"
+
 class DialogAdapter : RecyclerView.Adapter<DialogAdapter.ViewHolder>() {
 
     private val samplePlaylist = arrayOf("P1", "P2", "P3", "P4")
@@ -22,26 +25,13 @@ class DialogAdapter : RecyclerView.Adapter<DialogAdapter.ViewHolder>() {
 
     private var playlists = ArrayList<Collection>()
 
+    fun setData(newData: ArrayList<Collection>) {
+        playlists = newData
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DialogAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
-
-        FirebaseDatabase.getInstance().getReference("users/" + FirebaseAuth.getInstance().currentUser?.uid + "/playlists").addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                playlists.clear()
-                snapshot.children.forEach{ data ->
-                    if(data != null){
-                        val key = data.key
-                        val count = data.childrenCount
-                        playlists.add(Collection("playlists",key?:"", count))
-                    }
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-        })
-
         return ViewHolder(v)
     }
 

@@ -1,8 +1,10 @@
 package com.mobdeve.awitize.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -19,10 +21,15 @@ class HomeFragmentViewModel : ViewModel() {
     private var artists = ArrayList<Collection>()
     private var albums = ArrayList<Collection>()
     private var genres = ArrayList<Collection>()
+    private var playlists = ArrayList<Collection>()
     private var displayed = MutableLiveData<ArrayList<Collection>>(ArrayList())
+    private var playlistsDisplayed = MutableLiveData<ArrayList<Collection>>(ArrayList())
     private var recom = MutableLiveData<ArrayList<Music>>(ArrayList())
 
     private var category = "Genre"
+
+    val displayedPlaylist : LiveData<ArrayList<Collection>>
+        get() = playlistsDisplayed
 
     val displayedData : LiveData<ArrayList<Collection>>
         get() = displayed
@@ -31,6 +38,8 @@ class HomeFragmentViewModel : ViewModel() {
         get() = recom
 
     fun init(){
+
+        val id = FirebaseAuth.getInstance().currentUser?.uid
 
         FirebaseDatabase.getInstance().getReference("artists").addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -81,6 +90,27 @@ class HomeFragmentViewModel : ViewModel() {
                 }
                 if(category == "Genre"){
                     displayed.value = genres
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+        FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists").addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                playlists.clear()
+                snapshot.children.forEach{ data ->
+                    if(data != null){
+                        val key = data.key
+                        val count = data.childrenCount
+                        playlists.add(Collection("playlists",key?:"", count))
+
+                        playlistsDisplayed.value = playlists
+
+                    }
+
                 }
             }
             override fun onCancelled(error: DatabaseError) {
