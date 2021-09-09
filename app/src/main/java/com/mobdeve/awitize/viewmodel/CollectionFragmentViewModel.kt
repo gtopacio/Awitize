@@ -43,7 +43,7 @@ class CollectionFragmentViewModel : ViewModel() {
                             bannedRegions.children.forEach {
                                 it?.key?.let { it1 -> banned.add(it1) }
                             }
-                            data.add(Music(title, artist, audioFileURL, albumCoverURL, banned))
+                            data.add(Music(snapshot.key.toString(), title, artist, audioFileURL, albumCoverURL, banned))
                             displayed.value = data
                         }
                         override fun onCancelled(error: DatabaseError) {

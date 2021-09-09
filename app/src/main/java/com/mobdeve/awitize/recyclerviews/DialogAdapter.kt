@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -14,21 +15,14 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.dialogs.CustomDialog
 import com.mobdeve.awitize.model.Collection
 
 private const val TAG = "SearchFragment"
 
-class DialogAdapter : RecyclerView.Adapter<DialogAdapter.ViewHolder>() {
+class DialogAdapter(private var playlists: ArrayList<Collection>, private var key: String) : RecyclerView.Adapter<DialogAdapter.ViewHolder>() {
 
-    private val samplePlaylist = arrayOf("P1", "P2", "P3", "P4")
-    private val samplePlaylistcount = arrayOf("1", "2", "3", "4")
-
-    private var playlists = ArrayList<Collection>()
-
-    fun setData(newData: ArrayList<Collection>) {
-        playlists = newData
-        notifyDataSetChanged()
-    }
+    private var customDialog: CustomDialog? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DialogAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
@@ -36,8 +30,8 @@ class DialogAdapter : RecyclerView.Adapter<DialogAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: DialogAdapter.ViewHolder, position: Int) {
-        holder.playlistName.text = playlists.get(position).categoryName
-        holder.playlistSongCount.text = playlists.get(position).count.toString()
+        holder.playlistName.text = playlists[position].categoryName
+        holder.playlistSongCount.text = playlists[position].count.toString()
         if (position % 2 == 1) {
             holder.playlistCL.setBackgroundColor(Color.parseColor("#1C2120"))
         } else {
@@ -46,12 +40,29 @@ class DialogAdapter : RecyclerView.Adapter<DialogAdapter.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return samplePlaylist.size
+        return playlists.size
+    }
+
+    fun setCustomDialog (customDialog: CustomDialog) {
+        this.customDialog = customDialog
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var playlistName: TextView = itemView.findViewById(R.id.tv_category_name)
         var playlistSongCount: TextView = itemView.findViewById(R.id.tv_category_count)
         var playlistCL: ConstraintLayout = itemView.findViewById(R.id.cl_category)
+
+        init {
+            itemView.setOnClickListener {
+                val position: Int = bindingAdapterPosition
+
+                val id = FirebaseAuth.getInstance().currentUser?.uid
+
+                FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists/" + playlistName.text.toString()).child(key).setValue(true)
+                Toast.makeText(itemView.context,"Added song to " + playlistName.text.toString(),Toast.LENGTH_SHORT).show()
+                customDialog?.dismiss()
+                customDialog = null
+            }
+        }
     }
 }

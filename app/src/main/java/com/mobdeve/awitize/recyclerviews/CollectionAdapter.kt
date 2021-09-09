@@ -2,6 +2,7 @@ package com.mobdeve.awitize.recyclerviews
 
 import android.app.AlertDialog
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,11 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.dialogs.CustomDialog
 import com.mobdeve.awitize.model.Collection
@@ -68,8 +74,30 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
             }
 
             ibSongPlaylist.setOnClickListener {
-                val dialogAdapter: DialogAdapter = DialogAdapter()
-                val customDialog: CustomDialog = CustomDialog( itemView.context,dialogAdapter)
+                var playlists = ArrayList<Collection>()
+                val id = FirebaseAuth.getInstance().currentUser?.uid
+                var dialogAdapter: DialogAdapter
+                var customDialog: CustomDialog
+                FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists").addValueEventListener(object :
+                    ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        playlists.clear()
+                        snapshot.children.forEach{ data ->
+                            if(data != null){
+                                val key = data.key
+                                val count = data.childrenCount
+                                playlists.add(Collection("playlists",key?:"", count))
+                            }
+                        }
+                    }
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
+
+                dialogAdapter = DialogAdapter(playlists, songs[bindingAdapterPosition].key)
+                customDialog = CustomDialog( itemView.context, dialogAdapter, songs[bindingAdapterPosition].key)
+                dialogAdapter.setCustomDialog(customDialog)
                 customDialog.show()
             }
         }

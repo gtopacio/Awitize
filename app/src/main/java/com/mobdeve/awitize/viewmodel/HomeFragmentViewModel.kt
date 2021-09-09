@@ -159,7 +159,7 @@ class HomeFragmentViewModel : ViewModel() {
                             bannedRegions.children.forEach {
                                 it?.key?.let { it1 -> banned.add(it1) }
                             }
-                            rec.add(Music(title, artist, audioFileURL, albumCoverURL, banned))
+                            rec.add(Music(snapshot.key.toString(), title, artist, audioFileURL, albumCoverURL, banned))
                             recom.value = rec
                         }
                     }

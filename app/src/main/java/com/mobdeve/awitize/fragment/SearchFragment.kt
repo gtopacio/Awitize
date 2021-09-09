@@ -118,7 +118,7 @@ class SearchFragment : Fragment(), CollectionAdapter.MusicQueuer{
                                 }
 
                                 if (title.replace("\\s".toRegex(), "").contains(s.toString(), ignoreCase = true) || artist.replace("\\s".toRegex(), "").contains(s.toString(), ignoreCase = true)){
-                                    musicData.add(Music(title, artist, audioFileURL, albumCoverURL, banned))
+                                    musicData.add(Music(snapshot.key.toString(), title, artist, audioFileURL, albumCoverURL, banned))
                                 }
 
                             }
