@@ -1,5 +1,6 @@
 package com.mobdeve.awitize.recyclerviews
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.dialogs.CustomDialog
 import com.mobdeve.awitize.model.Music
 
 class CollectionAdapter(private var queuer: MusicQueuer?) :
@@ -57,10 +59,17 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         var title: TextView = itemView.findViewById(R.id.tv_item_title)
         var conslay: ConstraintLayout = itemView.findViewById(R.id.item_cl_song)
         var queue: ImageButton = itemView.findViewById(R.id.ib_song_queue)
+        var ibSongPlaylist: ImageButton = itemView.findViewById(R.id.ib_song_playlist)
 
         init{
             queue.setOnClickListener {
                 this@CollectionAdapter.queuer?.queueMusic(songs[bindingAdapterPosition])
+            }
+
+            ibSongPlaylist.setOnClickListener {
+                val dialogAdapter: DialogAdapter = DialogAdapter()
+                val customDialog: CustomDialog = CustomDialog( itemView.context,dialogAdapter)
+                customDialog.show()
             }
         }
     }
