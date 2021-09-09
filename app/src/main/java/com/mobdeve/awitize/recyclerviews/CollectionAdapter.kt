@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.dialogs.CustomDialog
+import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
 
 class CollectionAdapter(private var queuer: MusicQueuer?) :

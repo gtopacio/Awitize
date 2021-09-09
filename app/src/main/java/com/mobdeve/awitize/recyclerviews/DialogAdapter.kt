@@ -7,21 +7,47 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.model.Collection
 
 class DialogAdapter : RecyclerView.Adapter<DialogAdapter.ViewHolder>() {
 
     private val samplePlaylist = arrayOf("P1", "P2", "P3", "P4")
     private val samplePlaylistcount = arrayOf("1", "2", "3", "4")
 
+    private var playlists = ArrayList<Collection>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DialogAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
+
+        FirebaseDatabase.getInstance().getReference("users/" + FirebaseAuth.getInstance().currentUser?.uid + "/playlists").addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                playlists.clear()
+                snapshot.children.forEach{ data ->
+                    if(data != null){
+                        val key = data.key
+                        val count = data.childrenCount
+                        playlists.add(Collection("playlists",key?:"", count))
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
         return ViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: DialogAdapter.ViewHolder, position: Int) {
-        holder.playlistName.text = samplePlaylist.get(position)
-        holder.playlistSongCount.text = samplePlaylistcount.get(position)
+        holder.playlistName.text = playlists.get(position).categoryName
+        holder.playlistSongCount.text = playlists.get(position).count.toString()
         if (position % 2 == 1) {
             holder.playlistCL.setBackgroundColor(Color.parseColor("#1C2120"))
         } else {
