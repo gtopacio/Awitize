@@ -1,6 +1,5 @@
 package com.mobdeve.awitize.recyclerviews
 
-import android.app.AlertDialog
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater

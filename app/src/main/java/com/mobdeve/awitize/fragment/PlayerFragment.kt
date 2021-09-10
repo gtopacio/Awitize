@@ -22,7 +22,6 @@ import com.mobdeve.awitize.service.PlayerService
 class PlayerFragment : Fragment() {
 
     //Components
-    private var attachedContext : Context? = null
     private lateinit var playPauseButton : ImageButton
     private lateinit var title : TextView
     private lateinit var artist : TextView
@@ -52,7 +51,7 @@ class PlayerFragment : Fragment() {
 
     private fun updateUI() {
         val metaData = playerService?.getNowPlaying()?.mediaMetadata
-        attachedContext?.let { Glide.with(it).load(metaData?.artworkUri).error(R.drawable.logo___awitize).into(albumCover) }
+        context?.let { Glide.with(it).load(metaData?.artworkUri).error(R.drawable.logo___awitize).into(albumCover) }
         artist.text = if(metaData == null) "No Artist" else metaData.artist
         title.text = if(metaData == null) "No Song" else metaData.title
         playPauseButton.setBackgroundResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause else R.drawable.ic___play)
@@ -70,7 +69,7 @@ class PlayerFragment : Fragment() {
         albumCover = view.findViewById(R.id.iv_mp_albumart)
         layout = view.findViewById(R.id.cl_frag_mp)
         layout.setOnClickListener{
-            val i = Intent(attachedContext, MusicPlayerActivity::class.java)
+            val i = Intent(view.context, MusicPlayerActivity::class.java)
             startActivity(i)
         }
         playPauseButton.setOnClickListener{
@@ -88,15 +87,13 @@ class PlayerFragment : Fragment() {
         super.onAttach(context)
         val i = Intent(context, PlayerService::class.java)
         context.bindService(i, conn, Context.BIND_AUTO_CREATE)
-        attachedContext = context
         LocalBroadcastManager.getInstance(context).registerReceiver(stateChangeReceiver, IntentFilter(PlayerServiceEvents.PLAYER_STATE_CHANGED.name))
     }
 
     override fun onDetach() {
         super.onDetach()
-        attachedContext?.let { LocalBroadcastManager.getInstance(it).unregisterReceiver(stateChangeReceiver) }
-        attachedContext?.unbindService(conn)
-        attachedContext = null
+        context?.let { LocalBroadcastManager.getInstance(it).unregisterReceiver(stateChangeReceiver) }
+        context?.unbindService(conn)
     }
 
 }
