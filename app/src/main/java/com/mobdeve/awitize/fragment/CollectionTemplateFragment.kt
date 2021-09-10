@@ -93,4 +93,8 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
         playerService?.queueSong(music)
     }
 
+    override fun playImmediately(music: Music) {
+        playerService?.playImmediately(music)
+    }
+
 }

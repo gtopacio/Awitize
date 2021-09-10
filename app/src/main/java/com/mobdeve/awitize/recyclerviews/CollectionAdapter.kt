@@ -25,6 +25,7 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
 
     interface MusicQueuer{
         fun queueMusic(music: Music)
+        fun playImmediately(music: Music)
     }
 
     private val TAG = "CollectionAdapter"
@@ -71,9 +72,15 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         var title: TextView = itemView.findViewById(R.id.tv_item_title)
         var conslay: ConstraintLayout = itemView.findViewById(R.id.item_cl_song)
         var queue: ImageButton = itemView.findViewById(R.id.ib_song_queue)
+        var play: ImageButton = itemView.findViewById(R.id.ib_song_play)
         var ibSongPlaylist: ImageButton = itemView.findViewById(R.id.ib_song_playlist)
 
         init{
+
+            play.setOnClickListener{
+                this@CollectionAdapter.queuer?.playImmediately(songs[bindingAdapterPosition])
+            }
+
             queue.setOnClickListener {
                 this@CollectionAdapter.queuer?.queueMusic(songs[bindingAdapterPosition])
             }

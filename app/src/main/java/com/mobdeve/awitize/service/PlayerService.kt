@@ -23,6 +23,7 @@ import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Music
 import java.util.*
+import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
 
 
@@ -89,28 +90,52 @@ class PlayerService : LifecycleService() {
     }
 
     fun queueSong(music: Music){
-        val queueThread = object: Thread(){
-            override fun run() {
-                Looper.prepare()
-                Log.d(TAG, "run: ${music.banned.size}")
-                for(x in music.banned){
-                    Log.d(TAG, "run: $x")
-                }
-                val metaData = MediaMetadata.Builder()
-                val bannedBundle = Bundle()
-                bannedBundle.putStringArrayList("banned", music.banned)
-                metaData.setExtras(bannedBundle)
-                metaData.setTitle(music.title)
-                metaData.setArtist(music.artist)
-                metaData.setArtworkUri(Uri.parse(music.albumCoverURL))
-                val mediaItem = MediaItem.Builder().setUri(music.audioFileURL).setMediaMetadata(metaData.build()).build()
-                queue.add(mediaItem)
-                val i = Intent(PlayerServiceEvents.NEW_SONG.name)
-                i.putExtra("message", "Queued " + music.artist + " - " + music.title)
-                LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
-            }
+        val queueThread = Runnable {
+            val metaData = MediaMetadata.Builder()
+            val bannedBundle = Bundle()
+            bannedBundle.putStringArrayList("banned", music.banned)
+            metaData.setExtras(bannedBundle)
+            metaData.setTitle(music.title)
+            metaData.setArtist(music.artist)
+            metaData.setArtworkUri(Uri.parse(music.albumCoverURL))
+            val mediaItem = MediaItem.Builder().setUri(music.audioFileURL).setMediaMetadata(metaData.build()).build()
+            queue.add(mediaItem)
+            val i = Intent(PlayerServiceEvents.NEW_SONG.name)
+            i.putExtra("message", "Queued " + music.artist + " - " + music.title)
+            LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
         }
-        queueThread.start()
+        Executors.newSingleThreadExecutor().execute(queueThread)
+    }
+
+    fun playImmediately(music: Music){
+        val metaData = MediaMetadata.Builder()
+        val bannedBundle = Bundle()
+        bannedBundle.putStringArrayList("banned", music.banned)
+        metaData.setExtras(bannedBundle)
+        metaData.setTitle(music.title)
+        metaData.setArtist(music.artist)
+        metaData.setArtworkUri(Uri.parse(music.albumCoverURL))
+        val mediaItem = MediaItem.Builder().setUri(music.audioFileURL).setMediaMetadata(metaData.build()).build()
+        if(history.size > 5 && nowPlaying != null){
+            history.pollFirst()
+            history.add(nowPlaying!!)
+        }
+        val nextMusic = mediaItem
+        val banned = (nextMusic.mediaMetadata.extras?.get("banned") as ArrayList<String>)
+        if(banned.size > 0 && (currentCountry == null || currentCountry == "")){
+            Toast.makeText(this, "Skipped ${nextMusic.mediaMetadata.artist} - ${nextMusic.mediaMetadata.title} because of region-lock (Location not available)", Toast.LENGTH_SHORT).show()
+            playNextSong()
+            return
+        }
+        if(banned.indexOf(currentCountry) > -1){
+            Toast.makeText(this, "Skipped ${nextMusic.mediaMetadata.artist} - ${nextMusic.mediaMetadata.title} because the song is not available in your country.", Toast.LENGTH_SHORT).show()
+            playNextSong()
+            return
+        }
+        nowPlaying = nextMusic
+        player.setMediaItem(nowPlaying!!)
+        player.prepare()
+        player.playWhenReady = true
     }
 
     private fun playNextSong() {

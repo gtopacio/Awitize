@@ -149,4 +149,8 @@ class HomeFragment(private var collectionListener: RecyclerAdapter.CollectionLis
     override fun queueMusic(music: Music) {
         playerService?.queueSong(music)
     }
+
+    override fun playImmediately(music: Music) {
+        playerService?.queueSong(music)
+    }
 }

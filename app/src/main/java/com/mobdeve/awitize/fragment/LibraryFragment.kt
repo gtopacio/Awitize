@@ -128,5 +128,9 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
         playerService?.queueSong(music)
     }
 
+    override fun playImmediately(music: Music) {
+        playerService?.playImmediately(music)
+    }
+
 
 }

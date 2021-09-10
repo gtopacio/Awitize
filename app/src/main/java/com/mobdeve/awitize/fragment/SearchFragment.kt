@@ -136,4 +136,8 @@ class SearchFragment : Fragment(), CollectionAdapter.MusicQueuer{
     override fun queueMusic(music: Music) {
         playerService?.queueSong(music)
     }
+
+    override fun playImmediately(music: Music) {
+        playerService?.playImmediately(music)
+    }
 }
