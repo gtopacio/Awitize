@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
         accountFragment = AccountFragment()
         searchFragment = SearchFragment()
         navFragment = NavFragment()
-        libraryFragment = LibraryFragment()
+        libraryFragment = LibraryFragment(this)
 
         collectionFragment = CollectionTemplateFragment()
 
@@ -106,4 +106,5 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
             commit()
         }
     }
+
 }

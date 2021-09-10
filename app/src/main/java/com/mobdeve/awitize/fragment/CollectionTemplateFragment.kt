@@ -92,4 +92,5 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
     override fun queueMusic(music: Music) {
         playerService?.queueSong(music)
     }
+
 }
