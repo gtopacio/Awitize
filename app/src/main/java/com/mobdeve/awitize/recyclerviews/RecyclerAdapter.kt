@@ -57,17 +57,10 @@ class RecyclerAdapter(collectionListener: CollectionListener) :
             categoryName = itemView.findViewById(R.id.tv_category_name)
             categoryCount = itemView.findViewById(R.id.tv_category_count)
             categoryCL = itemView.findViewById(R.id.cl_category)
-
-
             itemView.setOnClickListener {
                 val position: Int = bindingAdapterPosition
                 collectionListener.onClickCollectionListener(displayedData[position])
             }
-
-
         }
-
-
     }
-
 }

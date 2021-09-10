@@ -35,6 +35,7 @@ class PlayerFragment : Fragment() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             serviceBounded = true
             playerService = (service as PlayerService.PlayerBinder).getService()
+            updateUI()
         }
         override fun onServiceDisconnected(name: ComponentName?) {
             playerService = null
@@ -73,7 +74,7 @@ class PlayerFragment : Fragment() {
             startActivity(i)
         }
         playPauseButton.setOnClickListener{
-            LocalBroadcastManager.getInstance(view.context).sendBroadcast(Intent(PlayerServiceEvents.PLAY_PAUSE.name))
+            context?.sendBroadcast(Intent(PlayerServiceEvents.PLAY_PAUSE.name))
         }
         return view
     }

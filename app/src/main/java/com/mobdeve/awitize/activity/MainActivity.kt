@@ -1,9 +1,14 @@
 package com.mobdeve.awitize.activity
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.auth.FirebaseAuth
 import com.mobdeve.awitize.R
@@ -12,6 +17,7 @@ import com.mobdeve.awitize.fragment.*
 import com.mobdeve.awitize.helpers.DatabaseHelper
 import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
 import com.mobdeve.awitize.model.Collection
+import com.mobdeve.awitize.service.PlayerService
 
 class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFragment.NavListener, HomeFragment.HomeListener, RecyclerAdapter.CollectionListener {
 
@@ -31,6 +37,16 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if(FirebaseAuth.getInstance().currentUser == null){
+            val i = Intent(this, LoginActivity::class.java)
+            startActivity(i)
+            finish()
+            return
+        }
+
+        val i = Intent(this, PlayerService::class.java)
+        ContextCompat.startForegroundService(this, i)
+
         homeFragment = HomeFragment(this)
         accountFragment = AccountFragment()
         searchFragment = SearchFragment()
@@ -47,7 +63,7 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
     }
 
     override fun logout() {
-        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(PlayerServiceEvents.SESSION_DESTROY.name))
+        sendBroadcast(Intent(PlayerServiceEvents.SESSION_DESTROY.name))
         FirebaseAuth.getInstance().signOut()
         val i = Intent(this, LoginActivity::class.java)
         startActivity(i)

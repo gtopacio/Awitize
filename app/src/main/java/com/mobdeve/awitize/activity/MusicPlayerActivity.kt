@@ -8,11 +8,13 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ui.PlayerView
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.enums.PlayerServiceEvents
-import com.mobdeve.awitize.model.Music
+import com.mobdeve.awitize.recyclerviews.QueueAdapter
 import com.mobdeve.awitize.service.PlayerService
 
 class MusicPlayerActivity : AppCompatActivity() {
@@ -24,6 +26,8 @@ class MusicPlayerActivity : AppCompatActivity() {
     private lateinit var next : ImageButton
     private lateinit var prev : ImageButton
     private lateinit var playerView : PlayerView
+    private lateinit var rvQueue : RecyclerView
+    private lateinit var queueAdapter: QueueAdapter
 
     //Service Connections
     private var serviceBounded : Boolean = false
@@ -72,6 +76,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         play.setImageResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause else R.drawable.ic___play)
         playerView.showController()
         Glide.with(this).load(metaData?.artworkUri).error(R.drawable.logo___awitize).into(albumCover)
+        playerService?.currentQueue?.let { queueAdapter.setSongs(it) }
     }
 
     private fun initComponents(){
@@ -82,20 +87,26 @@ class MusicPlayerActivity : AppCompatActivity() {
         next = findViewById(R.id.ib_player_next)
         prev = findViewById(R.id.ib_player_prev)
         playerView = findViewById(R.id.playerView)
+        rvQueue = findViewById(R.id.rv_player_queue)
+        queueAdapter = QueueAdapter()
+        rvQueue.apply {
+            adapter = queueAdapter
+            layoutManager = LinearLayoutManager(this@MusicPlayerActivity)
+        }
 
         play.setOnClickListener{
             val i = Intent(PlayerServiceEvents.PLAY_PAUSE.name)
-            LocalBroadcastManager.getInstance(this).sendBroadcast(i)
+            sendBroadcast(i)
         }
 
         next.setOnClickListener {
             val i = Intent(PlayerServiceEvents.SKIP_NEXT.name)
-            LocalBroadcastManager.getInstance(this).sendBroadcast(i)
+            sendBroadcast(i)
         }
 
         prev.setOnClickListener {
             val i = Intent(PlayerServiceEvents.SKIP_PREV.name)
-            LocalBroadcastManager.getInstance(this).sendBroadcast(i)
+            sendBroadcast(i)
         }
     }
 }

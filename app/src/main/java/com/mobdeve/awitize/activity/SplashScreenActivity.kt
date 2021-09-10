@@ -48,7 +48,7 @@ class SplashScreenActivity : AppCompatActivity() {
         }
         else{
             Handler().postDelayed({
-                val i = Intent(this, MainActivity::class.java)
+                val i = Intent(this, LoginActivity::class.java)
                 startActivity(i)
                 finish()
             }, 3000) // 3 seconds

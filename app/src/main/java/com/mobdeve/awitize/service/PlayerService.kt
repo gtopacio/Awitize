@@ -3,13 +3,13 @@ package com.mobdeve.awitize.service
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.*
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.*
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.LiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -17,13 +17,15 @@ import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.gms.location.*
+import com.mobdeve.awitize.Awitize
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.activity.LoginActivity
+import com.mobdeve.awitize.activity.MainActivity
 import java.util.*
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
@@ -37,16 +39,21 @@ class PlayerService : LifecycleService() {
         }
     }
 
-    private val TAG = "PlayerService"
     private var nowPlaying : MediaItem? = null
     private lateinit var player : SimpleExoPlayer
     private var queue : LinkedList<MediaItem> = LinkedList()
     private var history : LinkedList<MediaItem> = LinkedList()
     private var currentCountry : String? = null
     private var locationHelper : LocationHelper? = null
+    private var bindCount : Long = 0L
+
+    val currentQueue : LinkedList<MediaItem>
+        get() = queue
 
     //Notification
-    private var notif : Notification? = null
+    private lateinit var notif : Notification
+    private lateinit var playerNotification : Notification
+    private lateinit var notificationManager : NotificationManagerCompat
 
     //BroadcastReceivers
     private val destroyReceiver = object: BroadcastReceiver(){
@@ -57,6 +64,10 @@ class PlayerService : LifecycleService() {
     private val sessionDestroyReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             destroySession()
+            if(bindCount <= 0){
+                stopForeground(true)
+                stopSelf()
+            }
         }
     }
     private val newSongReceiver = object: BroadcastReceiver(){
@@ -72,6 +83,7 @@ class PlayerService : LifecycleService() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if(nowPlaying != null){
                 player.playWhenReady = !player.playWhenReady
+                showNotification()
             }
         }
     }
@@ -88,7 +100,18 @@ class PlayerService : LifecycleService() {
 
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)
+        bindCount++
         return PlayerBinder()
+    }
+
+    override fun onRebind(intent: Intent?) {
+        super.onRebind(intent)
+        bindCount++
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        bindCount--
+        return super.onUnbind(intent)
     }
 
     fun queueSong(music: Music){
@@ -144,6 +167,13 @@ class PlayerService : LifecycleService() {
                 player.removeMediaItem(0)
                 val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
                 LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
+                showIdleNotif()
+                notificationManager.cancel(2)
+                if(bindCount <= 0){
+                    destroySession()
+                    stopForeground(true)
+                    stopSelf()
+                }
             }
         }
     }
@@ -174,6 +204,7 @@ class PlayerService : LifecycleService() {
         player.setMediaItem(nowPlaying!!)
         player.prepare()
         player.playWhenReady = true
+        showNotification()
     }
 
     private fun generateMediaItem(music: Music) : MediaItem{
@@ -193,6 +224,9 @@ class PlayerService : LifecycleService() {
         queue.clear()
         history.clear()
         nowPlaying = null
+        val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
+        LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
+        notificationManager.cancel(2)
     }
 
     private fun initPlayer() {
@@ -201,7 +235,6 @@ class PlayerService : LifecycleService() {
         player.addListener(object: Player.Listener{
 
             override fun onPlaybackStateChanged(playbackState: Int) {
-                Log.d(TAG, "onPlaybackStateChanged: ${player.duration}")
                 val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
                 LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
                 if(playbackState == ExoPlayer.STATE_ENDED){
@@ -218,68 +251,63 @@ class PlayerService : LifecycleService() {
                 val i = Intent(PlayerServiceEvents.PLAYER_STATE_CHANGED.name)
                 LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
             }
-        })
 
-        var playerNotificationManager = PlayerNotificationManager.Builder(this, 1, "Awitize")
-        playerNotificationManager.setMediaDescriptionAdapter(createMediaDescriptionAdapter())
-        playerNotificationManager.setNotificationListener(object: PlayerNotificationManager.NotificationListener{
-            override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
-                if(dismissedByUser){
-                    stopSelf()
-                }
-            }
         })
-        playerNotificationManager.build().setPlayer(player)
     }
 
-    private fun createMediaDescriptionAdapter(): PlayerNotificationManager.MediaDescriptionAdapter {
-        return object: PlayerNotificationManager.MediaDescriptionAdapter{
-            override fun getCurrentContentTitle(player: Player): CharSequence {
-                return "Awitize ${currentCountry?:""}"
-            }
+    private fun showNotification(){
+        val skipPrevIntent = PendingIntent.getBroadcast(this, 0, Intent(PlayerServiceEvents.SKIP_PREV.name), 0)
+        val skipNext = PendingIntent.getBroadcast(this, 0, Intent(PlayerServiceEvents.SKIP_NEXT.name), 0)
+        val playPause = PendingIntent.getBroadcast(this, 0, Intent(PlayerServiceEvents.PLAY_PAUSE.name), 0)
+        val sessionDestroy = PendingIntent.getBroadcast(this, 0, Intent(PlayerServiceEvents.SESSION_DESTROY.name), 0)
+        val playPauseIcon = if(nowPlaying!=null && player.playWhenReady) R.drawable.exo_icon_pause else R.drawable.exo_icon_play
+        val touchNotif = PendingIntent.getActivity(this, 0, Intent(this, LoginActivity::class.java), 0)
+        val noti = NotificationCompat.Builder(this@PlayerService, Awitize.GENERAL_CHANNEL_ID)
+        noti.setSmallIcon(R.drawable.logo___awitize)
+        noti.setContentTitle(nowPlaying?.mediaMetadata?.title)
+        noti.setContentIntent(touchNotif)
+        noti.setContentText(nowPlaying?.mediaMetadata?.artist)
+        noti.addAction(R.drawable.exo_icon_previous, "prev", skipPrevIntent)
+        noti.addAction(playPauseIcon, "playpause", playPause)
+        noti.addAction(R.drawable.exo_icon_next, "next", skipNext)
+        noti.setDeleteIntent(sessionDestroy)
+        noti.setStyle(androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(0,1,2))
+        noti.priority = NotificationCompat.PRIORITY_HIGH
+        playerNotification = noti.build()
+        notificationManager.notify(2, playerNotification)
+    }
 
-            override fun createCurrentContentIntent(player: Player): PendingIntent? {
-                return null
-            }
-
-            override fun getCurrentContentText(player: Player): CharSequence? {
-                val title = if(nowPlaying == null) "No Song" else nowPlaying!!.mediaMetadata.title.toString()
-                val artist = if(nowPlaying == null) "No Song" else nowPlaying!!.mediaMetadata.artist.toString()
-                return "$artist - $title"
-            }
-
-            override fun getCurrentLargeIcon(
-                player: Player,
-                callback: PlayerNotificationManager.BitmapCallback
-            ): Bitmap? {
-                return null
-            }
-        }
+    private fun showIdleNotif(){
+        val builder = NotificationCompat.Builder(this@PlayerService, Awitize.GENERAL_CHANNEL_ID)
+        builder.setContentTitle("Awitize ${currentCountry?:""}")
+        builder.setContentText(if(currentCountry === null) "Location is not available, unable to stream songs that have region-lock." else "Location is available.")
+        builder.setSmallIcon(R.drawable.logo___awitize)
+        builder.priority = NotificationCompat.PRIORITY_DEFAULT
+        notif = builder.build()
+        startForeground(1, notif)
     }
 
     override fun onCreate() {
         super.onCreate()
+        notificationManager = NotificationManagerCompat.from(this)
         initPlayer()
         locationHelper = LocationHelper(this)
-        locationHelper?.currentCountry?.observe(this, androidx.lifecycle.Observer {
+        locationHelper?.currentCountry?.observe(this, {
             currentCountry = it
+            if(!player.isPlaying){
+                showIdleNotif()
+            }
         })
-//        val builder = NotificationCompat.Builder(this@PlayerService, "Awitize")
-//        builder.setContentTitle("Awitize ${currentCountry?:""}")
-//        builder.setContentText("Notification for Audio Playback")
-//        builder.setSmallIcon(R.drawable.logo___awitize)
-//        notif = builder.build()
-//        startForeground(1, notif)
+        LocalBroadcastManager.getInstance(this).registerReceiver(destroyReceiver, IntentFilter(PlayerServiceEvents.DESTROY.name))
+        LocalBroadcastManager.getInstance(this).registerReceiver(newSongReceiver, IntentFilter(PlayerServiceEvents.NEW_SONG.name))
+        registerReceiver(playPauseReceiver, IntentFilter(PlayerServiceEvents.PLAY_PAUSE.name))
+        registerReceiver(skipNextReceiver, IntentFilter(PlayerServiceEvents.SKIP_NEXT.name))
+        registerReceiver(skipPrevReceiver, IntentFilter(PlayerServiceEvents.SKIP_PREV.name))
+        registerReceiver(sessionDestroyReceiver, IntentFilter(PlayerServiceEvents.SESSION_DESTROY.name))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        LocalBroadcastManager.getInstance(this).registerReceiver(destroyReceiver, IntentFilter(PlayerServiceEvents.DESTROY.name))
-        LocalBroadcastManager.getInstance(this).registerReceiver(newSongReceiver, IntentFilter(PlayerServiceEvents.NEW_SONG.name))
-        LocalBroadcastManager.getInstance(this).registerReceiver(playPauseReceiver, IntentFilter(PlayerServiceEvents.PLAY_PAUSE.name))
-        LocalBroadcastManager.getInstance(this).registerReceiver(skipNextReceiver, IntentFilter(PlayerServiceEvents.SKIP_NEXT.name))
-        LocalBroadcastManager.getInstance(this).registerReceiver(skipPrevReceiver, IntentFilter(PlayerServiceEvents.SKIP_PREV.name))
-        LocalBroadcastManager.getInstance(this).registerReceiver(sessionDestroyReceiver, IntentFilter(PlayerServiceEvents.SESSION_DESTROY.name))
         return START_STICKY
     }
 
@@ -289,9 +317,9 @@ class PlayerService : LifecycleService() {
         player.release()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(destroyReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(newSongReceiver)
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(playPauseReceiver)
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(skipNextReceiver)
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(skipPrevReceiver)
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(sessionDestroyReceiver)
+        unregisterReceiver(playPauseReceiver)
+        unregisterReceiver(skipNextReceiver)
+        unregisterReceiver(skipPrevReceiver)
+        unregisterReceiver(sessionDestroyReceiver)
     }
 }

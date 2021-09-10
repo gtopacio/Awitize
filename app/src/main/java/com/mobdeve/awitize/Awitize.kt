@@ -16,10 +16,10 @@ class Awitize : Application() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val mChannel = NotificationChannel("Awitize", "Awitize", importance)
-            mChannel.description = "Awitize Channel"
+            val generalChannel = NotificationChannel(GENERAL_CHANNEL_ID, "General Channel", importance)
+            generalChannel.description = "Channel use to display all notifications of Awitize"
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
+            notificationManager.createNotificationChannel(generalChannel)
         }
         val playerIntent = Intent(this, PlayerService::class.java)
         ContextCompat.startForegroundService(this, playerIntent)
@@ -29,5 +29,9 @@ class Awitize : Application() {
         super.onTerminate()
         val i = Intent(PlayerServiceEvents.DESTROY.name)
         LocalBroadcastManager.getInstance(this).sendBroadcast(i)
+    }
+
+    companion object{
+        const val GENERAL_CHANNEL_ID : String = "Awitize"
     }
 }
