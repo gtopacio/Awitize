@@ -22,15 +22,15 @@ class HomeFragmentViewModel : ViewModel() {
     private var artists = ArrayList<Collection>()
     private var albums = ArrayList<Collection>()
     private var genres = ArrayList<Collection>()
-    private var playlists = ArrayList<Collection>()
+//  private var playlists = ArrayList<Collection>()
     private var displayed = MutableLiveData<ArrayList<Collection>>(ArrayList())
-    private var playlistsDisplayed = MutableLiveData<ArrayList<Collection>>(ArrayList())
+//  private var playlistsDisplayed = MutableLiveData<ArrayList<Collection>>(ArrayList())
     private var recom = MutableLiveData<ArrayList<Music>>(ArrayList())
 
     private var category = "Genre"
 
-    val displayedPlaylist : LiveData<ArrayList<Collection>>
-        get() = playlistsDisplayed
+//  val displayedPlaylist : LiveData<ArrayList<Collection>>
+//      get() = playlistsDisplayed
 
     val displayedData : LiveData<ArrayList<Collection>>
         get() = displayed
@@ -48,7 +48,7 @@ class HomeFragmentViewModel : ViewModel() {
                             if(data != null){
                                 val key = data.key
                                 val count = data.childrenCount
-                                artists.add(Collection("artists", key?:"", count))
+                                artists.add(Collection("artists", key?:"", count, false))
                             }
                         }
                         if(category == "Artist"){
@@ -71,7 +71,7 @@ class HomeFragmentViewModel : ViewModel() {
                             if(data != null){
                                 val key = data.key
                                 val count = data.childrenCount
-                                albums.add(Collection("albums",key?:"", count))
+                                albums.add(Collection("albums",key?:"", count, false))
                             }
                         }
                         if(category == "Album"){
@@ -95,7 +95,7 @@ class HomeFragmentViewModel : ViewModel() {
                             if(data != null){
                                 val key = data.key
                                 val count = data.childrenCount
-                                genres.add(Collection("genres",key?:"", count))
+                                genres.add(Collection("genres",key?:"", count, false))
                             }
                         }
                         if(category == "Genre"){
@@ -109,6 +109,7 @@ class HomeFragmentViewModel : ViewModel() {
 
             }
         })
+
 //        FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists").addValueEventListener(object :
 //            ValueEventListener {
 //            override fun onDataChange(snapshot: DataSnapshot) {

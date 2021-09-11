@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -29,6 +30,7 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
     private lateinit var collectionAdapter: CollectionAdapter
     private var viewModel : CollectionFragmentViewModel? = null
     private lateinit var displayedData : Collection
+    private lateinit var deleteOpt : ImageButton
 
     //Service Connections
     private var serviceBounded : Boolean = false
@@ -72,6 +74,18 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
         viewModel?.displayedData?.observe(viewLifecycleOwner, Observer {
             collectionAdapter.setSongs(it)
         })
+
+        deleteOpt = view.findViewById(R.id.ib_delete_songs)
+
+        if (displayedData.playlist)
+            deleteOpt.visibility = (View.VISIBLE)
+        else
+            deleteOpt.visibility = (View.GONE)
+
+        deleteOpt.setOnClickListener {
+            collectionAdapter.showDelete(displayedData.categoryName)
+        }
+
         return view
     }
 

@@ -70,7 +70,7 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
                     if(data != null){
                         val key = data.key
                         val count = data.childrenCount
-                        playlists.add(Collection("users/${id}/playlists",key?:"", count))
+                        playlists.add(Collection("users/${id}/playlists",key?:"", count, true))
                         recyclerAdapter.setData(playlists)
                     }
                 }

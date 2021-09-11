@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -30,12 +31,29 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
     private val TAG = "CollectionAdapter"
     private var songs : ArrayList<Music> = ArrayList()
 
+    private lateinit var playlistName : String
+    private var delete = false
+
+    fun showDelete (playlistName: String) {
+        this.playlistName = playlistName
+        if (delete)
+            delete = false
+        else
+            delete = true
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_song, parent, false)
         return ViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if (delete)
+            holder.songDelete.visibility = View.VISIBLE
+        else
+            holder.songDelete.visibility = View.GONE
+
         holder.artist.text = songs[position].artist
         holder.title.text = songs[position].title
         if (position % 2 == 1) {
@@ -73,6 +91,7 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         var queue: ImageButton = itemView.findViewById(R.id.ib_song_queue)
         var play: ImageButton = itemView.findViewById(R.id.ib_song_play)
         var ibSongPlaylist: ImageButton = itemView.findViewById(R.id.ib_song_playlist)
+        var songDelete: ImageButton = itemView.findViewById(R.id.ib_song_delete)
 
         init{
 
@@ -97,7 +116,7 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
                             if(data != null){
                                 val key = data.key
                                 val count = data.childrenCount
-                                playlists.add(Collection("playlists",key?:"", count))
+                                playlists.add(Collection("playlists",key?:"", count, true))
                             }
                         }
                     }
@@ -110,6 +129,17 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
                 customDialog = CustomDialog( itemView.context, dialogAdapter, songs[bindingAdapterPosition].key)
                 dialogAdapter.setCustomDialog(customDialog)
                 customDialog.show()
+            }
+
+            songDelete.setOnClickListener {
+                val position: Int = bindingAdapterPosition
+
+                val id = FirebaseAuth.getInstance().currentUser?.uid
+                FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists/" + playlistName + "/" + songs[position].key).setValue(null)
+                Toast.makeText(itemView.context,"Deleted song: " + title.text + " from " + playlistName,
+                    Toast.LENGTH_SHORT).show()
+                songs.removeAt(position)
+                notifyDataSetChanged()
             }
         }
     }
