@@ -36,10 +36,7 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
 
     fun showDelete (playlistName: String) {
         this.playlistName = playlistName
-        if (delete)
-            delete = false
-        else
-            delete = true
+        delete = !delete
         notifyDataSetChanged()
     }
 
@@ -136,8 +133,7 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
 
                 val id = FirebaseAuth.getInstance().currentUser?.uid
                 FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists/" + playlistName + "/" + songs[position].key).setValue(null)
-                Toast.makeText(itemView.context,"Deleted song: " + title.text + " from " + playlistName,
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(itemView.context,"Deleted song: " + title.text + " from " + playlistName, Toast.LENGTH_SHORT).show()
                 songs.removeAt(position)
                 notifyDataSetChanged()
             }
