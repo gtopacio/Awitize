@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -26,26 +27,11 @@ import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
 import com.mobdeve.awitize.service.PlayerService
 import java.lang.RuntimeException
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [LibraryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LibraryFragment(private var collectionListener: RecyclerAdapter.CollectionListener) : Fragment(), CollectionAdapter.MusicQueuer  {
 
-    private lateinit var fab : FloatingActionButton
     private lateinit var recycler_view: RecyclerView
     private lateinit var collectionAdapter: CollectionAdapter
     private lateinit var recyclerAdapter: RecyclerAdapter
-
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     private var serviceBounded : Boolean = false
     private var playerService : PlayerService? = null
@@ -62,10 +48,7 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
         collectionAdapter = CollectionAdapter(this)
         recyclerAdapter = RecyclerAdapter(collectionListener)
     }
@@ -77,6 +60,7 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
         val view = inflater.inflate(R.layout.fragment_library, container, false)
         var playlists = ArrayList<Collection>()
         val id = FirebaseAuth.getInstance().currentUser?.uid
+        var deleteOption : ImageButton = view.findViewById(R.id.ib_delete_playlists)
 
         FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists").addValueEventListener(object :
             ValueEventListener {
@@ -95,6 +79,10 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
 
             }
         })
+
+        deleteOption.setOnClickListener {
+            recyclerAdapter.showDelete()
+        }
 
 
         recycler_view = view.findViewById(R.id.rv_frag_lib)

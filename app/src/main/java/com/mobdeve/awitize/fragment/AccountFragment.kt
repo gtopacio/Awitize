@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.mobdeve.awitize.R
 import java.lang.RuntimeException
 
@@ -39,6 +41,11 @@ class AccountFragment : Fragment() {
         }
 
         deleteAccount.setOnClickListener{
+            val id = FirebaseAuth.getInstance().currentUser?.uid
+            FirebaseDatabase.getInstance().getReference("users/" + id).setValue(null)
+            Toast.makeText(context,"Deleted account: " + email.text.toString(),
+                Toast.LENGTH_SHORT).show()
+
             listener?.deleteAccount()
         }
 
