@@ -35,10 +35,7 @@ class RecyclerAdapter(collectionListener: CollectionListener) :
     }
 
     fun showDelete () {
-        if (delete)
-            delete = false
-        else
-            delete = true
+        delete = !delete
         notifyDataSetChanged()
     }
 

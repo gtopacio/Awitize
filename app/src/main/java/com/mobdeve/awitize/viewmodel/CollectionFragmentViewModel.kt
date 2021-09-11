@@ -31,6 +31,7 @@ class CollectionFragmentViewModel : ViewModel() {
         override fun onDataChange(snapshot: DataSnapshot) {
             val queuer = object: Runnable{
                 override fun run() {
+                    data.clear()
                     snapshot.children.forEach { song ->
                         FirebaseDatabase.getInstance().getReference("music/${song.key}").addListenerForSingleValueEvent(object: ValueEventListener{
                             override fun onDataChange(snapshot: DataSnapshot) {
