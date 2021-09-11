@@ -55,7 +55,7 @@ class PlayerFragment : Fragment() {
         context?.let { Glide.with(it).load(metaData?.artworkUri).error(R.drawable.logo___awitize).into(albumCover) }
         artist.text = if(metaData == null) "No Artist" else metaData.artist
         title.text = if(metaData == null) "No Song" else metaData.title
-        playPauseButton.setBackgroundResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause else R.drawable.ic___play)
+        playPauseButton.setBackgroundResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause_vector else R.drawable.ic___play_vector)
     }
 
     override fun onCreateView(

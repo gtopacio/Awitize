@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/light_02"
         android:clickable="true"
-        android:src="@drawable/ic___folder"
+        android:src="@drawable/ic___folder_vector"
         app:layout_constraintBottom_toTopOf="@+id/sp_frag_home_category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"

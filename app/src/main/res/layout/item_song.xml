@@ -19,7 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic___trash"
+        app:srcCompat="@drawable/ic___trash_vector"
         app:tint="@color/light_03" />
 
     <ImageButton
@@ -30,11 +30,11 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:scaleType="fitCenter"
-        app:tint="@color/light_01"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ib_song_playlist"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic___add" />
+        app:srcCompat="@drawable/ic___add_vector"
+        app:tint="@color/light_01" />
 
     <ImageButton
         android:id="@+id/ib_song_playlist"
@@ -47,7 +47,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ib_song_delete"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic___list"
+        app:srcCompat="@drawable/ic___list_vector"
         app:tint="@color/white" />
 
     <ImageButton
@@ -61,7 +61,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic___play"
+        app:srcCompat="@drawable/ic___play_vector"
         app:tint="@color/white" />
 
     <TextView

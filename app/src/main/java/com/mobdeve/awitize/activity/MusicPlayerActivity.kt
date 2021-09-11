@@ -73,7 +73,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         val metaData = playerService?.getNowPlaying()?.mediaMetadata
         artist.text = if(metaData == null) "No Artist" else metaData.artist
         title.text = if(metaData == null) "No Song" else metaData.title
-        play.setImageResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause else R.drawable.ic___play)
+        play.setImageResource(if(playerService?.isPlaying() == true) R.drawable.ic___pause_vector else R.drawable.ic___play_vector)
         playerView.showController()
         Glide.with(this).load(metaData?.artworkUri).error(R.drawable.logo___awitize).into(albumCover)
         playerService?.currentQueue?.let { queueAdapter.setSongs(it) }

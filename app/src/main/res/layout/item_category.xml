@@ -21,7 +21,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic___trash"
+        app:srcCompat="@drawable/ic___trash_vector"
         app:tint="@color/dark_02" />
 
     <TextView
