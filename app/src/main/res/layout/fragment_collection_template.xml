@@ -8,21 +8,6 @@
     android:background="@color/dark_01"
     tools:context=".fragment.CollectionTemplateFragment">
 
-    <ImageButton
-        android:id="@+id/ib_delete_songs"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:adjustViewBounds="true"
-        android:background="@null"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic___settings_vector"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/light_03" />
-
     <TextView
         android:id="@+id/tv_collection"
         android:layout_width="0dp"
@@ -34,10 +19,48 @@
         android:text="Collection"
         android:textColor="@color/white"
         android:textSize="48sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/rv_frag_songs"
         app:layout_constraintEnd_toStartOf="@+id/ib_delete_songs"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_edit_playlist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:fontFamily="@font/kollektif_normal"
+        android:inputType="textPersonName"
+        android:singleLine="true"
+        android:textColor="@color/light_01"
+        android:textColorHint="@color/dark_02"
+        android:textSize="48sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guideline19"
+        app:layout_constraintEnd_toStartOf="@+id/ib_delete_songs"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ib_delete_songs"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="8dp"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic___settings_vector"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/guideline19"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/light_03" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_frag_songs"
@@ -47,6 +70,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_collection"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline19" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

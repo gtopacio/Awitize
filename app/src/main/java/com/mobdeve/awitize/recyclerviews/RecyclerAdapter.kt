@@ -34,8 +34,8 @@ class RecyclerAdapter(collectionListener: CollectionListener) :
         notifyDataSetChanged()
     }
 
-    fun showDelete () {
-        delete = !delete
+    fun showDelete (delete: Boolean) {
+        this.delete = delete
         notifyDataSetChanged()
     }
 

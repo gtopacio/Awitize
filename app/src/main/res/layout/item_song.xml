@@ -20,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic___trash_vector"
-        app:tint="@color/light_03" />
+        app:tint="@color/dark_02" />
 
     <ImageButton
         android:id="@+id/ib_song_queue"
