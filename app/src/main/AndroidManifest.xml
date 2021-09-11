@@ -19,9 +19,6 @@
         android:theme="@style/Theme.Awitize">
 
         <activity android:name=".activity.MusicPlayerActivity" />
-        <activity android:name=".activity.SearchActivity" />
-        <activity android:name=".activity.AccountActivity" />
-        <activity android:name=".activity.LibraryActivity" />
 
         <service
             android:name=".service.PlayerService"

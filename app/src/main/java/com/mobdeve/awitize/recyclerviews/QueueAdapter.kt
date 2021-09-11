@@ -1,6 +1,5 @@
 package com.mobdeve.awitize.recyclerviews
 
-import android.media.browse.MediaBrowser
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.MediaItem
 import com.mobdeve.awitize.R
 import java.util.*
-import kotlin.collections.ArrayList
 
 class QueueAdapter : RecyclerView.Adapter<QueueAdapter.ViewHolder>(){
 
@@ -21,7 +19,7 @@ class QueueAdapter : RecyclerView.Adapter<QueueAdapter.ViewHolder>(){
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QueueAdapter.ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.queue_song, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_queue_song, parent, false)
         return ViewHolder(v)
     }
 
