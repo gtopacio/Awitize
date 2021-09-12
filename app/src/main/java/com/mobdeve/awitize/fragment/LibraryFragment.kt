@@ -33,6 +33,8 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
     private lateinit var collectionAdapter: CollectionAdapter
     private lateinit var recyclerAdapter: RecyclerAdapter
 
+    private var editMode : Boolean = false
+
     private var serviceBounded : Boolean = false
     private var playerService : PlayerService? = null
     private var conn = object: ServiceConnection {
@@ -60,7 +62,7 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
         val view = inflater.inflate(R.layout.fragment_library, container, false)
         var playlists = ArrayList<Collection>()
         val id = FirebaseAuth.getInstance().currentUser?.uid
-        var deleteOption : ImageButton = view.findViewById(R.id.ib_delete_playlists)
+        var editOption : ImageButton = view.findViewById(R.id.ib_delete_playlists)
 
         FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists").addValueEventListener(object :
             ValueEventListener {
@@ -80,8 +82,13 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
             }
         })
 
-        deleteOption.setOnClickListener {
-            recyclerAdapter.showDelete()
+        editOption.setOnClickListener {
+            editMode = !editMode
+            if (editMode)
+                editOption.setImageResource(R.drawable.ic___check_vector)
+            else
+                editOption.setImageResource(R.drawable.ic___settings_vector)
+            recyclerAdapter.showDelete(editMode)
         }
 
 

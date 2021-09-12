@@ -34,9 +34,9 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
     private lateinit var playlistName : String
     private var delete = false
 
-    fun showDelete (playlistName: String) {
+    fun showDelete (playlistName: String, delete: Boolean) {
         this.playlistName = playlistName
-        delete = !delete
+        this.delete = delete
         notifyDataSetChanged()
     }
 

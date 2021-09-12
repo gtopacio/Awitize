@@ -10,12 +10,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.FirebaseDatabase
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
@@ -30,7 +32,10 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
     private lateinit var collectionAdapter: CollectionAdapter
     private var viewModel : CollectionFragmentViewModel? = null
     private lateinit var displayedData : Collection
-    private lateinit var deleteOpt : ImageButton
+    private lateinit var editOption : ImageButton
+    private lateinit var editPlaylistName : EditText
+
+    private var editMode : Boolean = false
 
     //Service Connections
     private var serviceBounded : Boolean = false
@@ -75,15 +80,30 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
             collectionAdapter.setSongs(it)
         })
 
-        deleteOpt = view.findViewById(R.id.ib_delete_songs)
+        editOption = view.findViewById(R.id.ib_delete_songs)
+        editPlaylistName = view.findViewById(R.id.et_edit_playlist)
 
         if (displayedData.playlist)
-            deleteOpt.visibility = (View.VISIBLE)
+            editOption.visibility = (View.VISIBLE)
         else
-            deleteOpt.visibility = (View.GONE)
+            editOption.visibility = (View.GONE)
 
-        deleteOpt.setOnClickListener {
-            collectionAdapter.showDelete(displayedData.categoryName)
+        editOption.setOnClickListener {
+            editMode = !editMode
+            if (editMode) {
+                editOption.setImageResource(R.drawable.ic___check_vector)
+                editPlaylistName.visibility = (View.VISIBLE)
+                editPlaylistName.setHint(collectionName.text)
+                collectionName.visibility = (View.INVISIBLE)
+            } else {
+                editOption.setImageResource(R.drawable.ic___settings_vector)
+                editPlaylistName.visibility = (View.INVISIBLE)
+                collectionName.visibility = (View.VISIBLE)
+
+                collectionName.text = editPlaylistName.text
+                //FirebaseDatabase.getInstance().getReference("users/$id/playlists/$playlistName").setValue(null)
+            }
+            collectionAdapter.showDelete(displayedData.categoryName, editMode)
         }
 
         return view
