@@ -5,15 +5,13 @@ import android.content.Context
 import android.location.Geocoder
 import android.os.Looper
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
-import com.mobdeve.awitize.R
+
+private const val TAG = "LocationHelper"
 
 class LocationHelper(context: Context) {
-
-    private val TAG = "LocationHelper"
 
     private var context : Context? = context
 
@@ -27,7 +25,7 @@ class LocationHelper(context: Context) {
             val geocoder = Geocoder(context)
             val lat = p0.lastLocation.latitude
             val lon = p0.lastLocation.longitude
-            country.value = geocoder.getFromLocation(lat, lon, 1).first().countryName
+            country.value = geocoder.getFromLocation(lat, lon, 1)?.first()?.countryName
         }
 
         override fun onLocationAvailability(p0: LocationAvailability) {
