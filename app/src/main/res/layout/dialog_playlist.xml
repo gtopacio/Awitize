@@ -24,8 +24,8 @@
             android:layout_weight="0.75"
             android:ems="10"
             android:fontFamily="@font/kollektif_normal"
-            android:hint="New Playlist"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:text="New Playlist" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_add_playlist"

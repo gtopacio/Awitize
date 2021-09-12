@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +18,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
@@ -93,15 +98,31 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
             if (editMode) {
                 editOption.setImageResource(R.drawable.ic___check_vector)
                 editPlaylistName.visibility = (View.VISIBLE)
-                editPlaylistName.setHint(collectionName.text)
+                editPlaylistName.setText(collectionName.text)
                 collectionName.visibility = (View.INVISIBLE)
             } else {
                 editOption.setImageResource(R.drawable.ic___settings_vector)
                 editPlaylistName.visibility = (View.INVISIBLE)
                 collectionName.visibility = (View.VISIBLE)
 
-                collectionName.text = editPlaylistName.text
-                //FirebaseDatabase.getInstance().getReference("users/$id/playlists/$playlistName").setValue(null)
+                var oldPlaylist = collectionName.text.toString()
+                var newPlaylist = editPlaylistName.text.toString()
+
+                val id = FirebaseAuth.getInstance().currentUser?.uid
+                FirebaseDatabase.getInstance().getReference("users/$id/playlists/$oldPlaylist").addValueEventListener(object :
+                    ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        FirebaseDatabase.getInstance().getReference("users/$id/playlists").child(newPlaylist).setValue(snapshot.value).addOnCompleteListener {
+                            FirebaseDatabase.getInstance().getReference("users/$id/playlists").child(oldPlaylist).setValue(null)
+
+                            var newDisplayedData = Collection("users/$id/playlists", newPlaylist, snapshot.childrenCount, true)
+                            setDisplayedCollection(newDisplayedData)
+                            viewModel?.loadCollection(newDisplayedData)
+                        }
+                        collectionName.text = newPlaylist
+                    }
+                    override fun onCancelled(error: DatabaseError) {}
+                })
             }
             collectionAdapter.showDelete(displayedData.categoryName, editMode)
         }
