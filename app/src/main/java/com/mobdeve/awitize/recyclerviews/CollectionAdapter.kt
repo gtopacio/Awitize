@@ -1,6 +1,8 @@
 package com.mobdeve.awitize.recyclerviews
 
+import android.annotation.SuppressLint
 import android.graphics.Color
+import android.location.Geocoder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,7 +35,6 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
 
     private val TAG = "CollectionAdapter"
     private var songs : ArrayList<Music> = ArrayList()
-    private lateinit var location: LocationHelper
     private var currentLocation : String? = null
 
     private lateinit var playlistName : String
@@ -43,10 +46,17 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         notifyDataSetChanged()
     }
 
+    @SuppressLint("MissingPermission")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_song, parent, false)
-        location = LocationHelper(parent.context)
-
+        LocationServices.getFusedLocationProviderClient(parent.context).lastLocation.addOnSuccessListener {
+            if(it == null){
+                currentLocation = null;
+                return@addOnSuccessListener
+            }
+            val geocoder = Geocoder(parent.context)
+            currentLocation = geocoder.getFromLocation(it.latitude, it.longitude, 1).first().countryName
+        }
         return ViewHolder(v)
     }
 
@@ -67,13 +77,13 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         }
 
         songs[position].banned.forEach{region ->
-            if (songs[position].banned.size > 0 && (location.currentCountry.value == null || location.currentCountry.value == "")) {
+            if (songs[position].banned.size > 0 && (currentLocation == null || currentLocation == "")) {
                 holder.conslay.setBackgroundColor(Color.parseColor("#8D8F84"))
                 Log.d("ASDASD", "111111 " + songs[position].title)
                 return
             }
 
-            if (songs[position].banned.indexOf(location.currentCountry.value) > -1) {
+            if (songs[position].banned.indexOf(currentLocation) > -1) {
                 holder.conslay.setBackgroundColor(Color.parseColor("#8D8F84"))
                 Log.d("ASDASD", "222222 " + songs[position].title)
                 return
@@ -94,7 +104,6 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
         queuer = null
-        location.destroy()
     }
 
     override fun onViewRecycled(holder: ViewHolder) {
