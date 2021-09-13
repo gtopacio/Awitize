@@ -35,7 +35,6 @@ class PlayerFragment : Fragment() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             serviceBounded = true
             playerService = (service as PlayerService.PlayerBinder).getService()
-            updateUI()
         }
         override fun onServiceDisconnected(name: ComponentName?) {
             playerService = null
