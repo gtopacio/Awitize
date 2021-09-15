@@ -97,17 +97,17 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
             editMode = !editMode
             if (editMode) {
                 editOption.setImageResource(R.drawable.ic___check_vector)
-                editPlaylistName.visibility = (View.VISIBLE)
-                editPlaylistName.setText(collectionName.text)
-                collectionName.visibility = (View.INVISIBLE)
+                //editPlaylistName.visibility = (View.VISIBLE)
+                //editPlaylistName.setText(collectionName.text)
+                //collectionName.visibility = (View.INVISIBLE)
             } else {
                 editOption.setImageResource(R.drawable.ic___settings_vector)
-                editPlaylistName.visibility = (View.INVISIBLE)
-                collectionName.visibility = (View.VISIBLE)
+                //editPlaylistName.visibility = (View.INVISIBLE)
+                //collectionName.visibility = (View.VISIBLE)
 
-                var oldPlaylist = collectionName.text.toString()
-                var newPlaylist = editPlaylistName.text.toString()
-
+                //var oldPlaylist = collectionName.text.toString()
+                //var newPlaylist = editPlaylistName.text.toString()
+                /*
                 val id = FirebaseAuth.getInstance().currentUser?.uid
                 FirebaseDatabase.getInstance().getReference("users/$id/playlists/$oldPlaylist").addValueEventListener(object :
                     ValueEventListener {
@@ -122,7 +122,7 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
                         collectionName.text = newPlaylist
                     }
                     override fun onCancelled(error: DatabaseError) {}
-                })
+                })*/
             }
             collectionAdapter.showDelete(displayedData.categoryName, editMode)
         }
