@@ -24,6 +24,7 @@ import com.mobdeve.awitize.dialogs.CustomDialog
 import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
+import java.util.concurrent.Executors
 
 class CollectionAdapter(private var queuer: MusicQueuer?) :
     RecyclerView.Adapter<CollectionAdapter.ViewHolder>() {
@@ -46,24 +47,8 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         notifyDataSetChanged()
     }
 
-    @SuppressLint("MissingPermission")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_song, parent, false)
-        LocationServices.getFusedLocationProviderClient(parent.context).lastLocation.addOnSuccessListener {
-            if(it == null){
-                currentLocation = null;
-                return@addOnSuccessListener
-            }
-            if(Geocoder.isPresent()){
-                try{
-                    val geocoder = Geocoder(parent.context)
-                    currentLocation = geocoder.getFromLocation(it.latitude, it.longitude, 1).first().countryName
-                }
-                catch(e : Exception){
-                    currentLocation = null
-                }
-            }
-        }
         return ViewHolder(v)
     }
 
@@ -104,6 +89,30 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
     fun setSongs(newSongs : ArrayList<Music>){
         songs = newSongs
         notifyDataSetChanged()
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        LocationServices.getFusedLocationProviderClient(recyclerView.context).lastLocation.addOnSuccessListener {
+            if(it == null){
+                currentLocation = null;
+                return@addOnSuccessListener
+            }
+            val locationWorker = Runnable {
+                if(Geocoder.isPresent()){
+                    try{
+                        val geocoder = Geocoder(recyclerView.context)
+                        currentLocation = geocoder.getFromLocation(it.latitude, it.longitude, 1).first().countryName
+                    }
+                    catch(e : Exception){
+                        currentLocation = null
+                    }
+                }
+            }
+            Executors.newSingleThreadExecutor().execute(locationWorker)
+        }
+
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
