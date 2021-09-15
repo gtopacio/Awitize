@@ -54,8 +54,15 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
                 currentLocation = null;
                 return@addOnSuccessListener
             }
-            val geocoder = Geocoder(parent.context)
-            currentLocation = geocoder.getFromLocation(it.latitude, it.longitude, 1).first().countryName
+            if(Geocoder.isPresent()){
+                try{
+                    val geocoder = Geocoder(parent.context)
+                    currentLocation = geocoder.getFromLocation(it.latitude, it.longitude, 1).first().countryName
+                }
+                catch(e : Exception){
+                    currentLocation = null
+                }
+            }
         }
         return ViewHolder(v)
     }
