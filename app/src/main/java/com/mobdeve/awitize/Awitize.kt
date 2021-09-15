@@ -21,8 +21,6 @@ class Awitize : Application() {
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(generalChannel)
         }
-        val playerIntent = Intent(this, PlayerService::class.java)
-        ContextCompat.startForegroundService(this, playerIntent)
     }
 
     override fun onTerminate() {

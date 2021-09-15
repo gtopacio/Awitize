@@ -8,9 +8,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
+import java.io.IOException
+import java.util.concurrent.Executors
 
 private const val TAG = "LocationHelper"
 
+@SuppressLint("MissingPermission")
 class LocationHelper(context: Context) {
 
     private var context : Context? = context
@@ -18,14 +21,29 @@ class LocationHelper(context: Context) {
     private var fusedLocationProviderClient : FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     private var locationCallback = object: LocationCallback() {
         override fun onLocationResult(p0: LocationResult?) {
-            if(p0 == null){
-                country.value = null
-                return
+            val locationUpdater = object : Runnable{
+                override fun run() {
+                    if(p0 == null){
+                        country.postValue(null)
+                        return
+                    }
+                    val lat = p0.lastLocation.latitude
+                    val lon = p0.lastLocation.longitude
+                    if(Geocoder.isPresent()){
+                        val geocoder = Geocoder(context)
+                        try{
+                            val res = geocoder.getFromLocation(lat, lon, 1)
+                            if(res.size > 0){
+                                country.postValue(res.first().countryName)
+                            }
+                        }
+                        catch (e : Exception){
+
+                        }
+                    }
+                }
             }
-            val geocoder = Geocoder(context)
-            val lat = p0.lastLocation.latitude
-            val lon = p0.lastLocation.longitude
-            country.value = geocoder.getFromLocation(lat, lon, 1)?.first()?.countryName
+            Executors.newSingleThreadExecutor().execute(locationUpdater)
         }
 
         override fun onLocationAvailability(p0: LocationAvailability) {
@@ -40,7 +58,7 @@ class LocationHelper(context: Context) {
 
     init {
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 1000
+        locationRequest.interval = 3000
         startLocationUpdates()
     }
 

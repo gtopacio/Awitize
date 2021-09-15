@@ -79,13 +79,11 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         songs[position].banned.forEach{region ->
             if (songs[position].banned.size > 0 && (currentLocation == null || currentLocation == "")) {
                 holder.conslay.setBackgroundColor(Color.parseColor("#8D8F84"))
-                Log.d("ASDASD", "111111 " + songs[position].title)
                 return
             }
 
             if (songs[position].banned.indexOf(currentLocation) > -1) {
                 holder.conslay.setBackgroundColor(Color.parseColor("#8D8F84"))
-                Log.d("ASDASD", "222222 " + songs[position].title)
                 return
             }
 
@@ -104,11 +102,6 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
         queuer = null
-    }
-
-    override fun onViewRecycled(holder: ViewHolder) {
-        super.onViewRecycled(holder)
-        Log.d(TAG, "onViewRecycled: recycled")
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -13,6 +13,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.WindowManager
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.service.PlayerService
@@ -47,6 +48,8 @@ class SplashScreenActivity : AppCompatActivity() {
             return
         }
         else{
+            val playerIntent = Intent(this, PlayerService::class.java)
+            ContextCompat.startForegroundService(this, playerIntent)
             Handler().postDelayed({
                 val i = Intent(this, LoginActivity::class.java)
                 startActivity(i)
@@ -63,6 +66,8 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         Log.d(TAG, "onRequestPermissionsResult: ${grantResults[0] == PackageManager.PERMISSION_GRANTED}")
         if(grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED){
+            val playerIntent = Intent(this, PlayerService::class.java)
+            ContextCompat.startForegroundService(this, playerIntent)
             val i = Intent(this, MainActivity::class.java)
             startActivity(i)
             finish()

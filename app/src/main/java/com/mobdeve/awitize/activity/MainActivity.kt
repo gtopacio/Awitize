@@ -74,16 +74,11 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         databaseHelper.deleteUser(this, uid?:"")
         FirebaseAuth.getInstance().currentUser?.delete()?.addOnCompleteListener{
-            if(it.isSuccessful){
-                LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(PlayerServiceEvents.SESSION_DESTROY.name))
-                FirebaseAuth.getInstance().signOut()
-                val i = Intent(this, LoginActivity::class.java)
-                startActivity(i)
-                finish()
-            }
-            else{
-                Log.d(TAG, "deleteAccount: Unable to delete ${it.exception?.message}")
-            }
+            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(PlayerServiceEvents.SESSION_DESTROY.name))
+            FirebaseAuth.getInstance().signOut()
+            val i = Intent(this, LoginActivity::class.java)
+            startActivity(i)
+            finish()
         }
     }
 
