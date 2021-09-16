@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
 import java.util.*
@@ -149,6 +150,7 @@ class HomeFragmentViewModel : ViewModel() {
 
     fun generateRecommendations() {
         val rec : ArrayList<Music> = ArrayList()
+        val currentCountry = LocationHelper.getObjectInstance()?.currentCountry?.value
         FirebaseDatabase.getInstance().getReference("music").addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val worker = object: Runnable{
@@ -158,19 +160,29 @@ class HomeFragmentViewModel : ViewModel() {
                             x.key?.let { rand.add(it) }
                         }
                         rand.shuffle()
-                        for(i in 0..10){
+                        while(rand.isNotEmpty() && rec.size < 10){
                             FirebaseDatabase.getInstance().getReference("music/${rand.pollFirst()}").get().addOnCompleteListener {
                                 if(it.isSuccessful){
                                     val snapshot = it.result
+                                    val bannedRegions = snapshot.child("bannedRegions")
+                                    val banned : ArrayList<String> = ArrayList()
+                                    bannedRegions.children.forEach {
+                                        it?.key?.let { it1 -> banned.add(it1) }
+                                    }
+
+                                    if(banned.isNotEmpty() && currentCountry == null){
+                                        return@addOnCompleteListener
+                                    }
+
+                                    if(banned.contains(currentCountry?:"")){
+                                        return@addOnCompleteListener
+                                    }
+
                                     val title = snapshot.child("title").value.toString()
                                     val artist = snapshot.child("artist").value.toString()
                                     val audioFileURL = snapshot.child("audioFileURL").value.toString()
                                     val albumCoverURL = snapshot.child("albumCoverURL").value.toString()
-                                    val banned : ArrayList<String> = ArrayList()
-                                    val bannedRegions = snapshot.child("bannedRegions")
-                                    bannedRegions.children.forEach {
-                                        it?.key?.let { it1 -> banned.add(it1) }
-                                    }
+
                                     rec.add(Music(snapshot.key.toString(), title, artist, audioFileURL, albumCoverURL, banned))
                                     recom.postValue(rec)
                                 }

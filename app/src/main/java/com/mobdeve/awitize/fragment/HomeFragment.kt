@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.recyclerviews.CollectionAdapter
 import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
@@ -84,6 +85,10 @@ class HomeFragment(private var collectionListener: RecyclerAdapter.CollectionLis
             layoutManager = LinearLayoutManager(activity)
             adapter = recyclerAdapter
         }
+
+        LocationHelper.getObjectInstance()?.currentCountry?.observe(viewLifecycleOwner, Observer {
+            collectionAdapter.setCurrentLocation(it)
+        })
 
         viewModel = ViewModelProvider(this).get(HomeFragmentViewModel::class.java)
         viewModel.init()

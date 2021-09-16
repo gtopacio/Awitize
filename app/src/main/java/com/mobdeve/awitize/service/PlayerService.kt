@@ -291,7 +291,7 @@ class PlayerService : LifecycleService() {
         super.onCreate()
         notificationManager = NotificationManagerCompat.from(this)
         initPlayer()
-        locationHelper = LocationHelper(this)
+        locationHelper = LocationHelper.getObjectInstance()
         locationHelper?.currentCountry?.observe(this, {
             currentCountry = it
             if(!player.isPlaying){
@@ -313,7 +313,7 @@ class PlayerService : LifecycleService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        locationHelper?.destroy()
+        LocationHelper.destroy()
         player.release()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(destroyReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(newSongReceiver)

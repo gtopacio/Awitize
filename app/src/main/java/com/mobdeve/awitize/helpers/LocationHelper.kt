@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
 import java.io.IOException
+import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 private const val TAG = "LocationHelper"
@@ -21,25 +22,25 @@ class LocationHelper(context: Context) {
     private var fusedLocationProviderClient : FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     private var locationCallback = object: LocationCallback() {
         override fun onLocationResult(p0: LocationResult?) {
-            val locationUpdater = object : Runnable{
-                override fun run() {
-                    if(p0 == null){
-                        country.postValue(null)
-                        return
-                    }
-                    val lat = p0.lastLocation.latitude
-                    val lon = p0.lastLocation.longitude
-                    if(Geocoder.isPresent()){
-                        val geocoder = Geocoder(context)
-                        try{
-                            val res = geocoder.getFromLocation(lat, lon, 1)
-                            if(res.size > 0){
-                                country.postValue(res.first().countryName)
+            if(p0 == null) {
+                return
+            }
+            val locationUpdater = Runnable {
+                val lat = p0.lastLocation.latitude
+                val lon = p0.lastLocation.longitude
+                Log.d(TAG, "onLocationResult: $lat $lon")
+                if(Geocoder.isPresent()){
+                    val geocoder = Geocoder(context)
+                    try{
+                        val res = geocoder.getFromLocation(lat, lon, 1)
+                        if(res.size > 0){
+                            val newCountry = res.first().countryName
+                            if(newCountry !== country.value){
+                                country.postValue(newCountry)
                             }
                         }
-                        catch (e : Exception){
+                    } catch (e : Exception){
 
-                        }
                     }
                 }
             }
@@ -57,8 +58,38 @@ class LocationHelper(context: Context) {
         get() = country
 
     init {
+        fusedLocationProviderClient.lastLocation.addOnCompleteListener {
+            if(it.isSuccessful){
+                if(it.result == null){
+                    country.value = null
+                    return@addOnCompleteListener
+                }
+                var loc = it.result
+                val locationUpdater = Runnable {
+                    val lat = loc.latitude
+                    val lon = loc.longitude
+                    Log.d(TAG, "onLocationResult: $lat $lon")
+                    if(Geocoder.isPresent()){
+                        val geocoder = Geocoder(context)
+                        try{
+                            val res = geocoder.getFromLocation(lat, lon, 1)
+                            if(res.size > 0){
+                                val newCountry = res.first().countryName
+                                if(newCountry !== country.value){
+                                    country.postValue(newCountry)
+                                }
+                            }
+                        } catch (e : Exception){
+
+                        }
+                    }
+                }
+                Executors.newSingleThreadExecutor().execute(locationUpdater)
+            }
+        }
+
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 3000
+        locationRequest.interval = 5000
         startLocationUpdates()
     }
 
@@ -76,4 +107,20 @@ class LocationHelper(context: Context) {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 
+    companion object{
+        var instance : LocationHelper? = null
+
+        fun getObjectInstance() : LocationHelper?{
+            return instance
+        }
+
+        fun init(context: Context){
+            instance = LocationHelper(context)
+        }
+
+        fun destroy(){
+            instance?.destroy()
+            instance = null
+        }
+    }
 }

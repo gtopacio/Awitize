@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.recyclerviews.CollectionAdapter
@@ -74,6 +75,10 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
             adapter = collectionAdapter
             layoutManager = LinearLayoutManager(activity)
         }
+
+        LocationHelper.getObjectInstance()?.currentCountry?.observe(viewLifecycleOwner, Observer {
+            collectionAdapter.setCurrentLocation(it);
+        })
 
         viewModel = ViewModelProvider(this).get(CollectionFragmentViewModel::class.java)
         viewModel?.loadCollection(displayedData)
@@ -126,7 +131,6 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
             }
             collectionAdapter.showDelete(displayedData.categoryName, editMode)
         }
-
         return view
     }
 

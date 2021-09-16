@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.recyclerviews.CollectionAdapter
@@ -99,6 +101,10 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
             layoutManager = LinearLayoutManager(activity)
             adapter = recyclerAdapter
         }
+
+        LocationHelper.getObjectInstance()?.currentCountry?.observe(viewLifecycleOwner, Observer {
+            collectionAdapter.setCurrentLocation(it)
+        })
 
 
         return view

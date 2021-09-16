@@ -16,12 +16,14 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.enums.DatabaseCollections
+import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.recyclerviews.CollectionAdapter
@@ -97,6 +99,10 @@ class SearchFragment : Fragment(), CollectionAdapter.MusicQueuer{
             layoutManager = LinearLayoutManager(activity)
             adapter = recyclerAdapter
         }
+
+        LocationHelper.getObjectInstance()?.currentCountry?.observe(viewLifecycleOwner, Observer {
+            recyclerAdapter.setCurrentLocation(it)
+        })
 
         editText = view.findViewById(R.id.et_searchview)
         editText.addTextChangedListener(object : TextWatcher {

@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.mobdeve.awitize.enums.PlayerServiceEvents
+import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.service.PlayerService
 
 class Awitize : Application() {
@@ -27,6 +28,7 @@ class Awitize : Application() {
         super.onTerminate()
         val i = Intent(PlayerServiceEvents.DESTROY.name)
         LocalBroadcastManager.getInstance(this).sendBroadcast(i)
+        LocationHelper.destroy()
     }
 
     companion object{
