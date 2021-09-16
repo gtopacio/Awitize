@@ -1,9 +1,6 @@
 package com.mobdeve.awitize.recyclerviews
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.graphics.Color
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,11 +14,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.model.Collection
 
-class RecyclerAdapter(collectionListener: CollectionListener) :
+class RecyclerAdapter(private var collectionListener: CollectionListener) :
     RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
     private var displayedData = ArrayList<Collection>()
-    private var collectionListener = collectionListener
 
     private var delete = false
 
@@ -50,8 +46,8 @@ class RecyclerAdapter(collectionListener: CollectionListener) :
         else
             holder.categoryDelete.visibility = View.GONE
 
-        holder.categoryName.text = displayedData.get(position).categoryName
-        var trackCnt: String = displayedData.get(position).count.toString() + " tracks"
+        holder.categoryName.text = displayedData[position].categoryName
+        val trackCnt: String = displayedData[position].count.toString() + " tracks"
         holder.categoryCount.text = trackCnt
         if (position % 2 == 1) {
             holder.categoryCL.setBackgroundColor(Color.parseColor("#1C2120"))
@@ -65,15 +61,12 @@ class RecyclerAdapter(collectionListener: CollectionListener) :
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var categoryName: TextView
-        var categoryCount: TextView
-        var categoryCL: ConstraintLayout
-        var categoryDelete: ImageButton
+        var categoryName: TextView = itemView.findViewById(R.id.tv_category_name)
+        var categoryCount: TextView = itemView.findViewById(R.id.tv_category_count)
+        var categoryCL: ConstraintLayout = itemView.findViewById(R.id.cl_category)
+        var categoryDelete: ImageButton = itemView.findViewById(R.id.ib_category_delete)
+
         init {
-            categoryName = itemView.findViewById(R.id.tv_category_name)
-            categoryCount = itemView.findViewById(R.id.tv_category_count)
-            categoryCL = itemView.findViewById(R.id.cl_category)
-            categoryDelete = itemView.findViewById(R.id.ib_category_delete)
 
             itemView.setOnClickListener {
                 val position: Int = bindingAdapterPosition

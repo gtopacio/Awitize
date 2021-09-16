@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.activity.MusicPlayerActivity
 import com.mobdeve.awitize.enums.PlayerServiceEvents
-import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.service.PlayerService
 
 class PlayerFragment : Fragment() {

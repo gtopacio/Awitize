@@ -11,10 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -27,11 +25,10 @@ import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.recyclerviews.CollectionAdapter
 import com.mobdeve.awitize.recyclerviews.RecyclerAdapter
 import com.mobdeve.awitize.service.PlayerService
-import java.lang.RuntimeException
 
 class LibraryFragment(private var collectionListener: RecyclerAdapter.CollectionListener) : Fragment(), CollectionAdapter.MusicQueuer  {
 
-    private lateinit var recycler_view: RecyclerView
+    private lateinit var recyclerView: RecyclerView
     private lateinit var collectionAdapter: CollectionAdapter
     private lateinit var recyclerAdapter: RecyclerAdapter
 
@@ -62,11 +59,11 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_library, container, false)
-        var playlists = ArrayList<Collection>()
+        val playlists = ArrayList<Collection>()
         val id = FirebaseAuth.getInstance().currentUser?.uid
-        var editOption : ImageButton = view.findViewById(R.id.ib_delete_playlists)
+        val editOption : ImageButton = view.findViewById(R.id.ib_delete_playlists)
 
-        FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists").addValueEventListener(object :
+        FirebaseDatabase.getInstance().getReference("users/$id/playlists").addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 playlists.clear()
@@ -94,15 +91,15 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
         }
 
 
-        recycler_view = view.findViewById(R.id.rv_frag_lib)
+        recyclerView = view.findViewById(R.id.rv_frag_lib)
 
 
-        recycler_view.apply {
+        recyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = recyclerAdapter
         }
 
-        LocationHelper.getObjectInstance()?.currentCountry?.observe(viewLifecycleOwner, Observer {
+        LocationHelper.getInstance(view.context)?.currentCountry?.observe(viewLifecycleOwner, {
             collectionAdapter.setCurrentLocation(it)
         })
 
@@ -119,7 +116,7 @@ class LibraryFragment(private var collectionListener: RecyclerAdapter.Collection
     override fun onDetach() {
         super.onDetach()
         context?.unbindService(conn)
-        recycler_view.apply {
+        recyclerView.apply {
             layoutManager = null
             adapter = null
         }

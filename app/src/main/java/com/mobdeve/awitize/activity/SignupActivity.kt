@@ -3,7 +3,6 @@ package com.mobdeve.awitize.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -12,8 +11,6 @@ import com.mobdeve.awitize.R
 import com.mobdeve.awitize.helpers.DatabaseHelper
 
 class SignupActivity : AppCompatActivity() {
-
-    private val TAG = "SignupActivity"
 
     private lateinit var etEmail : EditText
     private lateinit var etPassword: EditText
@@ -56,7 +53,7 @@ class SignupActivity : AppCompatActivity() {
 
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{
                 if(it.isSuccessful){
-                    db.registerUser(this@SignupActivity, email, mAuth.currentUser?.uid.toString())
+                    db.registerUser(email, mAuth.currentUser?.uid.toString())
                     val i = Intent(this@SignupActivity, MainActivity::class.java)
                     startActivity(i)
                     finish()

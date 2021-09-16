@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.LiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -25,7 +24,7 @@ import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.activity.LoginActivity
-import com.mobdeve.awitize.activity.MainActivity
+import com.mobdeve.awitize.activity.SplashScreenActivity
 import java.util.*
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
@@ -157,7 +156,7 @@ class PlayerService : LifecycleService() {
                 history.add(nowPlaying!!)
             }
             val nextMusic = queue.pollFirst()
-            playSong(nextMusic)
+            playSong(nextMusic!!)
         }
         else{
             Toast.makeText(this, "No Next Song in Queue", Toast.LENGTH_SHORT).show()
@@ -181,7 +180,7 @@ class PlayerService : LifecycleService() {
     private fun playPrevSong() {
         if(history.size > 0){
             queue.addFirst(nowPlaying)
-            playSong(history.pollLast())
+            playSong(history.pollLast()!!)
         }
         else{
             Toast.makeText(this, "Last Remembered Song Reached", Toast.LENGTH_SHORT).show()
@@ -261,7 +260,7 @@ class PlayerService : LifecycleService() {
         val playPause = PendingIntent.getBroadcast(this, 0, Intent(PlayerServiceEvents.PLAY_PAUSE.name), 0)
         val sessionDestroy = PendingIntent.getBroadcast(this, 0, Intent(PlayerServiceEvents.SESSION_DESTROY.name), 0)
         val playPauseIcon = if(nowPlaying!=null && player.playWhenReady) R.drawable.exo_icon_pause else R.drawable.exo_icon_play
-        val touchNotif = PendingIntent.getActivity(this, 0, Intent(this, LoginActivity::class.java), 0)
+        val touchNotif = PendingIntent.getActivity(this, 0, Intent(this, SplashScreenActivity::class.java), 0)
         val noti = NotificationCompat.Builder(this@PlayerService, Awitize.GENERAL_CHANNEL_ID)
         noti.setSmallIcon(R.drawable.logo___awitize)
         noti.setContentTitle(nowPlaying?.mediaMetadata?.title)
@@ -279,10 +278,14 @@ class PlayerService : LifecycleService() {
 
     private fun showIdleNotif(){
         val builder = NotificationCompat.Builder(this@PlayerService, Awitize.GENERAL_CHANNEL_ID)
+        val sessionDestroy = PendingIntent.getBroadcast(this, 0, Intent(PlayerServiceEvents.SESSION_DESTROY.name), 0)
+        val touchNotif = PendingIntent.getActivity(this, 0, Intent(this, SplashScreenActivity::class.java), 0)
         builder.setContentTitle("Awitize ${currentCountry?:""}")
         builder.setContentText(if(currentCountry === null) "Location is not available, unable to stream songs that have region-lock." else "Location is available.")
+        builder.setContentIntent(touchNotif)
         builder.setSmallIcon(R.drawable.logo___awitize)
         builder.priority = NotificationCompat.PRIORITY_DEFAULT
+        builder.setDeleteIntent(sessionDestroy)
         notif = builder.build()
         startForeground(1, notif)
     }
@@ -291,12 +294,10 @@ class PlayerService : LifecycleService() {
         super.onCreate()
         notificationManager = NotificationManagerCompat.from(this)
         initPlayer()
-        locationHelper = LocationHelper.getObjectInstance()
+        locationHelper = LocationHelper.getInstance(applicationContext)
         locationHelper?.currentCountry?.observe(this, {
             currentCountry = it
-            if(!player.isPlaying){
-                showIdleNotif()
-            }
+            showIdleNotif()
         })
         LocalBroadcastManager.getInstance(this).registerReceiver(destroyReceiver, IntentFilter(PlayerServiceEvents.DESTROY.name))
         LocalBroadcastManager.getInstance(this).registerReceiver(newSongReceiver, IntentFilter(PlayerServiceEvents.NEW_SONG.name))

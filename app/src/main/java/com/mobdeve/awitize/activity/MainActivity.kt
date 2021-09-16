@@ -1,13 +1,8 @@
 package com.mobdeve.awitize.activity
 
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.IBinder
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.auth.FirebaseAuth
@@ -20,8 +15,6 @@ import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.service.PlayerService
 
 class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFragment.NavListener, HomeFragment.HomeListener, RecyclerAdapter.CollectionListener {
-
-    private val TAG = "MainActivity"
 
     private lateinit var libraryFragment: LibraryFragment
     private lateinit var homeFragment : HomeFragment
@@ -72,7 +65,7 @@ class MainActivity : AppCompatActivity(), AccountFragment.AccountListener, NavFr
 
     override fun deleteAccount() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
-        databaseHelper.deleteUser(this, uid?:"")
+        databaseHelper.deleteUser(uid?:"")
         FirebaseAuth.getInstance().currentUser?.delete()?.addOnCompleteListener{
             LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(PlayerServiceEvents.SESSION_DESTROY.name))
             FirebaseAuth.getInstance().signOut()

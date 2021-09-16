@@ -1,6 +1,5 @@
 package com.mobdeve.awitize.dialogs
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -17,10 +16,7 @@ import com.mobdeve.awitize.recyclerviews.DialogAdapter
 
 class CustomDialog (context: Context, internal var adapter: DialogAdapter, private var key: String) : Dialog(context) {
 
-    var dialog: Dialog? = null
-
-    private lateinit var recycler_view: RecyclerView
-    private lateinit var recyclerAdapter: DialogAdapter
+    private lateinit var recyclerView: RecyclerView
     private lateinit var mLayoutManager: RecyclerView.LayoutManager
 
     private lateinit var newPlaylist: EditText
@@ -33,10 +29,10 @@ class CustomDialog (context: Context, internal var adapter: DialogAdapter, priva
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.dialog_playlist)
 
-        recycler_view = findViewById(R.id.rv_playlists)
+        recyclerView = findViewById(R.id.rv_playlists)
         mLayoutManager = LinearLayoutManager(context)
-        recycler_view.layoutManager = mLayoutManager
-        recycler_view.adapter = adapter
+        recyclerView.layoutManager = mLayoutManager
+        recyclerView.adapter = adapter
 
         addBtn = findViewById(R.id.btn_add_playlist)
         newPlaylist = findViewById(R.id.et_new_playlist)
@@ -44,7 +40,7 @@ class CustomDialog (context: Context, internal var adapter: DialogAdapter, priva
         addBtn.setOnClickListener {
             val id = FirebaseAuth.getInstance().currentUser?.uid
 
-            FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists").child(newPlaylist.text.toString()).child(key).setValue(true)
+            FirebaseDatabase.getInstance().getReference("users/$id/playlists").child(newPlaylist.text.toString()).child(key).setValue(true)
             Toast.makeText(context,"Added song to " + newPlaylist.text.toString(), Toast.LENGTH_SHORT).show()
             this.dismiss()
         }

@@ -1,28 +1,20 @@
 package com.mobdeve.awitize.activity
 
 import android.Manifest
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.WindowManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.*
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.service.PlayerService
 
 @Suppress("DEPRECATION")
 class SplashScreenActivity : AppCompatActivity() {
-
-    private val TAG = "SplashScreenActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +41,7 @@ class SplashScreenActivity : AppCompatActivity() {
             return
         }
         else{
-            LocationHelper.init(applicationContext)
+            LocationHelper.getInstance(applicationContext)
             val playerIntent = Intent(this, PlayerService::class.java)
             ContextCompat.startForegroundService(this, playerIntent)
             Handler().postDelayed({
@@ -66,9 +58,8 @@ class SplashScreenActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.d(TAG, "onRequestPermissionsResult: ${grantResults[0] == PackageManager.PERMISSION_GRANTED}")
         if(grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED){
-            LocationHelper.init(applicationContext)
+            LocationHelper.getInstance(applicationContext)
             val playerIntent = Intent(this, PlayerService::class.java)
             ContextCompat.startForegroundService(this, playerIntent)
             val i = Intent(this, MainActivity::class.java)

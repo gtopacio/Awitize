@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,15 +13,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Collection
@@ -76,17 +69,17 @@ class CollectionTemplateFragment : Fragment(),  CollectionAdapter.MusicQueuer{
             layoutManager = LinearLayoutManager(activity)
         }
 
-        LocationHelper.getObjectInstance()?.currentCountry?.observe(viewLifecycleOwner, Observer {
-            collectionAdapter.setCurrentLocation(it);
+        LocationHelper.getInstance(view.context)?.currentCountry?.observe(viewLifecycleOwner, {
+            collectionAdapter.setCurrentLocation(it)
         })
 
         viewModel = ViewModelProvider(this).get(CollectionFragmentViewModel::class.java)
         viewModel?.loadCollection(displayedData)
 
-        viewModel?.collectionName?.observe(viewLifecycleOwner, Observer {
+        viewModel?.collectionName?.observe(viewLifecycleOwner, {
             collectionName.text = it.toString()
         })
-        viewModel?.displayedData?.observe(viewLifecycleOwner, Observer {
+        viewModel?.displayedData?.observe(viewLifecycleOwner, {
             collectionAdapter.setSongs(it)
         })
 

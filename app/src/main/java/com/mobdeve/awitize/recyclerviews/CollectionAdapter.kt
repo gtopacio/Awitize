@@ -1,9 +1,6 @@
 package com.mobdeve.awitize.recyclerviews
 
-import android.annotation.SuppressLint
 import android.graphics.Color
-import android.location.Geocoder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +9,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,10 +16,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.dialogs.CustomDialog
-import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
-import java.util.concurrent.Executors
 
 class CollectionAdapter(private var queuer: MusicQueuer?) :
     RecyclerView.Adapter<CollectionAdapter.ViewHolder>() {
@@ -34,7 +27,6 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         fun playImmediately(music: Music)
     }
 
-    private val TAG = "CollectionAdapter"
     private var songs : ArrayList<Music> = ArrayList()
     private var currentLocation : String? = null
 
@@ -73,7 +65,7 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
             holder.conslay.setBackgroundColor(Color.parseColor("#152D2E"))
         }
 
-        songs[position].banned.forEach{region ->
+        songs[position].banned.forEach{_ ->
             if (songs[position].banned.size > 0 && (currentLocation == null || currentLocation == "")) {
                 holder.conslay.setBackgroundColor(Color.parseColor("#8D8F84"))
                 return
@@ -105,10 +97,10 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         var artist: TextView = itemView.findViewById(R.id.tv_item_artist)
         var title: TextView = itemView.findViewById(R.id.tv_item_title)
         var conslay: ConstraintLayout = itemView.findViewById(R.id.item_cl_song)
-        var queue: ImageButton = itemView.findViewById(R.id.ib_song_queue)
-        var play: ImageButton = itemView.findViewById(R.id.ib_song_play)
-        var ibSongPlaylist: ImageButton = itemView.findViewById(R.id.ib_song_playlist)
         var songDelete: ImageButton = itemView.findViewById(R.id.ib_song_delete)
+        private var queue: ImageButton = itemView.findViewById(R.id.ib_song_queue)
+        private var play: ImageButton = itemView.findViewById(R.id.ib_song_play)
+        private var ibSongPlaylist: ImageButton = itemView.findViewById(R.id.ib_song_playlist)
 
         init{
 
@@ -121,11 +113,10 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
             }
 
             ibSongPlaylist.setOnClickListener {
-                var playlists = ArrayList<Collection>()
+                val playlists = ArrayList<Collection>()
                 val id = FirebaseAuth.getInstance().currentUser?.uid
-                var dialogAdapter: DialogAdapter
-                var customDialog: CustomDialog
-                FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists").addValueEventListener(object :
+                val customDialog: CustomDialog
+                FirebaseDatabase.getInstance().getReference("users/$id/playlists").addValueEventListener(object :
                     ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         playlists.clear()
@@ -134,7 +125,6 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
                                 val key = data.key
                                 val count = data.childrenCount
                                 playlists.add(Collection("playlists",key?:"", count, true))
-                                Log.d(TAG, key.toString())
                             }
                         }
                     }
@@ -143,7 +133,7 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
                     }
                 })
 
-                dialogAdapter = DialogAdapter(playlists, songs[bindingAdapterPosition].key)
+                val dialogAdapter = DialogAdapter(playlists, songs[bindingAdapterPosition].key)
                 customDialog = CustomDialog( itemView.context, dialogAdapter, songs[bindingAdapterPosition].key)
                 dialogAdapter.setCustomDialog(customDialog)
                 customDialog.show()
@@ -151,7 +141,7 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
 
             songDelete.setOnClickListener {
                 val position: Int = bindingAdapterPosition
-                var songKey = songs[position].key
+                val songKey = songs[position].key
                 songs.removeAt(position)
 
                 val id = FirebaseAuth.getInstance().currentUser?.uid

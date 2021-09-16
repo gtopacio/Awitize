@@ -42,7 +42,7 @@ class AccountFragment : Fragment() {
 
         deleteAccount.setOnClickListener{
             val id = FirebaseAuth.getInstance().currentUser?.uid
-            FirebaseDatabase.getInstance().getReference("users/" + id).setValue(null)
+            FirebaseDatabase.getInstance().getReference("users/$id").setValue(null)
             Toast.makeText(context,"Deleted account: " + email.text.toString(),
                 Toast.LENGTH_SHORT).show()
 

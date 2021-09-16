@@ -1,7 +1,6 @@
 package com.mobdeve.awitize.recyclerviews
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +9,10 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.dialogs.CustomDialog
 import com.mobdeve.awitize.model.Collection
-
-private const val TAG = "SearchFragment"
 
 class DialogAdapter(private var playlists: ArrayList<Collection>, private var key: String) : RecyclerView.Adapter<DialogAdapter.ViewHolder>() {
 
@@ -54,10 +48,7 @@ class DialogAdapter(private var playlists: ArrayList<Collection>, private var ke
 
         init {
             itemView.setOnClickListener {
-                val position: Int = bindingAdapterPosition
-
                 val id = FirebaseAuth.getInstance().currentUser?.uid
-
                 FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists/" + playlistName.text.toString()).child(key).setValue(true)
                 Toast.makeText(itemView.context,"Added song to " + playlistName.text.toString(),Toast.LENGTH_SHORT).show()
                 customDialog?.dismiss()

@@ -1,10 +1,9 @@
 package com.mobdeve.awitize.viewmodel
 
-import android.util.Log
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -18,20 +17,13 @@ import kotlin.collections.ArrayList
 
 class HomeFragmentViewModel : ViewModel() {
 
-    private val TAG = "HomeFragmentViewModel"
-
     private var artists = ArrayList<Collection>()
     private var albums = ArrayList<Collection>()
     private var genres = ArrayList<Collection>()
-//  private var playlists = ArrayList<Collection>()
     private var displayed = MutableLiveData<ArrayList<Collection>>(ArrayList())
-//  private var playlistsDisplayed = MutableLiveData<ArrayList<Collection>>(ArrayList())
     private var recom = MutableLiveData<ArrayList<Music>>(ArrayList())
 
     private var category = "Genre"
-
-//  val displayedPlaylist : LiveData<ArrayList<Collection>>
-//      get() = playlistsDisplayed
 
     val displayedData : LiveData<ArrayList<Collection>>
         get() = displayed
@@ -42,19 +34,17 @@ class HomeFragmentViewModel : ViewModel() {
     fun init(){
         FirebaseDatabase.getInstance().getReference("artists").addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                val worker = object: Runnable{
-                    override fun run() {
-                        artists.clear()
-                        snapshot.children.forEach{ data ->
-                            if(data != null){
-                                val key = data.key
-                                val count = data.childrenCount
-                                artists.add(Collection("artists", key?:"", count, false))
-                            }
+                val worker = Runnable {
+                    artists.clear()
+                    snapshot.children.forEach{ data ->
+                        if(data != null){
+                            val key = data.key
+                            val count = data.childrenCount
+                            artists.add(Collection("artists", key?:"", count, false))
                         }
-                        if(category == "Artist"){
-                            displayed.postValue(artists)
-                        }
+                    }
+                    if(category == "Artist"){
+                        displayed.postValue(artists)
                     }
                 }
                 Executors.newSingleThreadExecutor().execute(worker)
@@ -65,19 +55,17 @@ class HomeFragmentViewModel : ViewModel() {
         })
         FirebaseDatabase.getInstance().getReference("albums").addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                val worker = object: Runnable{
-                    override fun run() {
-                        albums.clear()
-                        snapshot.children.forEach{ data ->
-                            if(data != null){
-                                val key = data.key
-                                val count = data.childrenCount
-                                albums.add(Collection("albums",key?:"", count, false))
-                            }
+                val worker = Runnable {
+                    albums.clear()
+                    snapshot.children.forEach{ data ->
+                        if(data != null){
+                            val key = data.key
+                            val count = data.childrenCount
+                            albums.add(Collection("albums",key?:"", count, false))
                         }
-                        if(category == "Album"){
-                            displayed.postValue(albums)
-                        }
+                    }
+                    if(category == "Album"){
+                        displayed.postValue(albums)
                     }
                 }
                 Executors.newSingleThreadExecutor().execute(worker)
@@ -89,19 +77,17 @@ class HomeFragmentViewModel : ViewModel() {
 
         FirebaseDatabase.getInstance().getReference("genres").addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                val worker = object :Runnable{
-                    override fun run() {
-                        genres.clear()
-                        snapshot.children.forEach{ data ->
-                            if(data != null){
-                                val key = data.key
-                                val count = data.childrenCount
-                                genres.add(Collection("genres",key?:"", count, false))
-                            }
+                val worker = Runnable {
+                    genres.clear()
+                    snapshot.children.forEach{ data ->
+                        if(data != null){
+                            val key = data.key
+                            val count = data.childrenCount
+                            genres.add(Collection("genres",key?:"", count, false))
                         }
-                        if(category == "Genre"){
-                            displayed.postValue(genres)
-                        }
+                    }
+                    if(category == "Genre"){
+                        displayed.postValue(genres)
                     }
                 }
                 Executors.newSingleThreadExecutor().execute(worker)
@@ -148,9 +134,9 @@ class HomeFragmentViewModel : ViewModel() {
         }
     }
 
-    fun generateRecommendations() {
+    fun generateRecommendations(context : Context) {
         val rec : ArrayList<Music> = ArrayList()
-        val currentCountry = LocationHelper.getObjectInstance()?.currentCountry?.value
+        val currentCountry = LocationHelper.getInstance(context)?.currentCountry?.value
         FirebaseDatabase.getInstance().getReference("music").addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val worker = object: Runnable{
@@ -163,11 +149,11 @@ class HomeFragmentViewModel : ViewModel() {
                         while(rand.isNotEmpty() && rec.size < 10){
                             FirebaseDatabase.getInstance().getReference("music/${rand.pollFirst()}").get().addOnCompleteListener {
                                 if(it.isSuccessful){
-                                    val snapshot = it.result
-                                    val bannedRegions = snapshot.child("bannedRegions")
+                                    val snapshotData = it.result
+                                    val bannedRegions = snapshotData.child("bannedRegions")
                                     val banned : ArrayList<String> = ArrayList()
-                                    bannedRegions.children.forEach {
-                                        it?.key?.let { it1 -> banned.add(it1) }
+                                    bannedRegions.children.forEach {region ->
+                                        region?.key?.let { it1 -> banned.add(it1) }
                                     }
 
                                     if(banned.isNotEmpty() && currentCountry == null){
@@ -178,12 +164,12 @@ class HomeFragmentViewModel : ViewModel() {
                                         return@addOnCompleteListener
                                     }
 
-                                    val title = snapshot.child("title").value.toString()
-                                    val artist = snapshot.child("artist").value.toString()
-                                    val audioFileURL = snapshot.child("audioFileURL").value.toString()
-                                    val albumCoverURL = snapshot.child("albumCoverURL").value.toString()
+                                    val title = snapshotData.child("title").value.toString()
+                                    val artist = snapshotData.child("artist").value.toString()
+                                    val audioFileURL = snapshotData.child("audioFileURL").value.toString()
+                                    val albumCoverURL = snapshotData.child("albumCoverURL").value.toString()
 
-                                    rec.add(Music(snapshot.key.toString(), title, artist, audioFileURL, albumCoverURL, banned))
+                                    rec.add(Music(snapshotData.key.toString(), title, artist, audioFileURL, albumCoverURL, banned))
                                     recom.postValue(rec)
                                 }
                             }

@@ -8,8 +8,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
-import java.io.IOException
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 private const val TAG = "LocationHelper"
@@ -64,7 +62,7 @@ class LocationHelper(context: Context) {
                     country.value = null
                     return@addOnCompleteListener
                 }
-                var loc = it.result
+                val loc = it.result
                 val locationUpdater = Runnable {
                     val lat = loc.latitude
                     val lon = loc.longitude
@@ -108,14 +106,13 @@ class LocationHelper(context: Context) {
     }
 
     companion object{
-        var instance : LocationHelper? = null
+        private var instance : LocationHelper? = null
 
-        fun getObjectInstance() : LocationHelper?{
+        fun getInstance(context: Context) : LocationHelper?{
+            if(instance == null){
+                instance = LocationHelper(context)
+            }
             return instance
-        }
-
-        fun init(context: Context){
-            instance = LocationHelper(context)
         }
 
         fun destroy(){
