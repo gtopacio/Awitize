@@ -112,8 +112,10 @@ class HomeFragment(private var collectionListener: RecyclerAdapter.CollectionLis
             ) {
                 val text: String = parent?.getItemAtPosition(position).toString()
                 if(text == "Recommendation"){
-                    view?.context?.let { viewModel.generateRecommendations(it) }
-                    recyclerView.adapter = collectionAdapter
+                    view?.context?.let {
+                        viewModel.generateRecommendations(it)
+                        recyclerView.adapter = collectionAdapter
+                    }
                     return
                 }
                 recyclerView.adapter =  recyclerAdapter
