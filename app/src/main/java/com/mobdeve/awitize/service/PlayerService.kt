@@ -18,12 +18,12 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.gms.location.*
+import com.google.firebase.storage.FirebaseStorage
 import com.mobdeve.awitize.Awitize
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.R
-import com.mobdeve.awitize.activity.LoginActivity
 import com.mobdeve.awitize.activity.SplashScreenActivity
 import java.util.*
 import java.util.concurrent.Executors
@@ -45,6 +45,8 @@ class PlayerService : LifecycleService() {
     private var currentCountry : String? = null
     private var locationHelper : LocationHelper? = null
     private var bindCount : Long = 0L
+
+    private val storage = FirebaseStorage.getInstance()
 
     val currentQueue : LinkedList<MediaItem>
         get() = queue
@@ -115,24 +117,49 @@ class PlayerService : LifecycleService() {
 
     fun queueSong(music: Music){
         val queueThread = Runnable {
-            val mediaItem = generateMediaItem(music)
-            queue.add(mediaItem)
-            val i = Intent(PlayerServiceEvents.NEW_SONG.name)
-            i.putExtra("message", "Queued " + music.artist + " - " + music.title)
-            LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
+            val metaData = generateMediaMetaData(music)
+            storage.getReferenceFromUrl(music.audioURI).downloadUrl.addOnSuccessListener {
+                val builder = MediaItem.Builder().setMediaMetadata(metaData).setUri(it)
+                val mediaItem = builder.build()
+                queue.add(mediaItem)
+                val i = Intent(PlayerServiceEvents.NEW_SONG.name)
+                i.putExtra("message", "Queued " + music.artist + " - " + music.title)
+                LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
+            }.addOnFailureListener {
+                Toast.makeText(
+                    this@PlayerService,
+                    "Error Queueing ${music.artist} - ${music.title}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
         Executors.newSingleThreadExecutor().execute(queueThread)
     }
 
     fun playImmediately(music: Music){
-        val mediaItem = generateMediaItem(music)
-        if(history.size > 5){
-            history.pollFirst()
+        val metaData = generateMediaMetaData(music)
+        val worker = Runnable {
+            var mediaItem : MediaItem
+            storage.getReferenceFromUrl(music.audioURI).downloadUrl.addOnSuccessListener {
+                if(history.size > 5){
+                    history.pollFirst()
+                }
+                if(nowPlaying != null){
+                    history.add(nowPlaying!!)
+                }
+                val builder = MediaItem.Builder().setMediaMetadata(metaData).setUri(it)
+                mediaItem = builder.build()
+                playSong(mediaItem)
+            }.addOnFailureListener {
+                Toast.makeText(
+                    this@PlayerService,
+                    "Error Playing ${music.artist} - ${music.title}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                playNextSong()
+            }
         }
-        if(nowPlaying != null){
-            history.add(nowPlaying!!)
-        }
-        playSong(mediaItem)
+        Executors.newSingleThreadExecutor().execute(worker)
     }
 
     fun isPlaying(): Boolean{
@@ -206,15 +233,16 @@ class PlayerService : LifecycleService() {
         showNotification()
     }
 
-    private fun generateMediaItem(music: Music) : MediaItem{
+    private fun generateMediaMetaData(music: Music) : MediaMetadata{
         val metaData = MediaMetadata.Builder()
         val bannedBundle = Bundle()
         bannedBundle.putStringArrayList("banned", music.banned)
         metaData.setExtras(bannedBundle)
+        metaData.setMediaUri(Uri.parse(music.audioURI))
         metaData.setTitle(music.title)
         metaData.setArtist(music.artist)
         metaData.setArtworkUri(Uri.parse(music.albumCoverURL))
-        return MediaItem.Builder().setUri(music.audioFileURL).setMediaMetadata(metaData.build()).build()
+        return metaData.build()
     }
 
     private fun destroySession() {

@@ -42,6 +42,8 @@ class SearchFragment : Fragment(), CollectionAdapter.MusicQueuer{
                         val artist = data.child("artist").value.toString()
                         val audioFileURL = data.child("audioFileURL").value.toString()
                         val albumCoverURL = data.child("albumCoverURL").value.toString()
+                        val audioURI = snapshot.child("audioURI").value.toString()
+                        val albumURI = snapshot.child("albumURI").value.toString()
                         val banned : ArrayList<String> = ArrayList()
                         val bannedRegions = data.child("bannedRegions")
                         bannedRegions.children.forEach {
@@ -49,7 +51,7 @@ class SearchFragment : Fragment(), CollectionAdapter.MusicQueuer{
                         }
 
                         if (title.replace("\\s".toRegex(), "").contains(s.toString(), ignoreCase = true) || artist.replace("\\s".toRegex(), "").contains(s.toString(), ignoreCase = true)){
-                            musicData.add(Music(snapshot.key.toString(), title, artist, audioFileURL, albumCoverURL, banned))
+                            musicData.add(Music(snapshot.key.toString(), title, artist, audioFileURL, audioURI, albumCoverURL, albumURI, banned))
                         }
 
                     }

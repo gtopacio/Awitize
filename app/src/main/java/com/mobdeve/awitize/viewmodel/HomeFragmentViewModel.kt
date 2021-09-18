@@ -1,6 +1,7 @@
 package com.mobdeve.awitize.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -168,8 +169,10 @@ class HomeFragmentViewModel : ViewModel() {
                                     val artist = snapshotData.child("artist").value.toString()
                                     val audioFileURL = snapshotData.child("audioFileURL").value.toString()
                                     val albumCoverURL = snapshotData.child("albumCoverURL").value.toString()
+                                    val audioURI = snapshotData.child("audioURI").value.toString()
+                                    val albumURI = snapshotData.child("albumURI").value.toString()
 
-                                    rec.add(Music(snapshotData.key.toString(), title, artist, audioFileURL, albumCoverURL, banned))
+                                    rec.add(Music(snapshotData.key.toString(), title, artist, audioFileURL, audioURI, albumCoverURL, albumURI, banned))
                                     recom.postValue(rec)
                                 }
                             }

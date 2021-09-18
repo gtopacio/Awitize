@@ -34,12 +34,14 @@ class CollectionFragmentViewModel : ViewModel() {
                                 val artist = snapshot.child("artist").value.toString()
                                 val audioFileURL = snapshot.child("audioFileURL").value.toString()
                                 val albumCoverURL = snapshot.child("albumCoverURL").value.toString()
+                                val audioURI = snapshot.child("audioURI").value.toString()
+                                val albumURI = snapshot.child("albumURI").value.toString()
                                 val banned : ArrayList<String> = ArrayList()
                                 val bannedRegions = snapshot.child("bannedRegions")
                                 bannedRegions.children.forEach {
                                     it?.key?.let { it1 -> banned.add(it1) }
                                 }
-                                data.add(Music(snapshot.key.toString(), title, artist, audioFileURL, albumCoverURL, banned))
+                                data.add(Music(snapshot.key.toString(), title, artist, audioFileURL, audioURI, albumCoverURL, albumURI, banned))
                                 displayed.postValue(data)
                             }
                             Executors.newSingleThreadExecutor().execute(worker)
