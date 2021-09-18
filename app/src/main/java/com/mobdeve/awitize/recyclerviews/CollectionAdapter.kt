@@ -1,5 +1,6 @@
 package com.mobdeve.awitize.recyclerviews
 
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -16,8 +18,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.dialogs.CustomDialog
+import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.model.Collection
 import com.mobdeve.awitize.model.Music
+import com.mobdeve.awitize.service.PlayerService
 
 class CollectionAdapter(private var queuer: MusicQueuer?) :
     RecyclerView.Adapter<CollectionAdapter.ViewHolder>() {
@@ -105,11 +109,33 @@ class CollectionAdapter(private var queuer: MusicQueuer?) :
         init{
 
             play.setOnClickListener{
-                this@CollectionAdapter.queuer?.playImmediately(songs[bindingAdapterPosition])
+                val song = songs[bindingAdapterPosition]
+                val i = Intent(itemView.context, PlayerService::class.java)
+                i.putExtra(PlayerServiceEvents.START_COMMAND.name, 2)
+                i.putExtra("key", song.key)
+                i.putExtra("title", song.title)
+                i.putExtra("artist", song.artist)
+                i.putExtra("albumCoverURL", song.albumCoverURL)
+                i.putExtra("albumURI", song.albumURI)
+                i.putExtra("audioURI", song.audioURI)
+                i.putExtra("audioFileURL", song.audioFileURL)
+                i.putExtra("banned", song.banned)
+                ContextCompat.startForegroundService(itemView.context, i)
             }
 
             queue.setOnClickListener {
-                this@CollectionAdapter.queuer?.queueMusic(songs[bindingAdapterPosition])
+                val song = songs[bindingAdapterPosition]
+                val i = Intent(itemView.context, PlayerService::class.java)
+                i.putExtra(PlayerServiceEvents.START_COMMAND.name, 1)
+                i.putExtra("key", song.key)
+                i.putExtra("title", song.title)
+                i.putExtra("artist", song.artist)
+                i.putExtra("albumCoverURL", song.albumCoverURL)
+                i.putExtra("albumURI", song.albumURI)
+                i.putExtra("audioURI", song.audioURI)
+                i.putExtra("audioFileURL", song.audioFileURL)
+                i.putExtra("banned", song.banned)
+                ContextCompat.startForegroundService(itemView.context, i)
             }
 
             ibSongPlaylist.setOnClickListener {

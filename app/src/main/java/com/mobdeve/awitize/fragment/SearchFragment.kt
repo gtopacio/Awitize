@@ -13,10 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.mobdeve.awitize.R
+import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.helpers.LocationHelper
 import com.mobdeve.awitize.model.Music
 import com.mobdeve.awitize.recyclerviews.CollectionAdapter
@@ -40,17 +42,17 @@ class SearchFragment : Fragment(), CollectionAdapter.MusicQueuer{
                     if(data != null){
                         val title = data.child("title").value.toString()
                         val artist = data.child("artist").value.toString()
-                        val audioFileURL = data.child("audioFileURL").value.toString()
-                        val albumCoverURL = data.child("albumCoverURL").value.toString()
-                        val audioURI = snapshot.child("audioURI").value.toString()
-                        val albumURI = snapshot.child("albumURI").value.toString()
-                        val banned : ArrayList<String> = ArrayList()
-                        val bannedRegions = data.child("bannedRegions")
-                        bannedRegions.children.forEach {
-                            it?.key?.let { it1 -> banned.add(it1) }
-                        }
 
                         if (title.replace("\\s".toRegex(), "").contains(s.toString(), ignoreCase = true) || artist.replace("\\s".toRegex(), "").contains(s.toString(), ignoreCase = true)){
+                            val audioFileURL = data.child("audioFileURL").value.toString()
+                            val albumCoverURL = data.child("albumCoverURL").value.toString()
+                            val audioURI = data.child("audioURI").value.toString()
+                            val albumURI = data.child("albumURI").value.toString()
+                            val banned : ArrayList<String> = ArrayList()
+                            val bannedRegions = data.child("bannedRegions")
+                            bannedRegions.children.forEach {
+                                it?.key?.let { it1 -> banned.add(it1) }
+                            }
                             musicData.add(Music(snapshot.key.toString(), title, artist, audioFileURL, audioURI, albumCoverURL, albumURI, banned))
                         }
 
@@ -128,11 +130,31 @@ class SearchFragment : Fragment(), CollectionAdapter.MusicQueuer{
         FirebaseDatabase.getInstance().getReference("music").removeEventListener(valueEventListener)
     }
 
-    override fun queueMusic(music: Music) {
-        playerService?.queueSong(music)
+    override fun queueMusic(song: Music) {
+        val i = Intent(context, PlayerService::class.java)
+        i.putExtra(PlayerServiceEvents.START_COMMAND.name, 2)
+        i.putExtra("key", song.key)
+        i.putExtra("title", song.title)
+        i.putExtra("artist", song.artist)
+        i.putExtra("albumCoverURL", song.albumCoverURL)
+        i.putExtra("albumURI", song.albumURI)
+        i.putExtra("audioURI", song.audioURI)
+        i.putExtra("audioFileURL", song.audioFileURL)
+        i.putExtra("banned", song.banned)
+        context?.let { ContextCompat.startForegroundService(it, i) }
     }
 
-    override fun playImmediately(music: Music) {
-        playerService?.playImmediately(music)
+    override fun playImmediately(song: Music) {
+        val i = Intent(context, PlayerService::class.java)
+        i.putExtra(PlayerServiceEvents.START_COMMAND.name, 1)
+        i.putExtra("key", song.key)
+        i.putExtra("title", song.title)
+        i.putExtra("artist", song.artist)
+        i.putExtra("albumCoverURL", song.albumCoverURL)
+        i.putExtra("albumURI", song.albumURI)
+        i.putExtra("audioURI", song.audioURI)
+        i.putExtra("audioFileURL", song.audioFileURL)
+        i.putExtra("banned", song.banned)
+        context?.let { ContextCompat.startForegroundService(it, i) }
     }
 }

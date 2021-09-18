@@ -44,7 +44,8 @@ class PlayerService : LifecycleService() {
     private var history : LinkedList<MediaItem> = LinkedList()
     private var currentCountry : String? = null
     private var locationHelper : LocationHelper? = null
-    private var bindCount : Long = 0L
+
+    private var binder = PlayerBinder()
 
     private val storage = FirebaseStorage.getInstance()
 
@@ -65,10 +66,8 @@ class PlayerService : LifecycleService() {
     private val sessionDestroyReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             destroySession()
-            if(bindCount <= 0){
-                stopForeground(true)
-                stopSelf()
-            }
+            stopForeground(true)
+            stopSelf()
         }
     }
     private val newSongReceiver = object: BroadcastReceiver(){
@@ -97,22 +96,6 @@ class PlayerService : LifecycleService() {
         override fun onReceive(context: Context?, intent: Intent?) {
             playNextSong()
         }
-    }
-
-    override fun onBind(intent: Intent): IBinder {
-        super.onBind(intent)
-        bindCount++
-        return PlayerBinder()
-    }
-
-    override fun onRebind(intent: Intent?) {
-        super.onRebind(intent)
-        bindCount++
-    }
-
-    override fun onUnbind(intent: Intent?): Boolean {
-        bindCount--
-        return super.onUnbind(intent)
     }
 
     fun queueSong(music: Music){
@@ -187,7 +170,7 @@ class PlayerService : LifecycleService() {
         }
         else{
             Toast.makeText(this, "No Next Song in Queue", Toast.LENGTH_SHORT).show()
-            if(!player.isPlaying && player.playbackState == ExoPlayer.STATE_ENDED){
+            if(!player.isPlaying && (player.playbackState == ExoPlayer.STATE_ENDED || player.playbackState == ExoPlayer.STATE_IDLE)){
                 nowPlaying = null
                 player.playWhenReady = false
                 player.removeMediaItem(0)
@@ -195,11 +178,9 @@ class PlayerService : LifecycleService() {
                 LocalBroadcastManager.getInstance(this@PlayerService).sendBroadcast(i)
                 showIdleNotif()
                 notificationManager.cancel(2)
-                if(bindCount <= 0){
-                    destroySession()
-                    stopForeground(true)
-                    stopSelf()
-                }
+                destroySession()
+                stopForeground(true)
+                stopSelf()
             }
         }
     }
@@ -335,8 +316,46 @@ class PlayerService : LifecycleService() {
         registerReceiver(sessionDestroyReceiver, IntentFilter(PlayerServiceEvents.SESSION_DESTROY.name))
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
+        return binder
+    }
+
+    override fun onStartCommand(i: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(i, flags, startId)
+        val commandType = i?.getIntExtra(PlayerServiceEvents.START_COMMAND.name, -1)
+
+        if(commandType == QUEUE_SONG){
+            val key = i.getStringExtra("key")
+            val title = i.getStringExtra("title")
+            val artist = i.getStringExtra("artist")
+            val albumCoverURL = i.getStringExtra("albumCoverURL")
+            val albumURI = i.getStringExtra("albumURI")
+            val audioURI = i.getStringExtra("audioURI")
+            val audioFileURL = i.getStringExtra("audioFileURL")
+            val banned = i.getStringArrayListExtra("banned")
+            val music = Music(key?:"", title?:"", artist?:"", audioFileURL?:"", audioURI?:"", albumCoverURL?:"", albumURI?:"", banned?: ArrayList())
+            queueSong(music)
+        }
+
+        if(commandType == PLAY_IMMEDIATELY){
+            val key = i.getStringExtra("key")
+            val title = i.getStringExtra("title")
+            val artist = i.getStringExtra("artist")
+            val albumCoverURL = i.getStringExtra("albumCoverURL")
+            val albumURI = i.getStringExtra("albumURI")
+            val audioURI = i.getStringExtra("audioURI")
+            val audioFileURL = i.getStringExtra("audioFileURL")
+            val banned = i.getStringArrayListExtra("banned")
+            val music = Music(key?:"", title?:"", artist?:"", audioFileURL?:"", audioURI?:"", albumCoverURL?:"", albumURI?:"", banned?: ArrayList())
+            playImmediately(music)
+        }
+
+        if(commandType == -1 && !player.isPlaying){
+            stopForeground(true)
+            stopSelf()
+        }
+
         return START_STICKY
     }
 
@@ -350,5 +369,10 @@ class PlayerService : LifecycleService() {
         unregisterReceiver(skipNextReceiver)
         unregisterReceiver(skipPrevReceiver)
         unregisterReceiver(sessionDestroyReceiver)
+    }
+
+    companion object{
+        const val QUEUE_SONG = 1
+        const val PLAY_IMMEDIATELY = 2
     }
 }

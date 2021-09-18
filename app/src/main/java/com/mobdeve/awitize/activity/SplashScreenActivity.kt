@@ -6,25 +6,16 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.view.WindowManager
+import android.os.Looper
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.mobdeve.awitize.R
 import com.mobdeve.awitize.helpers.LocationHelper
-import com.mobdeve.awitize.service.PlayerService
 
-@Suppress("DEPRECATION")
 class SplashScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-
-        // make full screen
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
     }
 
     override fun onStart() {
@@ -42,9 +33,7 @@ class SplashScreenActivity : AppCompatActivity() {
         }
         else{
             LocationHelper.getInstance(applicationContext)
-            val playerIntent = Intent(this, PlayerService::class.java)
-            ContextCompat.startForegroundService(this, playerIntent)
-            Handler().postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 val i = Intent(this, LoginActivity::class.java)
                 startActivity(i)
                 finish()
@@ -60,8 +49,6 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED){
             LocationHelper.getInstance(applicationContext)
-            val playerIntent = Intent(this, PlayerService::class.java)
-            ContextCompat.startForegroundService(this, playerIntent)
             val i = Intent(this, MainActivity::class.java)
             startActivity(i)
             finish()

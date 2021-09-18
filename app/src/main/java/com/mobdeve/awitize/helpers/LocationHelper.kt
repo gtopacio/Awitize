@@ -78,7 +78,7 @@ class LocationHelper(context: Context) {
                                 }
                             }
                         } catch (e : Exception){
-
+                            Log.e(TAG, "Geocoder Error: ${e.message}")
                         }
                     }
                 }
@@ -87,7 +87,7 @@ class LocationHelper(context: Context) {
         }
 
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 5000
+        locationRequest.interval = 20000
         startLocationUpdates()
     }
 

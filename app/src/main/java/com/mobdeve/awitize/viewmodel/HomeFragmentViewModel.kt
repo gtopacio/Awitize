@@ -1,7 +1,6 @@
 package com.mobdeve.awitize.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -97,24 +96,6 @@ class HomeFragmentViewModel : ViewModel() {
 
             }
         })
-
-//        FirebaseDatabase.getInstance().getReference("users/" + id + "/playlists").addValueEventListener(object :
-//            ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                playlists.clear()
-//                snapshot.children.forEach{ data ->
-//                    if(data != null){
-//                        val key = data.key
-//                        val count = data.childrenCount
-//                        playlists.add(Collection("playlists",key?:"", count))
-//                        playlistsDisplayed.value = playlists
-//                    }
-//                }
-//            }
-//            override fun onCancelled(error: DatabaseError) {
-//
-//            }
-//        })
     }
 
     fun setCategory(newCategory : String){

@@ -3,6 +3,7 @@ package com.mobdeve.awitize.fragment
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,8 @@ import com.mobdeve.awitize.R
 import com.mobdeve.awitize.activity.MusicPlayerActivity
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.service.PlayerService
+
+private const val TAG = "PlayerFragment"
 
 class PlayerFragment : Fragment() {
 
@@ -34,6 +37,7 @@ class PlayerFragment : Fragment() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             serviceBounded = true
             playerService = (service as PlayerService.PlayerBinder).getService()
+            updateUI()
         }
         override fun onServiceDisconnected(name: ComponentName?) {
             playerService = null
@@ -49,6 +53,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun updateUI() {
+        Log.d(TAG, "updateUI: ${playerService == null}")
         val metaData = playerService?.getNowPlaying()?.mediaMetadata
         context?.let { Glide.with(it).load(metaData?.artworkUri).error(R.drawable.logo___awitize).into(albumCover) }
         artist.text = if(metaData == null) "No Artist" else metaData.artist
@@ -74,6 +79,10 @@ class PlayerFragment : Fragment() {
         playPauseButton.setOnClickListener{
             context?.sendBroadcast(Intent(PlayerServiceEvents.PLAY_PAUSE.name))
         }
+
+        val i = Intent(view.context, PlayerService::class.java)
+        view.context.bindService(i, conn, Context.BIND_AUTO_CREATE)
+        LocalBroadcastManager.getInstance(view.context).registerReceiver(stateChangeReceiver, IntentFilter(PlayerServiceEvents.PLAYER_STATE_CHANGED.name))
         return view
     }
 
@@ -82,17 +91,12 @@ class PlayerFragment : Fragment() {
         updateUI()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val i = Intent(context, PlayerService::class.java)
-        context.bindService(i, conn, Context.BIND_AUTO_CREATE)
-        LocalBroadcastManager.getInstance(context).registerReceiver(stateChangeReceiver, IntentFilter(PlayerServiceEvents.PLAYER_STATE_CHANGED.name))
-    }
-
-    override fun onDetach() {
-        super.onDetach()
+    override fun onDestroy() {
+        super.onDestroy()
         context?.let { LocalBroadcastManager.getInstance(it).unregisterReceiver(stateChangeReceiver) }
-        context?.unbindService(conn)
+        if(serviceBounded){
+            context?.unbindService(conn)
+        }
     }
 
 }
