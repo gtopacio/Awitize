@@ -3,7 +3,6 @@ package com.mobdeve.awitize.fragment
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +17,6 @@ import com.mobdeve.awitize.R
 import com.mobdeve.awitize.activity.MusicPlayerActivity
 import com.mobdeve.awitize.enums.PlayerServiceEvents
 import com.mobdeve.awitize.service.PlayerService
-
-private const val TAG = "PlayerFragment"
 
 class PlayerFragment : Fragment() {
 
@@ -53,7 +50,6 @@ class PlayerFragment : Fragment() {
     }
 
     private fun updateUI() {
-        Log.d(TAG, "updateUI: ${playerService == null}")
         val metaData = playerService?.getNowPlaying()?.mediaMetadata
         context?.let { Glide.with(it).load(metaData?.artworkUri).error(R.drawable.logo___awitize).into(albumCover) }
         artist.text = if(metaData == null) "No Artist" else metaData.artist

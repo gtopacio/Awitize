@@ -128,7 +128,8 @@ class HomeFragmentViewModel : ViewModel() {
                             x.key?.let { rand.add(it) }
                         }
                         rand.shuffle()
-                        while(rand.isNotEmpty() && rec.size < 10){
+                        val randSize = rand.size - 10
+                        while(rand.isNotEmpty() && rand.size > randSize){
                             FirebaseDatabase.getInstance().getReference("music/${rand.pollFirst()}").get().addOnCompleteListener {
                                 if(it.isSuccessful){
                                     val snapshotData = it.result

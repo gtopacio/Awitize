@@ -53,7 +53,7 @@ class SearchFragment : Fragment(), CollectionAdapter.MusicQueuer{
                             bannedRegions.children.forEach {
                                 it?.key?.let { it1 -> banned.add(it1) }
                             }
-                            musicData.add(Music(snapshot.key.toString(), title, artist, audioFileURL, audioURI, albumCoverURL, albumURI, banned))
+                            musicData.add(Music(data.key.toString(), title, artist, audioFileURL, audioURI, albumCoverURL, albumURI, banned))
                         }
 
                     }
